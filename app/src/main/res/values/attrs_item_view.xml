@@ -1,0 +1,7 @@
+<resources>
+    <declare-styleable name="ItemView">
+        <attr name="label" format="string" />
+        <attr name="owner" format="string" />
+        <attr name="ivicon" format="color|reference" />
+    </declare-styleable>
+</resources>

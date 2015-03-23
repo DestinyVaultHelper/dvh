@@ -1,11 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.swistowski.destinyshelve.LoginActivity">
+    tools:context="org.swistowski.dvh.LoginActivity">
 
         <ImageButton
             android:layout_width="fill_parent"
@@ -16,7 +13,8 @@
             android:cropToPadding="false"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:onClick="onPSNButtonClick" />
+            android:onClick="onPSNButtonClick"
+            android:background="#ffffffff" />
 
         <ImageButton
             android:layout_width="fill_parent"
@@ -25,6 +23,7 @@
             android:layout_weight="1"
             android:scaleType="fitCenter"
             android:src="@drawable/xbox_logo"
-            android:onClick="onOneButtonClick" />
+            android:onClick="onOneButtonClick"
+            android:background="#ff2dab11" />
 
 </LinearLayout>

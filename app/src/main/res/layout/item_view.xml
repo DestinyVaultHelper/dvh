@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="fill_parent"
+    android:layout_height="48dp">
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/icon_preview"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/label_name"
+        android:layout_alignParentTop="false"
+        android:layout_marginTop="0dp"
+        android:layout_toRightOf="@+id/icon_preview"
+        android:layout_toEndOf="@+id/icon_preview"
+        android:singleLine="true"
+        android:paddingLeft="8dp"
+        android:text="lorem ipsum"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/label_owner"
+        android:layout_gravity="right|top"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:paddingRight="8dp"
+        android:singleLine="true"
+        android:text="lorem ipsum" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/label_details"
+        android:layout_toRightOf="@+id/icon_preview"
+        android:layout_toEndOf="@+id/icon_preview"
+        android:layout_alignParentBottom="false"
+        android:paddingLeft="8dp"
+        android:singleLine="true"
+        android:text="lorem ipsum"
+        android:layout_alignParentTop="true"
+         />
+</RelativeLayout>

@@ -1,11 +1,8 @@
 <resources>
-    <string name="app_name">Destiny Shelve</string>
-
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Destiny Vault Helper</string>
     <string name="title_activity_login">Login</string>
-
-    <string name="title_activity_web_view">WebViewActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="refresh">Refresh</string>
+    <string name="login">Login</string>
+    <string name="relogin">Relogin</string>
+    <string name="reload">Reload</string>
 </resources>
