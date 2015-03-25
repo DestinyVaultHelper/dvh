@@ -1,8 +1,12 @@
 package org.swistowski.dvh;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
+
 import org.swistowski.dvh.util.ImageStorage;
 
 public class Application extends android.app.Application {
+    private Tracker mTracker;
     private ClientWebView mWebView;
 
     @Override
@@ -15,5 +19,14 @@ public class Application extends android.app.Application {
 
     public ClientWebView getWebView() {
         return mWebView;
+    }
+
+
+    synchronized Tracker getTracker() {
+        if(mTracker==null){
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            mTracker = analytics.newTracker(R.xml.global_tracker);
+        }
+        return mTracker;
     }
 }

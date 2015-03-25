@@ -3,7 +3,6 @@ package org.swistowski.dvh.util;
 import android.app.Activity;
 import android.util.Log;
 
-import com.joshdholtz.sentry.Sentry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +22,13 @@ public class DatabaseLoader {
     private final Database database;
     private Runnable onFinish;
     private Runnable onError;
+    private Callback onMessage;
+
+
+
+    public interface Callback{
+        public void onMessage(String message);
+    }
 
     public DatabaseLoader(Activity act, ClientWebView webView, Database database) {
         this.act = act;
@@ -30,10 +36,20 @@ public class DatabaseLoader {
         this.database = database;
     }
 
-    public void process(Runnable onFinish, Runnable onError){
+    public void process(Runnable onFinish, Runnable onError, Callback onMessage){
         this.onFinish = onFinish;
         this.onError = onError;
+        this.onMessage = onMessage;
         doLoadAllData();
+    }
+
+    public void process(Runnable runnable) {
+        process(runnable, runnable, new Callback() {
+            @Override
+            public void onMessage(String message) {
+
+            }
+        });
     }
 
     private void doLoadAllData() {
@@ -43,7 +59,7 @@ public class DatabaseLoader {
             return;
         }
         if (database.getMembership() == null) {
-            doSearchDestinyPlayer("all", database.getUser().getDisplayName());
+            doSearchDestinyPlayer(""+database.getUser().getAccountType(), database.getUser().getDisplayName());
             return;
         }
         if (database.getCharacters() == null) {
@@ -61,6 +77,7 @@ public class DatabaseLoader {
     }
 
     void doGetCurrentUser() {
+        onMessage.onMessage("Loading User");
         Log.v(LOG_TAG, "doGetCurrentUser");
         // getting current user from bungie
         webView.call("userService.GetCurrentUser").then(new ClientWebView.Callback() {
@@ -68,12 +85,11 @@ public class DatabaseLoader {
             public void onAccept(String result) {
                 Log.v(LOG_TAG, "doGetCurrentUser in service");
                 try {
-                    database.loadUserFromJson(new JSONObject(result).getJSONObject("user"));
+                    database.loadUserFromJson(new JSONObject(result));
                     Log.v(LOG_TAG, "doGetCurrentUser database loaded");
                     doLoadAllData();
                 } catch (JSONException e) {
-                    Sentry.captureException(e);
-                    e.printStackTrace();
+                    onError("Cannot get user data");
                 }
                 Log.v(LOG_TAG, "got displayname: " + Database.getInstance().getUser().getDisplayName());
             }
@@ -86,6 +102,7 @@ public class DatabaseLoader {
         });
     }
     void doSearchDestinyPlayer(String type, String displayName) {
+        onMessage.onMessage("Searching your account");
         Log.v(LOG_TAG, "doSearchDestinyPlayer "+type+" "+displayName);
         // know that i'm logged in, search me as the player
         webView.call("destinyService.SearchDestinyPlayer", type, displayName).then(new ClientWebView.Callback() {
@@ -98,8 +115,9 @@ public class DatabaseLoader {
                     Log.v(LOG_TAG, "doSearchDestinyPlayer loaded");
                     doLoadAllData();
                 } catch (JSONException e) {
-                    Sentry.captureException(e);
-                    e.printStackTrace();
+                    onError("Cannot get membership data");
+                    //Sentry.captureException(e);
+                    //e.printStackTrace();
                 }
             }
 
@@ -112,6 +130,7 @@ public class DatabaseLoader {
     }
 
     void doGetAccount(final Membership membership) {
+        onMessage.onMessage("Downloading information about your account");
         Log.v("MainActivity", "doGetAccount");
         // i know my membershipId, so i'm destiny player, get my characters
         webView.call("destinyService.GetAccount", membership.getTigerType(), "" + membership.getId(), "true").then(new ClientWebView.Callback() {
@@ -122,8 +141,7 @@ public class DatabaseLoader {
                     Database.getInstance().loadCharactersFromJson(new JSONObject(result).getJSONObject("data").getJSONArray("characters"));
                     doLoadAllData();
                 } catch (JSONException e) {
-                    Sentry.captureException(e);
-                    e.printStackTrace();
+                    onError("Cannot get account data");
                 }
             }
 
@@ -137,6 +155,7 @@ public class DatabaseLoader {
     }
 
     private void doLoadItems(Membership membership, List<Character> characters) {
+        onMessage.onMessage("Loading your items");
         Log.v(LOG_TAG, "doLoadItems");
         WaitForAll waiter = new WaitForAll() {
             @Override
@@ -161,6 +180,7 @@ public class DatabaseLoader {
 
     void doGetCharacterInventory(final Membership membership, final Character character, final WaitForAll waiter) {
         Log.v(LOG_TAG, "doGetCharacterInventory");
+        onMessage.onMessage("Loading inventory for "+character);
         webView.call("destinyService.GetCharacterInventory", "" + membership.getType(), "" + membership.getId(), character.getId(), "true").then(new ClientWebView.Callback() {
             @Override
             public void onAccept(String result) {
@@ -168,8 +188,7 @@ public class DatabaseLoader {
                 try {
                     Database.getInstance().putItems(character.getId(), Item.fromJson(result));
                 } catch (JSONException e) {
-                    Sentry.captureException(e);
-                    e.printStackTrace();
+                    onError("Cannot get character inventory data");
                 }
                 waiter.decrease();
             }
@@ -184,6 +203,7 @@ public class DatabaseLoader {
 
 
     private void doGetVaultInventory(final Membership membership, final WaitForAll waiter) {
+        onMessage.onMessage("Loading vault inventory");
         Log.v(LOG_TAG, "doGetVaultInventory");
         webView.call("destinyService.GetVault", "" + membership.getType(), "true", membership.getId()).then(new ClientWebView.Callback() {
             @Override
@@ -191,8 +211,6 @@ public class DatabaseLoader {
                 try {
                     Database.getInstance().putItems(Database.VAULT_ID, Item.fromJson(result, true));
                 } catch (JSONException e) {
-                    Sentry.captureException(e);
-                    e.printStackTrace();
                 }
                 waiter.decrease();
             }

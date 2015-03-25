@@ -138,6 +138,9 @@ public class Database implements Serializable {
 
     public String getItemOwnerName(Item item) {
         String owner = getItemOwner(item);
+        if(owner==null){
+            return "None";
+        }
         if (owner.equals(VAULT_ID)) {
             return "Vault";
         }

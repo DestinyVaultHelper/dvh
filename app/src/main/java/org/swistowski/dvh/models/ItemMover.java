@@ -2,7 +2,6 @@ package org.swistowski.dvh.models;
 
 import android.util.Log;
 
-import com.joshdholtz.sentry.Sentry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +26,6 @@ public class ItemMover {
             obj.put("itemId", item.getItemId());
             obj.put("membershipType", Database.getInstance().getMembership().getType());
         } catch (JSONException e) {
-            Sentry.captureException(e);
             e.printStackTrace();
         }
 
@@ -197,7 +195,6 @@ public class ItemMover {
             json.put("stackSize", stackSize);
             json.put("transferToVault", transferToVault);
         } catch (JSONException e) {
-            Sentry.captureException(e);
             e.printStackTrace();
         }
         return json;
@@ -213,7 +210,6 @@ public class ItemMover {
             json.put("stackSize", stackSize);
             json.put("transferToVault", transferToVault);
         } catch (JSONException e) {
-            Sentry.captureException(e);
             e.printStackTrace();
         }
         return json;

@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 
-import com.joshdholtz.sentry.Sentry;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -81,7 +80,6 @@ public class ImageStorage {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
                 fos.close();
             } catch (IOException e) {
-                Sentry.captureException(e);
                 e.printStackTrace();
             }
     }
@@ -125,7 +123,6 @@ public class ImageStorage {
             try {
                 url = new URL("http://www.bungie.net" + urls[0]);
             } catch (MalformedURLException e) {
-                Sentry.captureException(e);
                 e.printStackTrace();
                 return null;
             }
@@ -133,7 +130,6 @@ public class ImageStorage {
             try {
                 bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
             } catch (IOException e) {
-                Sentry.captureException(e);
                 e.printStackTrace();
             }
             return bmp;

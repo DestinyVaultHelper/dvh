@@ -1,29 +1,50 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="org.swistowski.dvh.LoginActivity">
 
-        <ImageButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/psnButton"
-            android:layout_weight="1"
-            android:src="@drawable/psn_logo"
-            android:cropToPadding="false"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:onClick="onPSNButtonClick"
-            android:background="#ffffffff" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_information"
+        android:id="@+id/loginDetailInformation"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:padding="8dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="144dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp">
 
         <ImageButton
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageButton2"
-            android:layout_weight="1"
-            android:scaleType="fitCenter"
-            android:src="@drawable/xbox_logo"
-            android:onClick="onOneButtonClick"
-            android:background="#ff2dab11" />
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/psnButton"
+                  android:layout_weight="1"
+                android:src="@drawable/psn_logo"
+                android:cropToPadding="false"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:onClick="onPSNButtonClick"
+                android:background="#ffffffff"
+            android:layout_marginRight="4dp" />
 
-</LinearLayout>
+        <ImageButton
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/xboxButton"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:src="@drawable/xbox_logo"
+                android:onClick="onOneButtonClick"
+                android:background="#ff2dab11"
+            android:layout_marginLeft="4dp" />
+    </LinearLayout>
+
+</RelativeLayout>

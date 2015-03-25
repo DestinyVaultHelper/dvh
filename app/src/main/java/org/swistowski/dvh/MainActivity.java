@@ -2,14 +2,17 @@ package org.swistowski.dvh;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
-import com.joshdholtz.sentry.Sentry;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,16 +25,21 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
     private static final String LOG_TAG = "MainActivity";
 
     private FragmentStatePagerAdapter mPagerAdapter;
-    private ViewPager mViewPager;
+    private DisableableViewPager mViewPager;
     private boolean mIsLoading = false;
 
     void setIsLoading(boolean isLoading) {
         this.mIsLoading = isLoading;
+        Log.v(LOG_TAG, "is loading: " + isLoading);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Tracker t = getTracker();
+        t.setScreenName("MainScreen");
+
+        t.send(new HitBuilders.ScreenViewBuilder().build());
 
         if (!getWebView().isPrepared()) {
             setIsLoading(true);
@@ -43,22 +51,47 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
                 }
             });
         }
-        Sentry.init(this.getApplicationContext(), "https://0bb761867bfb4aa69bbaa247a2fe4862:e9ef23acb2094494a8a452d526a46513@app.getsentry.com/40292");
         initUI();
 
+    }
+
+    private boolean isFirstTime() {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        boolean ranBefore = preferences.getBoolean("RanBefore", false);
+        return !ranBefore;
+    }
+
+    private void commitFirstTime() {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("RanBefore", true);
+        editor.commit();
     }
 
     void initUI() {
         Log.v(LOG_TAG, "initUI");
         if (!mIsLoading) {
-            setContentView(R.layout.activity_items_preview);
-            mViewPager = (ViewPager) findViewById(R.id.pager);
+            setContentView(R.layout.items_tabs);
+            mViewPager = (DisableableViewPager) findViewById(R.id.pager);
             mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager());
             mViewPager.setAdapter(mPagerAdapter);
+            if (isFirstTime()) {
+                final View overflow = findViewById(R.id.tutorial_overflow);
+                overflow.setVisibility(View.VISIBLE);
+                overflow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        overflow.setVisibility(View.GONE);
+                        commitFirstTime();
+                    }
+                });
+                Log.v(LOG_TAG, "First time run");
+            }
         } else {
             setContentView(R.layout.layout_waiting);
         }
     }
+
 
     private ClientWebView getWebView() {
         return ((Application) getApplication()).getWebView();
@@ -96,6 +129,11 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
         (new DatabaseLoader(this, getWebView(), Database.getInstance())).process(new Runnable() {
             @Override
             public void run() {
+                getTracker().send(new HitBuilders.EventBuilder()
+                        .setCategory(getString(R.string.tracker_category_database))
+                        .setAction(getString(R.string.tracker_action_loaded))
+                        .setLabel("Success")
+                        .build());
                 Log.v(LOG_TAG, "web view data loaded");
                 setIsLoading(false);
                 initUI();
@@ -103,10 +141,32 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
         }, new Runnable() {
             @Override
             public void run() {
+                getTracker().send(new HitBuilders.EventBuilder()
+                        .setCategory(getString(R.string.tracker_category_database))
+                        .setAction(getString(R.string.tracker_action_loaded))
+                        .setLabel("Failure")
+                        .build());
                 Log.v(LOG_TAG, "i'm not logged in");
                 goLogin();
             }
+        }, new DatabaseLoader.Callback() {
+            @Override
+            public void onMessage(final String message) {
+                Log.v("ON message", message);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mIsLoading) {
+                            ((TextView) findViewById(R.id.progress_text)).setText(message);
+                        }
+                    }
+                });
+            }
         });
+    }
+
+    private Tracker getTracker() {
+        return ((Application) getApplication()).getTracker();
     }
 
     @Override
@@ -152,12 +212,36 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
 
     @Override
     public boolean onItemLongClicked(ItemListFragment fragment, Item item, String subject, int direction) {
+        /*
         Intent intent = new Intent(this, ItemDetailActivity.class);
         Bundle b = new Bundle();
         b.putSerializable(ItemDetailActivity.ITEM, item);
         intent.putExtras(b);
         startActivity(intent);
+        */
         return true;
+    }
+
+    @Override
+    public void refreshRequest(final Runnable finished) {
+        if (!getIsLoading()) {
+            mViewPager.setDisabled(true);
+            Database.getInstance().cleanCharacters();
+            setIsLoading(true);
+            (new DatabaseLoader(this, getWebView(), Database.getInstance())).process(new Runnable() {
+                @Override
+                public void run() {
+                    setIsLoading(false);
+                    mViewPager.setDisabled(false);
+                    initUI();
+                    finished.run();
+                }
+            });
+        }
+    }
+
+    private boolean getIsLoading() {
+        return mIsLoading;
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -169,4 +253,5 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
 
         }
     }
+
 }

@@ -3,6 +3,7 @@ package org.swistowski.dvh;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,7 @@ import android.widget.AdapterView;
 
 import org.swistowski.dvh.models.Item;
 
-public class ItemListFragment extends Fragment implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener {
+public class ItemListFragment extends Fragment implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     public static final int DIRECTION_TO = 1;
     public static final int DIRECTION_FROM = 2;
@@ -21,6 +22,8 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
     private int mDirection;
 
     private String mSubject;
+    private SwipeRefreshLayout mSwipeLayout;
+    private boolean mEnabled=true;
 
 
     public static Fragment newInstance(int direction, String subject) {
@@ -61,6 +64,9 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
+
+        mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+        mSwipeLayout.setOnRefreshListener(this);
         return rootView;
     }
 
@@ -84,6 +90,9 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        if(!mEnabled){
+            return false;
+        }
         if (null != mListener) {
             return mListener.onItemLongClicked(this, mAdapter.getItem(position), mSubject, mDirection);
         }
@@ -92,14 +101,29 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(!mEnabled){
+            return;
+        }
         if (null != mListener) {
             mListener.onItemClicked(this, mAdapter.getItem(position), mSubject, mDirection);
         }
     }
 
+    @Override
+    public void onRefresh() {
+        mEnabled = false;
+        mListener.refreshRequest(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeLayout.setRefreshing(false);
+                mEnabled = true;
+            }
+        });
+    }
+
     public interface OnItemIterationListener {
         public void onItemClicked(ItemListFragment fragment, Item item, String subject, int direction);
-
         public boolean onItemLongClicked(ItemListFragment fragment, Item item, String subject, int direction);
+        void refreshRequest(Runnable finished);
     }
 }

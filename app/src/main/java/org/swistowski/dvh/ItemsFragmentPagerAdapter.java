@@ -53,12 +53,14 @@ class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
             }));
             */
         }
-        mPages.add(new Page("Setting", new FragmentProvider() {
-            @Override
-            public Fragment getFragment() {
-                return SettingsFragment.newInstance();
-            }
-        }));
+        if(mPages.size()==0) {
+            mPages.add(new Page("Setting", new FragmentProvider() {
+                @Override
+                public Fragment getFragment() {
+                    return SettingsFragment.newInstance();
+                }
+            }));
+        }
     }
 
     @Override

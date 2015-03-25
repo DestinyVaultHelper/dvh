@@ -1,8 +1,17 @@
 <resources>
-    <string name="app_name">Destiny Vault Helper</string>
+    <string name="app_name">Vault Helper for Destiny</string>
     <string name="title_activity_login">Login</string>
     <string name="refresh">Refresh</string>
     <string name="login">Login</string>
     <string name="relogin">Relogin</string>
     <string name="reload">Reload</string>
+    <string name="login_information"><![CDATA[
+<p>Don\'t be afraid, Vault Helper for Destiny does not store any of your psn or xbox account information.</p>
+<p>When you click login button, your internal web browser will be pointed to psn or microsoft account authorization site in the same way as you were on bungie page. When you provide correct authorization data, internet browser will be hidden but all operation on you will be done using that browser.
+]]></string>
+    <string name="tracker_category_user_action">UserAction</string>
+    <string name="tracker_action_click">Click</string>
+    <string name="tracker_category_database">Database</string>
+    <string name="tracker_action_loaded">Loaded</string>
+
 </resources>
