@@ -29,7 +29,7 @@ public class Database implements Serializable {
     private List<Character> mCharacters;
     private Map<String, List<Item>> items = new HashMap<>();
     private Map<Item, String> itemsOwners = new HashMap<>();
-
+    private Set<String> bucketNames = new HashSet<>();
     private final Set<BaseAdapter> registeredAdapters = new HashSet<>();
 
     private Database() {
@@ -74,6 +74,7 @@ public class Database implements Serializable {
         this.items.put(id, items);
         for (Item item : items) {
             this.itemsOwners.put(item, id);
+            this.bucketNames.add(item.getBucketName());
         }
     }
 
@@ -177,6 +178,11 @@ public class Database implements Serializable {
         registeredAdapters.remove(adapter);
     }
 
+    public List<String> getBucketNames(){
+        List<String> names = new ArrayList<String>(this.bucketNames);
+        Collections.sort(names);
+        return names;
+    }
         /*
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static void load(Context context) {

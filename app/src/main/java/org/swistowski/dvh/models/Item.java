@@ -12,7 +12,6 @@ import java.util.List;
 
 public class Item implements Serializable, Comparable<Item> {
     private static final String LOG_TAG = "Item Class";
-    private final String mBucketName;
     private final long mItemHash;
     private final String mItemInstanceId;
     private final int mBindStatus;
@@ -38,15 +37,18 @@ public class Item implements Serializable, Comparable<Item> {
     private final int mClassType;
     // private final String mJson;
     // private final String mDefinition;
+    private final String mBucketName;
+    private final String mBucketDescription;
 
-    private Item(String bucketName, long itemHash, int bindStatus, boolean isEquipped, int itemLevel, int stackSize, int qualityLevel, boolean canEquip, boolean isEquipment, boolean isGridComplete, String itemInstanceId,
+    private Item(long itemHash, int bindStatus, boolean isEquipped, int itemLevel, int stackSize, int qualityLevel, boolean canEquip, boolean isEquipment, boolean isGridComplete, String itemInstanceId,
                  String itemName, String itemDescription, String icon, String secondaryIcon, String tierTypeName, String itemTypeName, long bucketTypeHash, int itemType, int itemSubType, int classType,
                  int primaryStatValue,
                  int damageType,
+                 String bucketName,
+                 String bucketDescription,
                  String json, String definition
 
     ) {
-        mBucketName = bucketName;
         mItemHash = itemHash;
         mBindStatus = bindStatus;
         mIsEquipped = isEquipped;
@@ -71,19 +73,23 @@ public class Item implements Serializable, Comparable<Item> {
 
         mPrimaryStatValue = primaryStatValue;
         mDamageType = damageType;
+        mBucketName = bucketName;
+        mBucketDescription = bucketDescription;
         // mJson = json;
         // mDefinition = definition;
+
     }
 
-    private static List<Item> fillFromBucket(JSONArray bucket_content, JSONObject items_definitions, String key, List<Item> items) {
+    private static List<Item> fillFromBucket(JSONArray bucket_content, JSONObject items_definitions, JSONObject bucket_definitions, String key, List<Item> items) {
         for (int j = 0; j < bucket_content.length(); j++) {
             JSONArray bucket_items = bucket_content.optJSONObject(j).optJSONArray("items");
             for (int k = 0; k < bucket_items.length(); k++) {
                 JSONObject item = bucket_items.optJSONObject(k);
                 JSONObject definition = items_definitions.optJSONObject(item.optString("itemHash"));
+                JSONObject bucket = bucket_definitions.optJSONObject(definition.optString("bucketTypeHash"));
                 // i'm interested only in transferrable items
                 if (!definition.optBoolean("nonTransferrable")) {
-                    items.add(createItem(key, item, definition));
+                    items.add(createItem(key, item, definition, bucket));
                 }
             }
 
@@ -94,31 +100,31 @@ public class Item implements Serializable, Comparable<Item> {
     private static List<Item> fromJson(JSONObject data, boolean isVault) throws JSONException {
         List<Item> items = new ArrayList<Item>();
         JSONObject items_definitions = data.getJSONObject("definitions").getJSONObject("items");
-
+        JSONObject bucket_definitions = data.getJSONObject("definitions").getJSONObject("buckets");
         if (!isVault) {
             JSONObject buckets = data.getJSONObject("data").getJSONObject("buckets");
             Iterator<String> i = buckets.keys();
             while (i.hasNext()) {
                 String key = i.next();
                 JSONArray bucket_content = buckets.getJSONArray(key);
-                items = fillFromBucket(bucket_content, items_definitions, key, items);
+                items = fillFromBucket(bucket_content, items_definitions, bucket_definitions, key, items);
             }
         } else {
             JSONArray bucket_content = data.optJSONObject("data").optJSONArray("buckets");
-            items = fillFromBucket(bucket_content, items_definitions, "VAULT", items);
+            items = fillFromBucket(bucket_content, items_definitions, bucket_definitions, "VAULT", items);
         }
 
         return items;
     }
 
-    private static Item createItem(String key, JSONObject item, JSONObject definition) {
+    private static Item createItem(String key, JSONObject item, JSONObject definition, JSONObject bucket) {
         JSONObject primaryStat = item.optJSONObject("primaryStat");
         int primaryStatValue = 0;
         if(primaryStat!=null){
             primaryStatValue = primaryStat.optInt("value", 0);
         }
         return new Item(
-                key,
+                //key,
                 item.optLong("itemHash"),
                 item.optInt("bindStatus"),
                 item.optBoolean("isEquipped"),
@@ -143,6 +149,8 @@ public class Item implements Serializable, Comparable<Item> {
 
                 primaryStatValue,
                 item.optInt("damageType", 0),
+                bucket!=null?bucket.optString("bucketName"):"",
+                bucket!=null?bucket.optString("bucketDescription"):"",
                 item.toString(),
                 definition.toString()
         );
@@ -156,15 +164,35 @@ public class Item implements Serializable, Comparable<Item> {
         return fromJson(result, false);
     }
 
+    private static final int typeToImportance(int type){
+        switch (type){
+            case 3: // weapon
+                return 100;
+            case 2: // armor
+                return 90;
+            case 8: //
+                return 80;
+            case 9:
+                return 70;
+
+        }
+        return 3;
+    }
+
     @Override
     public int compareTo(Item another) {
-        int t = another.mItemType - mItemType;
-        if (t != 0)
+        int t = typeToImportance(another.mItemType) - typeToImportance(mItemType);
+        if (t != 0) {
             return t;
+        }
         int ql = another.mQualityLevel - mQualityLevel;
         if (ql != 0) {
             return ql;
         }
+        int compare = mBucketName.compareTo(another.mBucketName);
+        if(compare!=0){
+            return compare;
+        };
         return mName.compareTo(another.mName);
     }
 
@@ -193,6 +221,8 @@ public class Item implements Serializable, Comparable<Item> {
                 "class type " + mClassType,
         //        "item json " +mJson,
         //        "item definition " + mDefinition
+                "bucket name " + mBucketName,
+                "bucket description " + mBucketDescription
 
         };
         return ret;
@@ -219,7 +249,8 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     public boolean isVisible() {
-        return mItemType==2 || mItemType==3;
+        return true;
+        // /return mItemType==2 || mItemType==3;
     }
 
     public String getItemId() {
@@ -266,4 +297,15 @@ public class Item implements Serializable, Comparable<Item> {
         return "";
     }
 
+    public int getType() {
+        return mItemType;
+    }
+
+    public int getStackSize(){
+        return mStackSize;
+    }
+
+    public String getBucketName() {
+        return mBucketName;
+    }
 }

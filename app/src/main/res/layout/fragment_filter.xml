@@ -1,9 +1,22 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="0dp" tools:context="org.swistowski.dvh.FilterFragment">
+    android:layout_height="wrap_content" tools:context="org.swistowski.dvh.FilterFragment"
+    android:background="@android:color/background_dark"
+    tools:showIn="@layout/fragment_collection_object">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="Filter placeholder" />
+
+    <TextView android:layout_width="match_parent" android:layout_height="48dp"
+        android:text="All items"
+        android:textColor="@android:color/primary_text_dark"
+        android:id="@+id/textView4" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_button"
+        android:layout_gravity="right|center_vertical"
+        android:src="@drawable/ic_action_search"
+        android:background="#ff000000" />
 
 </FrameLayout>

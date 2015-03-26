@@ -65,7 +65,7 @@ public class ClientWebView extends WebView {
             });
             getSettings().setJavaScriptEnabled(true);
             addJavascriptInterface(new JsObject(mPromises), "clientHandler");
-            loadUrl("http://www.bungie.net/");
+            loadUrl("https://www.bungie.net/");
         } else
             onInit.run();
     }
@@ -109,7 +109,11 @@ public class ClientWebView extends WebView {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                loadUrl("javascript:" + javascript);
+                if (android.os.Build.VERSION.SDK_INT < 19) {
+                    loadUrl("javascript:" + javascript);
+                } else {
+                    evaluateJavascript("javascript:" + javascript, null);
+                }
             }
         });
     }
@@ -141,6 +145,7 @@ public class ClientWebView extends WebView {
         @JavascriptInterface
         public void error(String promiseId, String result) {
             Log.v(LOG_TAG, "interface error " + promiseId);
+            Log.v(LOG_TAG, "error value"+ result);
             mPromises.get(promiseId).error(result);
             mPromises.remove(promiseId);
         }

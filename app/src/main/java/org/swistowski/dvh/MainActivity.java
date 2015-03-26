@@ -21,7 +21,7 @@ import org.swistowski.dvh.models.ItemMover;
 import org.swistowski.dvh.util.DatabaseLoader;
 
 
-public class MainActivity extends FragmentActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener {
+public class MainActivity extends FragmentActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, FilterFragment.OnFragmentInteractionListener {
     private static final String LOG_TAG = "MainActivity";
 
     private FragmentStatePagerAdapter mPagerAdapter;
@@ -126,6 +126,7 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
     }
 
     private void reloadDatabase() {
+
         (new DatabaseLoader(this, getWebView(), Database.getInstance())).process(new Runnable() {
             @Override
             public void run() {
@@ -138,16 +139,27 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
                 setIsLoading(false);
                 initUI();
             }
-        }, new Runnable() {
+        }, new DatabaseLoader.Callback() {
             @Override
-            public void run() {
+            public void onMessage(final String message) {
                 getTracker().send(new HitBuilders.EventBuilder()
                         .setCategory(getString(R.string.tracker_category_database))
                         .setAction(getString(R.string.tracker_action_loaded))
                         .setLabel("Failure")
                         .build());
+                String errorMesssage = "";
+                try {
+                    errorMesssage = new JSONObject(message).getString("errorMessage");
+                } catch (JSONException e) {
+                    errorMesssage = message;
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                builder.setMessage(errorMesssage)
+                        .setTitle("Bungie Api error");
+                Log.v(LOG_TAG, "error "+ message);
                 Log.v(LOG_TAG, "i'm not logged in");
                 goLogin();
+                builder.show();
             }
         }, new DatabaseLoader.Callback() {
             @Override
@@ -212,13 +224,11 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
 
     @Override
     public boolean onItemLongClicked(ItemListFragment fragment, Item item, String subject, int direction) {
-        /*
         Intent intent = new Intent(this, ItemDetailActivity.class);
         Bundle b = new Bundle();
         b.putSerializable(ItemDetailActivity.ITEM, item);
         intent.putExtras(b);
         startActivity(intent);
-        */
         return true;
     }
 
@@ -254,4 +264,8 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
         }
     }
 
+    @Override
+    public void onFilterChanged(FilterFragment.Filter newFilter) {
+        Log.v(LOG_TAG, "New filter to apply");
+    }
 }

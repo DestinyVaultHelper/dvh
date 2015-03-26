@@ -9,12 +9,13 @@
         android:id="@+id/fragment"
         android:name="org.swistowski.dvh.FilterFragment"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_centerHorizontal="true"
-        tools:layout="@layout/fragment_filter" />
+        tools:layout="@layout/fragment_filter"
+        android:layout_alignParentEnd="true" />
 
     <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipe_container"

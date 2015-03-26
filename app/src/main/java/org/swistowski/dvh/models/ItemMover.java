@@ -26,6 +26,7 @@ public class ItemMover {
             obj.put("itemId", item.getItemId());
             obj.put("membershipType", Database.getInstance().getMembership().getType());
         } catch (JSONException e) {
+            Log.e(LOG_TAG, "exception", e);
             e.printStackTrace();
         }
 
@@ -44,7 +45,7 @@ public class ItemMover {
     }
 
     private static Promise moveToVault(final ClientWebView webView, final String owner, final Item item, final Promise p) {
-        JSONObject obj = generateMoveJson(owner, item, true, 1);
+        JSONObject obj = generateMoveJson(owner, item, true);
         final Promise p_inner = new Promise();
         if (item.isEquipped()) {
             /* find items from the same hash */
@@ -118,7 +119,7 @@ public class ItemMover {
     }
 
     private static Promise moveFromVault(final ClientWebView webView, final String subject, final Item item, final Promise p) {
-        JSONObject obj = generateMoveJson(subject, item, false, 1);
+        JSONObject obj = generateMoveJson(subject, item, false);
         final Promise p_inner = new Promise();
         webView.call("destinyService.TransferItem", obj).then(new ClientWebView.Callback() {
             @Override
@@ -185,16 +186,17 @@ public class ItemMover {
         return p;
     }
 
-    private static JSONObject generateMoveJson(String characterId, Item item, boolean transferToVault, int stackSize) {
+    private static JSONObject generateMoveJson(String characterId, Item item, boolean transferToVault) {
         JSONObject json = new JSONObject();
         try {
             json.put("characterId", characterId);
             json.put("itemId", item.getItemId());
             json.put("itemReferenceHash", item.getItemHash());
             json.put("membershipType", Database.getInstance().getMembership().getType());
-            json.put("stackSize", stackSize);
+            json.put("stackSize", item.getStackSize());
             json.put("transferToVault", transferToVault);
         } catch (JSONException e) {
+            Log.e(LOG_TAG, "exception", e);
             e.printStackTrace();
         }
         return json;
@@ -210,6 +212,7 @@ public class ItemMover {
             json.put("stackSize", stackSize);
             json.put("transferToVault", transferToVault);
         } catch (JSONException e) {
+            Log.e(LOG_TAG, "exception", e);
             e.printStackTrace();
         }
         return json;

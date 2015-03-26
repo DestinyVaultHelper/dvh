@@ -1,90 +1,115 @@
 package org.swistowski.dvh;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
+
+import org.swistowski.dvh.models.Item;
+
+import java.util.List;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FilterFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FilterFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FilterFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private static final String LOG_TAG = "FilterFragment";
     private OnFragmentInteractionListener mListener;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FilterFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FilterFragment newInstance(String param1, String param2) {
-        FilterFragment fragment = new FilterFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    private BaseAdapter mAdapter;
     public FilterFragment() {
         // Required empty public constructor
     }
 
+    private class BucketNamesListAdapter extends BaseAdapter {
+
+        private List<String> mItems;
+
+        public BucketNamesListAdapter(){
+            super();
+            reloadItems();
+        }
+
+        @Override
+        public int getCount() {
+            return mItems.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mItems.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return mItems.get(position).hashCode();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView view;
+            if (convertView == null) {
+                view = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_list_item, null);
+            } else {
+                view = (TextView) convertView;
+            }
+            view.setTextColor(getResources().getColor(R.color.wallet_highlighted_text_holo_light));
+            view.setText((String)getItem(position));
+            return view;
+        }
+
+        @Override
+        public void notifyDataSetChanged() {
+            Log.v(LOG_TAG, "filter changed");
+            reloadItems();
+            Log.v(LOG_TAG, Database.getInstance().getBucketNames().toString());
+            super.notifyDataSetChanged();
+        }
+
+        private void reloadItems() {
+            mItems = Database.getInstance().getBucketNames();
+            Log.v(LOG_TAG, "items loaded: " + mItems);
+        }
+
+        @Override
+        public String toString(){
+            return "BucketNamesAdapter: "+mItems.toString();
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        mAdapter = new BucketNamesListAdapter();
+        Database.getInstance().registerItemAdapter(mAdapter);
+    }
+
+    @Override
+    public void onDestroy(){
+        Database.getInstance().unregisterItemAdapter(mAdapter);
+        super.onDestroy();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_filter, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        String[] items = new String[]{};
+        View root_view = inflater.inflate(R.layout.fragment_filter, container, false);
+        return root_view;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        /*
         try {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        */
     }
 
     @Override
@@ -93,19 +118,12 @@ public class FilterFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onFilterChanged(Filter newFilter);
+    }
+
+    public interface Filter {
+        boolean applyFilter(Item item);
     }
 
 }

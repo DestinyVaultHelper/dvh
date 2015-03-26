@@ -20,9 +20,9 @@ public class DatabaseLoader {
     private final Activity act;
     private final ClientWebView webView;
     private final Database database;
-    private Runnable onFinish;
-    private Runnable onError;
-    private Callback onMessage;
+    private Runnable mOnFinish;
+    private Callback mOnError;
+    private Callback mOnMessage;
 
 
 
@@ -36,15 +36,20 @@ public class DatabaseLoader {
         this.database = database;
     }
 
-    public void process(Runnable onFinish, Runnable onError, Callback onMessage){
-        this.onFinish = onFinish;
-        this.onError = onError;
-        this.onMessage = onMessage;
+    public void process(Runnable onFinish, Callback onError, Callback onMessage){
+        mOnFinish = onFinish;
+        mOnError = onError;
+        mOnMessage = onMessage;
         doLoadAllData();
     }
 
-    public void process(Runnable runnable) {
-        process(runnable, runnable, new Callback() {
+    public void process(final Runnable runnable) {
+        process(runnable, new Callback(){
+            @Override
+            public void onMessage(String message) {
+                runnable.run();
+            }
+        }, new Callback() {
             @Override
             public void onMessage(String message) {
 
@@ -59,7 +64,7 @@ public class DatabaseLoader {
             return;
         }
         if (database.getMembership() == null) {
-            doSearchDestinyPlayer(""+database.getUser().getAccountType(), database.getUser().getDisplayName());
+            doSearchDestinyPlayer(""+database.getUser().getAccountType(), database.getUser().getAccountName());
             return;
         }
         if (database.getCharacters() == null) {
@@ -71,13 +76,13 @@ public class DatabaseLoader {
             return;
         }
 
-        if(onFinish!=null){
-            onFinish.run();
+        if(mOnFinish!=null){
+            mOnFinish.run();
         }
     }
 
     void doGetCurrentUser() {
-        onMessage.onMessage("Loading User");
+        mOnMessage.onMessage("Loading User");
         Log.v(LOG_TAG, "doGetCurrentUser");
         // getting current user from bungie
         webView.call("userService.GetCurrentUser").then(new ClientWebView.Callback() {
@@ -89,20 +94,21 @@ public class DatabaseLoader {
                     Log.v(LOG_TAG, "doGetCurrentUser database loaded");
                     doLoadAllData();
                 } catch (JSONException e) {
+                    Log.e(LOG_TAG, "exception", e);
                     onError("Cannot get user data");
                 }
-                Log.v(LOG_TAG, "got displayname: " + Database.getInstance().getUser().getDisplayName());
+                Log.v(LOG_TAG, "got displayname: " + Database.getInstance().getUser().getAccountName());
             }
 
             @Override
             public void onError(String result) {
                 Log.v(LOG_TAG, "doGetCurrentUser error");
-                onError.run();
+                mOnError.onMessage(result);
             }
         });
     }
     void doSearchDestinyPlayer(String type, String displayName) {
-        onMessage.onMessage("Searching your account");
+        mOnMessage.onMessage("Searching your account");
         Log.v(LOG_TAG, "doSearchDestinyPlayer "+type+" "+displayName);
         // know that i'm logged in, search me as the player
         webView.call("destinyService.SearchDestinyPlayer", type, displayName).then(new ClientWebView.Callback() {
@@ -115,6 +121,7 @@ public class DatabaseLoader {
                     Log.v(LOG_TAG, "doSearchDestinyPlayer loaded");
                     doLoadAllData();
                 } catch (JSONException e) {
+                    Log.e(LOG_TAG, "exception", e);
                     onError("Cannot get membership data");
                     //Sentry.captureException(e);
                     //e.printStackTrace();
@@ -124,13 +131,13 @@ public class DatabaseLoader {
             @Override
             public void onError(String result) {
                 Log.e(LOG_TAG, "doSearchDestinyPlayer unsucessfull");
-                onError.run();
+                mOnError.onMessage(result);
             }
         });
     }
 
     void doGetAccount(final Membership membership) {
-        onMessage.onMessage("Downloading information about your account");
+        mOnMessage.onMessage("Downloading information about your account");
         Log.v("MainActivity", "doGetAccount");
         // i know my membershipId, so i'm destiny player, get my characters
         webView.call("destinyService.GetAccount", membership.getTigerType(), "" + membership.getId(), "true").then(new ClientWebView.Callback() {
@@ -141,21 +148,21 @@ public class DatabaseLoader {
                     Database.getInstance().loadCharactersFromJson(new JSONObject(result).getJSONObject("data").getJSONArray("characters"));
                     doLoadAllData();
                 } catch (JSONException e) {
+                    Log.e(LOG_TAG, "exception", e);
                     onError("Cannot get account data");
                 }
             }
 
             @Override
             public void onError(String result) {
-
                 Log.e(LOG_TAG, "doGetAccount unsucessfull " + result);
-                onError.run();
+                mOnError.onMessage(result);
             }
         });
     }
 
     private void doLoadItems(Membership membership, List<Character> characters) {
-        onMessage.onMessage("Loading your items");
+        mOnMessage.onMessage("Loading your items");
         Log.v(LOG_TAG, "doLoadItems");
         WaitForAll waiter = new WaitForAll() {
             @Override
@@ -180,7 +187,7 @@ public class DatabaseLoader {
 
     void doGetCharacterInventory(final Membership membership, final Character character, final WaitForAll waiter) {
         Log.v(LOG_TAG, "doGetCharacterInventory");
-        onMessage.onMessage("Loading inventory for "+character);
+        mOnMessage.onMessage("Loading inventory for "+character);
         webView.call("destinyService.GetCharacterInventory", "" + membership.getType(), "" + membership.getId(), character.getId(), "true").then(new ClientWebView.Callback() {
             @Override
             public void onAccept(String result) {
@@ -188,6 +195,7 @@ public class DatabaseLoader {
                 try {
                     Database.getInstance().putItems(character.getId(), Item.fromJson(result));
                 } catch (JSONException e) {
+                    Log.e(LOG_TAG, "exception", e);
                     onError("Cannot get character inventory data");
                 }
                 waiter.decrease();
@@ -196,14 +204,14 @@ public class DatabaseLoader {
             @Override
             public void onError(String result) {
                 Log.e("doGetCharacterInventory", "unsucessfull " + result);
-                onError.run();
+                mOnError.onMessage(result);
             }
         });
     }
 
 
     private void doGetVaultInventory(final Membership membership, final WaitForAll waiter) {
-        onMessage.onMessage("Loading vault inventory");
+        mOnMessage.onMessage("Loading vault inventory");
         Log.v(LOG_TAG, "doGetVaultInventory");
         webView.call("destinyService.GetVault", "" + membership.getType(), "true", membership.getId()).then(new ClientWebView.Callback() {
             @Override
@@ -211,6 +219,7 @@ public class DatabaseLoader {
                 try {
                     Database.getInstance().putItems(Database.VAULT_ID, Item.fromJson(result, true));
                 } catch (JSONException e) {
+                    Log.e(LOG_TAG, "exception", e);
                 }
                 waiter.decrease();
             }
@@ -218,7 +227,7 @@ public class DatabaseLoader {
             @Override
             public void onError(String result) {
                 Log.v("MainActivity", "doGetVaultInventory fail");
-                onError.run();
+                mOnError.onMessage(result);
             }
         });
     }
