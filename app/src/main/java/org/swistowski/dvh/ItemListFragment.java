@@ -65,8 +65,10 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
         listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
 
+        /*
         mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
         mSwipeLayout.setOnRefreshListener(this);
+        */
         return rootView;
     }
 

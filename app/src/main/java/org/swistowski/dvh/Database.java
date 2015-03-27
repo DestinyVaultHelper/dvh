@@ -54,6 +54,8 @@ public class Database implements Serializable {
         BUCKET_FILTERS.put("Vehicle", Boolean.FALSE);
     }
 
+    private String mFilterText = "";
+
     public LinkedHashMap<String, Boolean> getBucketFilters(){
         if(mBucketFilters==null){
             mBucketFilters = new LinkedHashMap<>();
@@ -135,8 +137,15 @@ public class Database implements Serializable {
         itemsOwners = new HashMap<>();
     }
     private boolean isVisible(Item item){
-        return getBucketFilters().get(item.getBucketName());
+        return getBucketFilters().get(item.getBucketName()) && filterByText(item);
         //return true;
+    }
+
+    private boolean filterByText(Item item){
+        if(!mFilterText.equals("")){
+            return item.getName().toLowerCase().contains(mFilterText.toLowerCase());
+        }
+        return true;
     }
 
     public List<Item> notForItems(String key) {
@@ -222,6 +231,11 @@ public class Database implements Serializable {
                 mBucketFilters.put(key, Boolean.FALSE);
             }
         }
+        notifyItemsChanged();
+    }
+
+    public void setFilterText(String filterText) {
+        this.mFilterText = filterText;
         notifyItemsChanged();
     }
 

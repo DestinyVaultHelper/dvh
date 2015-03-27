@@ -64,4 +64,5 @@ public class FilterByBucketDialogFragment extends DialogFragment implements Dial
     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
         values[which] = isChecked;
     }
+
 }

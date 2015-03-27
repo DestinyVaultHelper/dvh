@@ -19,7 +19,7 @@
     <string name="bucket_filter_title">Visible buckets</string>
     <string name="app_name_short">Vault Helper</string>
     <string name="search">Search</string>
-    <string name="filter">Filter</string>
+    <string name="filter_bucket">Bucket filter</string>
     <string name="search_hint">Search items</string>
 
 </resources>

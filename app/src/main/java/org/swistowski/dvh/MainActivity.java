@@ -1,8 +1,6 @@
 package org.swistowski.dvh;
 
 import android.app.AlertDialog;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -60,23 +58,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             });
         }
         initUI();
-        if(getIntent()!=null){
-            handleIntent(getIntent());
-        }
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
-        //handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            Log.v(LOG_TAG, "Query was: " + query);
-        }
-    }
 
     private boolean isFirstTime() {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
@@ -129,10 +112,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 goLogin();
                 return;
             case R.id.button_reload:
-                Database.getInstance().cleanCharacters();
-                setIsLoading(true);
-                initUI();
-                reloadDatabase();
+                actionRefresh();
                 return;
             case R.id.button_logout:
                 Database.getInstance().clean();
@@ -287,19 +267,49 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         }
     }
 
-    @Override
+    @Override 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_actions, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
+        searchView.setQueryHint(getResources().getString(R.string.search_hint));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Database.getInstance().setFilterText(s);
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_filter:
+                new FilterByBucketDialogFragment().show(getSupportFragmentManager(), "FilterByBucketDialogFragment");
+                return true;
+            case R.id.action_refresh:
+                actionRefresh();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void actionRefresh() {
+        Database.getInstance().cleanCharacters();
+        setIsLoading(true);
+        initUI();
+        reloadDatabase();
+    }
 
 }
