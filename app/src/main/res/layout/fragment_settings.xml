@@ -2,8 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.swistowski.dvh.SettingsFragment"
-    android:rowCount="3"
-    android:columnCount="1"
     android:orientation="vertical">
 
     <Button

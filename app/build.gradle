@@ -5,14 +5,14 @@ android {
     signingConfigs {
         release
     }
-    compileSdkVersion 21
+    compileSdkVersion 22
     buildToolsVersion "21.1.2"
     defaultConfig {
         applicationId 'org.swistowski.dvh'
         minSdkVersion 10
-        targetSdkVersion 21
-        versionCode 4
-        versionName "1.1a"
+        targetSdkVersion 22
+        versionCode 5
+        versionName "1.1"
         signingConfig signingConfigs.release
     }
     buildTypes {

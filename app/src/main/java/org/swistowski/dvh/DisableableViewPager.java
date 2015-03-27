@@ -23,7 +23,6 @@ public class DisableableViewPager extends ViewPager {
 
     private void recurseDisable(ViewGroup v, boolean state) {
         View a;
-        boolean isgrp = false;
         for(int i = 0; i < v.getChildCount(); i++) {
             a = v.getChildAt(i);
             if(a instanceof ViewGroup) recurseDisable((ViewGroup) a, state);

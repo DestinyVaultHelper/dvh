@@ -1,13 +1,20 @@
 package org.swistowski.dvh;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,7 +28,7 @@ import org.swistowski.dvh.models.ItemMover;
 import org.swistowski.dvh.util.DatabaseLoader;
 
 
-public class MainActivity extends FragmentActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener{
+public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener{
     private static final String LOG_TAG = "MainActivity";
 
     private FragmentStatePagerAdapter mPagerAdapter;
@@ -36,6 +43,7 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Tracker t = getTracker();
         t.setScreenName("MainScreen");
 
@@ -52,7 +60,22 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
             });
         }
         initUI();
+        if(getIntent()!=null){
+            handleIntent(getIntent());
+        }
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+        //handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Log.v(LOG_TAG, "Query was: " + query);
+        }
     }
 
     private boolean isFirstTime() {
@@ -65,7 +88,7 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("RanBefore", true);
-        editor.commit();
+        editor.apply();
     }
 
     void initUI() {
@@ -263,4 +286,20 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
 
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
 }
