@@ -4,9 +4,13 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -21,17 +25,19 @@ import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.swistowski.dvh.models.Item;
-import org.swistowski.dvh.models.ItemMover;
+import org.swistowski.dvh.models.*;
+import org.swistowski.dvh.models.Character;
 import org.swistowski.dvh.util.DatabaseLoader;
+import org.swistowski.dvh.util.ImageStorage;
 
 
-public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener{
+public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener {
     private static final String LOG_TAG = "MainActivity";
 
     private FragmentStatePagerAdapter mPagerAdapter;
     private DisableableViewPager mViewPager;
     private boolean mIsLoading = false;
+    private PagerTabStrip mPageTabs;
 
     void setIsLoading(boolean isLoading) {
         this.mIsLoading = isLoading;
@@ -80,7 +86,11 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             setContentView(R.layout.items_tabs);
             mViewPager = (DisableableViewPager) findViewById(R.id.pager);
             mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager());
+            mPageTabs = (PagerTabStrip) findViewById(R.id.pager_title_strip);
+            mViewPager.setOnPageChangeListener(this);
+
             mViewPager.setAdapter(mPagerAdapter);
+
             if (isFirstTime()) {
                 final View overflow = findViewById(R.id.tutorial_overflow);
                 overflow.setVisibility(View.VISIBLE);
@@ -93,6 +103,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 });
                 Log.v(LOG_TAG, "First time run");
             }
+            onPageSelected(0);
         } else {
             setContentView(R.layout.layout_waiting);
         }
@@ -129,7 +140,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     private void reloadDatabase() {
-
         (new DatabaseLoader(this, getWebView(), Database.getInstance())).process(new Runnable() {
             @Override
             public void run() {
@@ -188,6 +198,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         //webView.post()
+
         initUI();
     }
 
@@ -267,7 +278,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         }
     }
 
-    @Override 
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
@@ -312,4 +323,38 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         reloadDatabase();
     }
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        Log.v(LOG_TAG, "onPageSelected " + Database.getInstance().getCharacters().size() + " " + position);
+        if(position<Database.getInstance().getCharacters().size()){
+            Character c = Database.getInstance().getCharacters().get(position);
+            if (ImageStorage.getInstance().getImage(c.getId())!=null) {
+                Log.v(LOG_TAG, "Set backround from cache");
+
+                mPageTabs.setBackgroundDrawable(new BitmapDrawable(getResources(), ImageStorage.getInstance().getImage(c.getId())));
+            } else {
+                Log.v(LOG_TAG, "Set backround from url");
+                ImageStorage.getInstance().fetchImage(c.getId(), c.getBackgroundPath(), new ImageStorage.UrlFetchWaiter() {
+                    @Override
+                    public void onImageFetched(Bitmap bitmap) {
+                        mPageTabs.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+                        //invalidate();
+                    }
+                });
+            }
+        } else {
+            mPageTabs.setBackgroundDrawable(new BitmapDrawable(Bitmap.createBitmap(1,1, Bitmap.Config.ALPHA_8)));
+            mPageTabs.setBackgroundColor(getResources().getColor(R.color.background_material_dark));
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }

@@ -66,6 +66,10 @@ public class ImageStorage {
     */
 
     public Bitmap getImage(long itemHash) {
+        return getImage(itemHash+"");
+    }
+
+    public Bitmap getImage(String itemHash){
         try{
             FileInputStream fis = mContext.openFileInput(itemHash+".png");
             return BitmapFactory.decodeStream(fis);
@@ -74,7 +78,7 @@ public class ImageStorage {
         }
     }
 
-    private void saveImage(long itemHash, Bitmap bitmap) {
+    private void saveImage(String itemHash, Bitmap bitmap) {
             try  {
                 FileOutputStream fos = mContext.openFileOutput(itemHash+".png", Context.MODE_PRIVATE);
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
@@ -88,7 +92,7 @@ public class ImageStorage {
         this.mContext = context;
     }
 
-    public DownloadImageTask fetchImage(final long itemHash, final String url, final UrlFetchWaiter ufw) {
+    public DownloadImageTask fetchImage(final String itemHash, final String url, final UrlFetchWaiter ufw) {
         Bitmap bmp = getImage(itemHash);
         if(bmp!=null){
             ufw.onImageFetched(bmp);

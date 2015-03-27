@@ -81,7 +81,7 @@ public class ItemView extends FrameLayout {
             iv.setImageBitmap(ImageStorage.getInstance().getImage(item.getItemHash()));
         } else {
             iv.setImageBitmap(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888));
-            mDownloadImageTask = ImageStorage.getInstance().fetchImage(item.getItemHash(), item.getIcon(), new ImageStorage.UrlFetchWaiter() {
+            mDownloadImageTask = ImageStorage.getInstance().fetchImage(item.getItemHash()+"", item.getIcon(), new ImageStorage.UrlFetchWaiter() {
                 @Override
                 public void onImageFetched(Bitmap bitmap) {
                     iv.setImageBitmap(bitmap);
