@@ -250,7 +250,6 @@ public class Item implements Serializable, Comparable<Item> {
 
     public boolean isVisible() {
         return true;
-        // /return mItemType==2 || mItemType==3;
     }
 
     public String getItemId() {

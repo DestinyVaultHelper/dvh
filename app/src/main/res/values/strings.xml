@@ -14,5 +14,8 @@
     <string name="tracker_category_database">Database</string>
     <string name="tracker_action_loaded">Loaded</string>
     <string name="login_message">Please select your console</string>
+    <string name="ok" >Ok</string>
+    <string name="cancel" >Cancel</string>
+    <string name="bucket_filter_title">Visible buckets</string>
 
 </resources>

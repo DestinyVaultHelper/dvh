@@ -36,9 +36,10 @@ public class ItemView extends FrameLayout {
 
     public void setItem(Item item){
         String details = "";
+        /*
         if(item.getBucketName()!=null){
             details += item.getBucketName()+ " ";
-        }
+        }*/
         if(item.getStackSize()!=1){
             details += "Stack size: " + item.getStackSize()+" ";
         }

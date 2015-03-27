@@ -1,26 +1,31 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <org.swistowski.dvh.DisableableViewPager xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="org.swistowski.dvh.MainActivity">
 
-        <android.support.v4.view.PagerTabStrip
-            android:id="@+id/pager_title_strip"
-            style="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Title"
+
+        <org.swistowski.dvh.DisableableViewPager xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:background="#000"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp"
-            android:textColor="#fff" />
+            android:layout_height="match_parent"
+            tools:context="org.swistowski.dvh.MainActivity"
+           >
+
+            <android.support.v4.view.PagerTabStrip
+                android:id="@+id/pager_title_strip"
+                style="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:background="#000"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:textColor="#fff" />
 
 
-    </org.swistowski.dvh.DisableableViewPager>
+        </org.swistowski.dvh.DisableableViewPager>
+
 
     <RelativeLayout
         android:id="@+id/tutorial_overflow"

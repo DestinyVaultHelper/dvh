@@ -21,7 +21,7 @@ import org.swistowski.dvh.models.ItemMover;
 import org.swistowski.dvh.util.DatabaseLoader;
 
 
-public class MainActivity extends FragmentActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, FilterFragment.OnFragmentInteractionListener {
+public class MainActivity extends FragmentActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener{
     private static final String LOG_TAG = "MainActivity";
 
     private FragmentStatePagerAdapter mPagerAdapter;
@@ -156,7 +156,7 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
                 AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
                 builder.setMessage(errorMesssage)
                         .setTitle("Bungie Api error");
-                Log.v(LOG_TAG, "error "+ message);
+                Log.v(LOG_TAG, "error " + message);
                 Log.v(LOG_TAG, "i'm not logged in");
                 goLogin();
                 builder.show();
@@ -262,10 +262,5 @@ public class MainActivity extends FragmentActivity implements ItemListFragment.O
             }
 
         }
-    }
-
-    @Override
-    public void onFilterChanged(FilterFragment.Filter newFilter) {
-        Log.v(LOG_TAG, "New filter to apply");
     }
 }
