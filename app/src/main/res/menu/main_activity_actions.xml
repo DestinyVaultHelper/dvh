@@ -6,8 +6,8 @@
         yourapp:showAsAction="ifRoom|collapseActionView"
         yourapp:actionViewClass="android.support.v7.widget.SearchView" />
 
-    <item android:id="@+id/action_filter"
-        android:title="@string/filter_bucket"
+    <item android:id="@+id/toggle_filters"
+        android:title="@string/toggle_filters"
         />
     <item android:id="@+id/action_refresh"
         android:title="@string/refresh" />

@@ -1,6 +1,7 @@
 package org.swistowski.dvh.fragments;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,8 @@ import org.swistowski.dvh.views.GroupTitleView;
  * A simple {@link Fragment} subclass.
  */
 public class ListFilteringFragment extends Fragment {
+    private static final String LOG_TAG = "ListFilteringFragment";
+
     private class FilterAdapter extends BaseExpandableListAdapter {
         private static final String LOG_TAG = "FilterAdapter";
         private Context mContext;
@@ -108,6 +111,7 @@ public class ListFilteringFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onCreateView");
         // Inflate the layout for this fragment
         View root_view = inflater.inflate(R.layout.fragment_list_filtering, container, false);
 
@@ -116,5 +120,34 @@ public class ListFilteringFragment extends Fragment {
         return root_view;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onCreateView");
+        super.onCreate(savedInstanceState);
 
+    }
+    @Override
+    public void onDestroyView(){
+        Log.v(LOG_TAG, "onDestroyView");
+
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy(){
+        Log.v(LOG_TAG, "onDestroy");
+        super.onDestroy();
+
+    }
+    @Override
+    public void onAttach(Activity act){
+        Log.v(LOG_TAG, "onAttach");
+        super.onAttach(act);
+    }
+
+    @Override
+    public void onDetach(){
+        Log.v(LOG_TAG, "onDetach");
+        super.onDetach();
+    }
 }

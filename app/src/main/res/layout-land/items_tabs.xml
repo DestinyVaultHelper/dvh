@@ -13,7 +13,8 @@
             android:id="@+id/fragment"
             android:layout_gravity="center|bottom|left|top"
             tools:layout="@layout/fragment_list_filtering"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            class="org.swistowski.dvh.fragments.ListFilteringFragment" />
 
         <include
             layout="@layout/items_tabs_inner"

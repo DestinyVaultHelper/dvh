@@ -8,4 +8,21 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:id="@+id/fragment_container"
+        android:layout_height="fill_parent"
+        android:background="#78ffffff">
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="org.swistowski.dvh.fragments.ListFilteringFragment"
+            android:id="@+id/fragment"
+            android:layout_gravity="center|bottom|left|top"
+            tools:layout="@layout/fragment_list_filtering"
+            android:layout_weight="1"
+            class="org.swistowski.dvh.fragments.ListFilteringFragment" />
+    </FrameLayout>
 </FrameLayout>

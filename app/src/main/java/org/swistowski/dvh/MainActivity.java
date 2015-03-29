@@ -28,7 +28,6 @@ import org.swistowski.dvh.activities.ItemDetailActivity;
 import org.swistowski.dvh.activities.LoginActivity;
 import org.swistowski.dvh.activities.WebViewActivity;
 import org.swistowski.dvh.atapters.ItemsFragmentPagerAdapter;
-import org.swistowski.dvh.fragments.FilterByBucketDialogFragment;
 import org.swistowski.dvh.fragments.ItemListFragment;
 import org.swistowski.dvh.fragments.SettingsFragment;
 import org.swistowski.dvh.models.Character;
@@ -68,7 +67,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 }
             });
         }
-        Log.v(LOG_TAG, "initUI");
         setContentView(R.layout.items_tabs);
         initUI();
     }
@@ -87,9 +85,9 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     void initUI() {
-        Log.v(LOG_TAG, "initUi " + Database.getInstance().getIsLoading());
-
+        Log.v(LOG_TAG, "initUI");
         if (!Database.getInstance().getIsLoading()) {
+
             mViewPager = (DisableableViewPager) findViewById(R.id.pager);
             mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager());
             mPageTabs = (PagerTabStrip) findViewById(R.id.pager_title_strip);
@@ -110,7 +108,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 Log.v(LOG_TAG, "First time run");
             }
             onPageSelected(0);
-            mViewPager.requestLayout();
         } else {
             //setContentView(R.layout.layout_waiting);
         }
@@ -189,7 +186,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                     @Override
                     public void run() {
                         if (Database.getInstance().getIsLoading()) {
-                            // ((TextView) findViewById(R.id.progress_text)).setText(message);
+                            Log.v(LOG_TAG, message);
+                          //  ((TextView) findViewById(R.id.progress_text)).setText(message);
                         }
                     }
                 });
@@ -308,9 +306,17 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
-            case R.id.action_filter:
+            /*case R.id.action_filter:
                 new FilterByBucketDialogFragment().show(getSupportFragmentManager(), "FilterByBucketDialogFragment");
                 return true;
+                */
+            case R.id.toggle_filters:
+                item.setChecked(!item.isChecked());
+                if(item.isChecked()){
+                    findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.fragment_container).setVisibility(View.GONE);
+                }
             case R.id.action_refresh:
                 actionRefresh();
                 return true;
@@ -318,6 +324,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
 
     private void actionRefresh() {
         Database.getInstance().cleanCharacters();
