@@ -93,7 +93,15 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         editor.apply();
     }
 
-    void initUI() {
+    void initUI(){
+        try {
+            initUIInner();
+        } catch(IllegalStateException e){
+            Log.e(LOG_TAG, "init fallback ",e );
+        }
+    }
+
+    void initUIInner() {
         Log.v(LOG_TAG, "got view: "+mFilterMenuItem);
 
         setFiltersVisible(filtersVisible);

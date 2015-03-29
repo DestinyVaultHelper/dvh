@@ -53,9 +53,14 @@ public class Database implements Serializable {
         BUCKET_FILTERS.put("Ships", Boolean.FALSE);
         BUCKET_FILTERS.put("Vehicle", Boolean.FALSE);
     }
-
-    private String mFilterText = "";
-    private boolean mIsLoading = false;
+    private LinkedHashMap<String, Boolean> mDamageFilters;
+    private static final LinkedHashMap<String, Boolean> DAMAGE_FILTERS;
+    static {
+        DAMAGE_FILTERS = new LinkedHashMap<>();
+        DAMAGE_FILTERS.put("Arc", Boolean.TRUE);
+        DAMAGE_FILTERS.put("Solar", Boolean.TRUE);
+        DAMAGE_FILTERS.put("Void", Boolean.TRUE);
+    }
 
     public LinkedHashMap<String, Boolean> getBucketFilters(){
         if(mBucketFilters==null){
@@ -66,6 +71,19 @@ public class Database implements Serializable {
         }
         return mBucketFilters;
     }
+    public LinkedHashMap<String, Boolean> getDamageFilters(){
+        if(mDamageFilters==null){
+            mDamageFilters = new LinkedHashMap<>();
+            for(Map.Entry<String, Boolean> entry: DAMAGE_FILTERS.entrySet()){
+                mDamageFilters.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return mDamageFilters;
+    }
+
+    private boolean mIsLoading = false;
+
+    private String mFilterText = "";
 
     private Database() {
     }

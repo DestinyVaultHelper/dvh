@@ -13,8 +13,14 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 import org.swistowski.dvh.R;
+import org.swistowski.dvh.util.Database;
 import org.swistowski.dvh.views.GroupDetailView;
 import org.swistowski.dvh.views.GroupTitleView;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -23,12 +29,63 @@ import org.swistowski.dvh.views.GroupTitleView;
 public class ListFilteringFragment extends Fragment {
     private static final String LOG_TAG = "ListFilteringFragment";
 
+    public interface FilterGetter {
+        LinkedHashMap<String, Boolean> getFilters();
+    };
+
+    static final FilterGetter bucketFilters = new FilterGetter(){
+        @Override
+        public LinkedHashMap<String, Boolean> getFilters() {
+            return Database.getInstance().getBucketFilters();
+        }
+    };
+
+    static final FilterGetter damageFilters = new FilterGetter() {
+        @Override
+        public LinkedHashMap<String, Boolean> getFilters() {
+            return Database.getInstance().getDamageFilters();
+        }
+    };
+
+    private class FilterGroup {
+        final private String mTitle;
+        final private FilterGetter mFilterGetter;
+        private final ArrayList<Map.Entry<String, Boolean>> mEntries;
+
+
+        public FilterGroup(String title, FilterGetter filterGetter){
+            mTitle = title;
+            mFilterGetter = filterGetter;
+            mEntries = new ArrayList<>();
+            reloadEntries();
+        }
+
+        private void reloadEntries(){
+            mEntries.clear();
+            mEntries.addAll(mFilterGetter.getFilters().entrySet());
+        }
+
+        public String getTitle() {
+            return mTitle;
+        }
+
+
+        public Map.Entry<String, Boolean> getChild(int childPosition) {
+            return mEntries.get(childPosition);
+        }
+    }
+
     private class FilterAdapter extends BaseExpandableListAdapter {
+        List<FilterGroup> mGroups;
         private static final String LOG_TAG = "FilterAdapter";
         private Context mContext;
+
         public FilterAdapter(Context context){
             super();
             mContext = context;
+            mGroups = new ArrayList<>();
+            mGroups.add(new FilterGroup(getResources().getString(R.string.bucket_filter_label), bucketFilters));
+            mGroups.add(new FilterGroup(getResources().getString(R.string.damage_type_filter_label), damageFilters));
         }
         Context getContext() {
             return mContext;
@@ -36,12 +93,12 @@ public class ListFilteringFragment extends Fragment {
 
         @Override
         public int getGroupCount() {
-            return 5;
-        }
+            return mGroups.size();
+         }
 
         @Override
         public int getChildrenCount(int groupPosition) {
-            return 5+groupPosition;
+            return mGroups.get(groupPosition).mEntries.size();
         }
 
         @Override
@@ -51,7 +108,6 @@ public class ListFilteringFragment extends Fragment {
 
         @Override
         public Object getChild(int groupPosition, int childPosition) {
-
             return ""+childPosition;
         }
 
@@ -67,33 +123,45 @@ public class ListFilteringFragment extends Fragment {
 
         @Override
         public boolean hasStableIds() {
-            return false;
+            return true;
         }
 
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
             final GroupTitleView view;
-            if(convertView==null){
+            if (convertView == null) {
                 view = new GroupTitleView(getContext());
             } else {
                 view = (GroupTitleView) convertView;
             }
-            view.setText("Position: "+groupPosition);
-            Log.v(LOG_TAG, "GV: " + groupPosition);
+            view.setText(mGroups.get(groupPosition).getTitle());
             return view;
         }
 
         @Override
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
             final GroupDetailView view;
+            final Map.Entry<String, Boolean> item = mGroups.get(groupPosition).getChild(childPosition);
+
             if(convertView==null){
                 view = new GroupDetailView(getContext());
             } else {
                 view = (GroupDetailView) convertView;
             }
-            view.setText("Child: "+groupPosition+" "+childPosition);
-            Log.v(LOG_TAG, "CV: " + groupPosition+ " " + childPosition);
+            view.setText(item.getKey());
+            view.setChecked(item.getValue());
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleOnClick(groupPosition, childPosition);
+                }
+            });
             return view;
+        }
+
+        private void handleOnClick(int groupPosition, int childPosition) {
+            Map.Entry<String, Boolean> entry = mGroups.get(groupPosition).mEntries.get(childPosition);
+            entry.setValue(entry.getValue());
         }
 
         @Override

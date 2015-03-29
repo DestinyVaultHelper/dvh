@@ -3,6 +3,7 @@ package org.swistowski.dvh.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 
@@ -29,7 +30,7 @@ public class GroupDetailView extends FrameLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.group_filter_detail_view, this, true);
+        View root_view = LayoutInflater.from(getContext()).inflate(R.layout.group_filter_detail_view, this, true);
     }
 
     public void setText(String text) {
@@ -40,4 +41,5 @@ public class GroupDetailView extends FrameLayout {
         CheckBox tv = (CheckBox) findViewById(R.id.detail_checkbox);
         tv.setChecked(value);
     }
+
 }
