@@ -6,10 +6,7 @@
         yourapp:showAsAction="ifRoom|collapseActionView"
         yourapp:actionViewClass="android.support.v7.widget.SearchView" />
 
-    <item android:id="@+id/toggle_filters"
-        yourapp:showAsAction="ifRoom"
-        android:title="@string/toggle_filters"
-        />
+
     <item android:id="@+id/action_refresh"
         android:title="@string/refresh" />
 </menu>

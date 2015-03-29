@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -46,7 +47,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     private FragmentStatePagerAdapter mPagerAdapter;
     private DisableableViewPager mViewPager;
     private PagerTabStrip mPageTabs;
-
+    private MenuItem mFilterMenuItem;
+    private boolean filtersVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +69,17 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 }
             });
         }
+        if(savedInstanceState!=null){
+            filtersVisible = savedInstanceState.getBoolean("filtersVisible");
+        }
         setContentView(R.layout.items_tabs);
         initUI();
     }
-
+    @Override
+    protected void onSaveInstanceState(Bundle stateToSave){
+        super.onSaveInstanceState(stateToSave);
+        stateToSave.putBoolean("filtersVisible", filtersVisible);
+    }
     private boolean isFirstTime() {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         boolean ranBefore = preferences.getBoolean("RanBefore", false);
@@ -85,9 +94,11 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     void initUI() {
-        Log.v(LOG_TAG, "initUI");
-        if (!Database.getInstance().getIsLoading()) {
+        Log.v(LOG_TAG, "got view: "+mFilterMenuItem);
 
+        setFiltersVisible(filtersVisible);
+        if (!Database.getInstance().getIsLoading()) {
+            findViewById(R.id.waiting_screen).setVisibility(View.GONE);
             mViewPager = (DisableableViewPager) findViewById(R.id.pager);
             mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager());
             mPageTabs = (PagerTabStrip) findViewById(R.id.pager_title_strip);
@@ -109,6 +120,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             }
             onPageSelected(0);
         } else {
+            findViewById(R.id.waiting_screen).setVisibility(View.VISIBLE);
             //setContentView(R.layout.layout_waiting);
         }
     }
@@ -187,7 +199,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                     public void run() {
                         if (Database.getInstance().getIsLoading()) {
                             Log.v(LOG_TAG, message);
-                          //  ((TextView) findViewById(R.id.progress_text)).setText(message);
+                            ((TextView) findViewById(R.id.progress_text)).setText(message);
                         }
                     }
                 });
@@ -303,6 +315,29 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        mFilterMenuItem = menu.findItem(R.id.toggle_filters);
+        if(mFilterMenuItem!=null) {
+            //mFilterMenuItem.setChecked(false);
+            mFilterMenuItem.setChecked(filtersVisible);
+        }
+        return true;
+    }
+
+    private void setFiltersVisible(boolean visibility){
+        filtersVisible = visibility;
+        View container = findViewById(R.id.fragment_container);
+        Log.v(LOG_TAG, "filters show: " + container + " " + visibility);
+        if(container!=null){
+            if(visibility){
+                container.setVisibility(View.VISIBLE);
+            } else {
+                container.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
@@ -311,12 +346,10 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 return true;
                 */
             case R.id.toggle_filters:
+                Log.v(LOG_TAG, "item checked: " + item.isChecked());
                 item.setChecked(!item.isChecked());
-                if(item.isChecked()){
-                    findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
-                } else {
-                    findViewById(R.id.fragment_container).setVisibility(View.GONE);
-                }
+                setFiltersVisible(item.isChecked());
+                return true;
             case R.id.action_refresh:
                 actionRefresh();
                 return true;

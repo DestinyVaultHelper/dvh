@@ -23,4 +23,17 @@
             android:layout_gravity="center|bottom|right|top"
             android:layout_weight="1" />
 
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/waiting_screen"
+        android:focusableInTouchMode="true"
+        android:background="#ffffffff" >
+
+        <include
+            layout="@layout/layout_waiting"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+    </FrameLayout>
+
 </LinearLayout>

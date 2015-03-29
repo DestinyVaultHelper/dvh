@@ -13,7 +13,7 @@
         android:layout_width="fill_parent"
         android:id="@+id/fragment_container"
         android:layout_height="fill_parent"
-        android:background="#78ffffff">
+        android:background="#dcffffff">
 
         <fragment
             android:layout_width="match_parent"
@@ -24,5 +24,18 @@
             tools:layout="@layout/fragment_list_filtering"
             android:layout_weight="1"
             class="org.swistowski.dvh.fragments.ListFilteringFragment" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/waiting_screen"
+        android:focusableInTouchMode="true"
+        android:background="#ffffffff">
+
+        <include
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            layout="@layout/layout_waiting" />
     </FrameLayout>
 </FrameLayout>
