@@ -3,7 +3,7 @@ package org.swistowski.dvh.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.swistowski.dvh.Database;
+import org.swistowski.dvh.util.Database;
 
 import java.io.Serializable;
 import java.util.ArrayList;

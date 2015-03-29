@@ -1,4 +1,4 @@
-package org.swistowski.dvh;
+package org.swistowski.dvh.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,6 +8,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.swistowski.dvh.util.Database;
+import org.swistowski.dvh.R;
 import org.swistowski.dvh.models.Item;
 import org.swistowski.dvh.util.ImageStorage;
 

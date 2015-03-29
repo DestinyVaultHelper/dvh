@@ -7,8 +7,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.swistowski.dvh.ClientWebView;
-import org.swistowski.dvh.Database;
+import org.swistowski.dvh.views.ClientWebView;
 import org.swistowski.dvh.models.Character;
 import org.swistowski.dvh.models.Item;
 import org.swistowski.dvh.models.Membership;
@@ -23,7 +22,6 @@ public class DatabaseLoader {
     private Runnable mOnFinish;
     private Callback mOnError;
     private Callback mOnMessage;
-
 
 
     public interface Callback{
@@ -58,6 +56,7 @@ public class DatabaseLoader {
     }
 
     private void doLoadAllData() {
+        Database.getInstance().setIsLoading(true);
         Log.v(LOG_TAG, "doLoadAllData");
         if (database.getUser() == null) {
             doGetCurrentUser();
@@ -77,6 +76,7 @@ public class DatabaseLoader {
         }
 
         if(mOnFinish!=null){
+            Database.getInstance().setIsLoading(false);
             mOnFinish.run();
         }
     }

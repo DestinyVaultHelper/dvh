@@ -4,6 +4,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
 import org.swistowski.dvh.util.ImageStorage;
+import org.swistowski.dvh.views.ClientWebView;
 
 public class Application extends android.app.Application {
     private Tracker mTracker;
@@ -22,7 +23,7 @@ public class Application extends android.app.Application {
     }
 
 
-    synchronized Tracker getTracker() {
+    public synchronized Tracker getTracker() {
         if(mTracker==null){
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             mTracker = analytics.newTracker(R.xml.global_tracker);

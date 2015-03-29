@@ -1,4 +1,4 @@
-package org.swistowski.dvh;
+package org.swistowski.dvh.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.swistowski.dvh.R;
 import org.swistowski.dvh.models.Item;
 import org.swistowski.dvh.util.ImageStorage;
 

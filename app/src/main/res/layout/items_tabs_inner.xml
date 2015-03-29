@@ -5,7 +5,7 @@
 
 
 
-        <org.swistowski.dvh.DisableableViewPager xmlns:tools="http://schemas.android.com/tools"
+        <org.swistowski.dvh.views.DisableableViewPager xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -22,7 +22,7 @@
                 style="@style/Base.TextAppearance.AppCompat.Large.Inverse" />
 
 
-        </org.swistowski.dvh.DisableableViewPager>
+        </org.swistowski.dvh.views.DisableableViewPager>
 
 
     <RelativeLayout

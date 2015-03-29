@@ -1,15 +1,18 @@
-package org.swistowski.dvh;
+package org.swistowski.dvh.atapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import org.swistowski.dvh.fragments.ItemListFragment;
+import org.swistowski.dvh.fragments.SettingsFragment;
 import org.swistowski.dvh.models.Character;
+import org.swistowski.dvh.util.Database;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
+public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
     private final List<Page> mPages = new ArrayList<Page>();
 
     public ItemsFragmentPagerAdapter(FragmentManager fm) {

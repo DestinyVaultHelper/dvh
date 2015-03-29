@@ -1,4 +1,4 @@
-package org.swistowski.dvh;
+package org.swistowski.dvh.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import org.swistowski.dvh.Application;
+import org.swistowski.dvh.R;
 
 
 public class LoginActivity extends ActionBarActivity {

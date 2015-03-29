@@ -1,4 +1,4 @@
-package org.swistowski.dvh;
+package org.swistowski.dvh.atapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -6,11 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import org.swistowski.dvh.fragments.ItemListFragment;
 import org.swistowski.dvh.models.Item;
+import org.swistowski.dvh.util.Database;
+import org.swistowski.dvh.views.ItemView;
 
 import java.util.List;
 
-class ItemAdapter extends BaseAdapter {
+public class ItemAdapter extends BaseAdapter {
     private static final String LOG_TAG = "ItemArrayAdapter";
     private final int mDirection;
     private final String mSubject;

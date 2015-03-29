@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="fill_parent"
+    android:layout_height="48dp">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/label_group_name"
+        android:layout_alignParentTop="false"
+        android:layout_toRightOf="@+id/icon_preview"
+        android:layout_toEndOf="@+id/icon_preview"
+        android:singleLine="true"
+        android:paddingLeft="8dp"
+        android:text="lorem ipsum"
+        android:layout_alignParentBottom="true"
+        android:paddingRight="8dp" />
+
+</RelativeLayout>

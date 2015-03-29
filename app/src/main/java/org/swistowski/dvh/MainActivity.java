@@ -18,17 +18,27 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.swistowski.dvh.models.*;
+import org.swistowski.dvh.activities.ItemDetailActivity;
+import org.swistowski.dvh.activities.LoginActivity;
+import org.swistowski.dvh.activities.WebViewActivity;
+import org.swistowski.dvh.atapters.ItemsFragmentPagerAdapter;
+import org.swistowski.dvh.fragments.FilterByBucketDialogFragment;
+import org.swistowski.dvh.fragments.ItemListFragment;
+import org.swistowski.dvh.fragments.SettingsFragment;
 import org.swistowski.dvh.models.Character;
+import org.swistowski.dvh.models.Item;
+import org.swistowski.dvh.models.ItemMover;
+import org.swistowski.dvh.util.Database;
 import org.swistowski.dvh.util.DatabaseLoader;
 import org.swistowski.dvh.util.ImageStorage;
+import org.swistowski.dvh.views.ClientWebView;
+import org.swistowski.dvh.views.DisableableViewPager;
 
 
 public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener {
@@ -36,13 +46,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     private FragmentStatePagerAdapter mPagerAdapter;
     private DisableableViewPager mViewPager;
-    private boolean mIsLoading = false;
     private PagerTabStrip mPageTabs;
 
-    void setIsLoading(boolean isLoading) {
-        this.mIsLoading = isLoading;
-        Log.v(LOG_TAG, "is loading: " + isLoading);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +59,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         t.send(new HitBuilders.ScreenViewBuilder().build());
 
         if (!getWebView().isPrepared()) {
-            setIsLoading(true);
+            Database.getInstance().setIsLoading(true);
             getWebView().prepare(new Runnable() {
                 @Override
                 public void run() {
@@ -63,9 +68,10 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 }
             });
         }
+        Log.v(LOG_TAG, "initUI");
+        setContentView(R.layout.items_tabs);
         initUI();
     }
-
 
     private boolean isFirstTime() {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
@@ -81,9 +87,9 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     void initUI() {
-        Log.v(LOG_TAG, "initUI");
-        if (!mIsLoading) {
-            setContentView(R.layout.items_tabs);
+        Log.v(LOG_TAG, "initUi " + Database.getInstance().getIsLoading());
+
+        if (!Database.getInstance().getIsLoading()) {
             mViewPager = (DisableableViewPager) findViewById(R.id.pager);
             mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager());
             mPageTabs = (PagerTabStrip) findViewById(R.id.pager_title_strip);
@@ -104,8 +110,9 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 Log.v(LOG_TAG, "First time run");
             }
             onPageSelected(0);
+            mViewPager.requestLayout();
         } else {
-            setContentView(R.layout.layout_waiting);
+            //setContentView(R.layout.layout_waiting);
         }
     }
 
@@ -149,7 +156,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                         .setLabel("Success")
                         .build());
                 Log.v(LOG_TAG, "web view data loaded");
-                setIsLoading(false);
+                Database.getInstance().setIsLoading(false);
                 initUI();
             }
         }, new DatabaseLoader.Callback() {
@@ -181,8 +188,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (mIsLoading) {
-                            ((TextView) findViewById(R.id.progress_text)).setText(message);
+                        if (Database.getInstance().getIsLoading()) {
+                            // ((TextView) findViewById(R.id.progress_text)).setText(message);
                         }
                     }
                 });
@@ -248,24 +255,20 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     @Override
     public void refreshRequest(final Runnable finished) {
-        if (!getIsLoading()) {
+        if (!Database.getInstance().getIsLoading()) {
             mViewPager.setDisabled(true);
             Database.getInstance().cleanCharacters();
-            setIsLoading(true);
+            Database.getInstance().setIsLoading(true);
             (new DatabaseLoader(this, getWebView(), Database.getInstance())).process(new Runnable() {
                 @Override
                 public void run() {
-                    setIsLoading(false);
+                    Database.getInstance().setIsLoading(false);
                     mViewPager.setDisabled(false);
                     initUI();
                     finished.run();
                 }
             });
         }
-    }
-
-    private boolean getIsLoading() {
-        return mIsLoading;
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -318,7 +321,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     private void actionRefresh() {
         Database.getInstance().cleanCharacters();
-        setIsLoading(true);
+        Database.getInstance().setIsLoading(true);
         initUI();
         reloadDatabase();
     }
@@ -330,8 +333,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     @Override
     public void onPageSelected(int position) {
-        Log.v(LOG_TAG, "onPageSelected " + Database.getInstance().getCharacters().size() + " " + position);
-        if(position<Database.getInstance().getCharacters().size()){
+        if(Database.getInstance().getCharacters()!=null && position<Database.getInstance().getCharacters().size()){
             Character c = Database.getInstance().getCharacters().get(position);
             if (ImageStorage.getInstance().getImage(c.getId())!=null) {
                 Log.v(LOG_TAG, "Set backround from cache");

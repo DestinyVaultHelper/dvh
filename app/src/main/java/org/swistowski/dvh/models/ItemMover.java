@@ -5,9 +5,9 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.swistowski.dvh.ClientWebView;
-import org.swistowski.dvh.Database;
-import org.swistowski.dvh.ItemListFragment;
+import org.swistowski.dvh.views.ClientWebView;
+import org.swistowski.dvh.util.Database;
+import org.swistowski.dvh.fragments.ItemListFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;

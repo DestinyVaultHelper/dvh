@@ -1,4 +1,4 @@
-package org.swistowski.dvh;
+package org.swistowski.dvh.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import org.swistowski.dvh.R;
+import org.swistowski.dvh.atapters.ItemAdapter;
 import org.swistowski.dvh.models.Item;
+import org.swistowski.dvh.util.Database;
 
 public class ItemListFragment extends Fragment implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 

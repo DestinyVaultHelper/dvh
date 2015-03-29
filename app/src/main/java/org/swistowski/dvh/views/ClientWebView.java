@@ -1,4 +1,4 @@
-package org.swistowski.dvh;
+package org.swistowski.dvh.views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

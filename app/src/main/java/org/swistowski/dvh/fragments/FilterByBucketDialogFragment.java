@@ -1,4 +1,4 @@
-package org.swistowski.dvh;
+package org.swistowski.dvh.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -6,6 +6,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
+
+import org.swistowski.dvh.util.Database;
+import org.swistowski.dvh.R;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;

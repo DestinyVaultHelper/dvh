@@ -1,4 +1,4 @@
-package org.swistowski.dvh;
+package org.swistowski.dvh.util;
 
 import android.util.Log;
 import android.widget.BaseAdapter;
@@ -55,6 +55,7 @@ public class Database implements Serializable {
     }
 
     private String mFilterText = "";
+    private boolean mIsLoading = false;
 
     public LinkedHashMap<String, Boolean> getBucketFilters(){
         if(mBucketFilters==null){
@@ -237,6 +238,14 @@ public class Database implements Serializable {
     public void setFilterText(String filterText) {
         this.mFilterText = filterText;
         notifyItemsChanged();
+    }
+
+    public synchronized void setIsLoading(boolean isLoading) {
+        mIsLoading = isLoading;
+    }
+
+    public boolean getIsLoading() {
+        return mIsLoading;
     }
 
     /*

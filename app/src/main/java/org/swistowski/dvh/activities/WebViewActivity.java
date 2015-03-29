@@ -1,4 +1,4 @@
-package org.swistowski.dvh;
+package org.swistowski.dvh.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,9 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import org.swistowski.dvh.R;
+import org.swistowski.dvh.activities.LoginActivity;
 
 public class WebViewActivity extends Activity {
     public static final int RESULT_RELOAD = 123;
