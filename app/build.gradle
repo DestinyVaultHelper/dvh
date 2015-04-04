@@ -11,8 +11,8 @@ android {
         applicationId 'org.swistowski.dvh'
         minSdkVersion 10
         targetSdkVersion 22
-        versionCode 7
-        versionName "1.2"
+        versionCode 9
+        versionName "1.2.2"
         signingConfig signingConfigs.release
     }
     buildTypes {

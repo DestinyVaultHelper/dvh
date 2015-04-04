@@ -308,6 +308,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -320,6 +321,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 return false;
             }
         });
+
         return super.onCreateOptionsMenu(menu);
     }
 

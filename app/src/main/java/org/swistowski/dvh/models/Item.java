@@ -88,10 +88,16 @@ public class Item implements Serializable, Comparable<Item> {
             for (int k = 0; k < bucket_items.length(); k++) {
                 JSONObject item = bucket_items.optJSONObject(k);
                 JSONObject definition = items_definitions.optJSONObject(item.optString("itemHash"));
-                JSONObject bucket = bucket_definitions.optJSONObject(definition.optString("bucketTypeHash"));
-                // i'm interested only in transferrable items
-                if (!definition.optBoolean("nonTransferrable")) {
-                    items.add(createItem(key, item, definition, bucket));
+                JSONObject bucket;
+                if(definition!=null) {
+                    if (bucket_definitions != null)
+                        bucket = bucket_definitions.optJSONObject(definition.optString("bucketTypeHash"));
+                    else
+                        bucket = null;
+                    // i'm interested only in transferrable items
+                    if (!definition.optBoolean("nonTransferrable")) {
+                        items.add(createItem(key, item, definition, bucket));
+                    }
                 }
             }
 

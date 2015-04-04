@@ -6,7 +6,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -40,6 +42,7 @@ public class ClientWebView extends WebView {
     }
 
     private void init(Context context) {
+
     }
 
     @SuppressLint("AddJavascriptInterface")
@@ -47,9 +50,19 @@ public class ClientWebView extends WebView {
         Log.v("ClientWebView", "ready = true");
         if (!mPrepared) {
             mPrepared = true;
+            setWebChromeClient(new WebChromeClient() {
+                public boolean onConsoleMessage(ConsoleMessage cm) {
+                    Log.d(LOG_TAG + " js", cm.message() + " -- From line "
+                            + cm.lineNumber() + " of "
+                            + cm.sourceId() );
+                    return true;
+                }
+            });
+
             setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView view, String url) {
+                    Log.v(LOG_TAG, "initialized: " + url);
                     if (!mInitialized) {
                         mInitialized = true;
                         onInit.run();
@@ -59,7 +72,7 @@ public class ClientWebView extends WebView {
 
                 @Override
                 public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                    Log.v(LOG_TAG, "onReceivedError");
+                    Log.v(LOG_TAG, "onReceivedError "+errorCode+ " "+description + "failingUrl: "+failingUrl);
                     super.onReceivedError(view, errorCode, description, failingUrl);
                 }
             });
@@ -109,8 +122,10 @@ public class ClientWebView extends WebView {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+                Log.v(LOG_TAG, "queue executed javascript: " + javascript);
                 if (android.os.Build.VERSION.SDK_INT < 19) {
-                    loadUrl("javascript:" + javascript);
+                    Log.v(LOG_TAG, "debug js: " + "javascript:" + "window.clientHandler.log(\"\"+ "+javascript+")");
+                    loadUrl("javascript:" + "window.clientHandler.log(\"\"+ " + javascript + ")");
                 } else {
                     evaluateJavascript("javascript:" + javascript, null);
                 }
@@ -148,6 +163,11 @@ public class ClientWebView extends WebView {
             Log.v(LOG_TAG, "error value"+ result);
             mPromises.get(promiseId).error(result);
             mPromises.remove(promiseId);
+        }
+        @JavascriptInterface
+        public boolean log(String data){
+            Log.v(LOG_TAG, "log: "+data);
+            return true;
         }
     }
 
