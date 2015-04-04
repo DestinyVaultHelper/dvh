@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
 
 import org.swistowski.dvh.R;
@@ -44,6 +45,13 @@ public class ListFilteringFragment extends Fragment {
         @Override
         public LinkedHashMap<String, Boolean> getFilters() {
             return Database.getInstance().getDamageFilters();
+        }
+    };
+
+    static final FilterGetter completedFilters = new FilterGetter() {
+        @Override
+        public LinkedHashMap<String, Boolean> getFilters() {
+            return Database.getInstance().getCompletedFilters();
         }
     };
 
@@ -86,6 +94,7 @@ public class ListFilteringFragment extends Fragment {
             mGroups = new ArrayList<>();
             mGroups.add(new FilterGroup(getResources().getString(R.string.bucket_filter_label), bucketFilters));
             mGroups.add(new FilterGroup(getResources().getString(R.string.damage_type_filter_label), damageFilters));
+            mGroups.add(new FilterGroup("Completed", completedFilters));
         }
         Context getContext() {
             return mContext;
@@ -127,13 +136,23 @@ public class ListFilteringFragment extends Fragment {
         }
 
         @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
             final GroupTitleView view;
             if (convertView == null) {
                 view = new GroupTitleView(getContext());
             } else {
                 view = (GroupTitleView) convertView;
             }
+            view.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    for (Map.Entry<String, Boolean> entry : mGroups.get(groupPosition).mEntries) {
+                        entry.setValue(isChecked);
+                    };
+                    Database.getInstance().notifyItemsChanged();
+                    mFilterAdapter.notifyDataSetChanged();
+                }
+            });
             view.setText(mGroups.get(groupPosition).getTitle());
             return view;
         }
@@ -149,19 +168,19 @@ public class ListFilteringFragment extends Fragment {
                 view = (GroupDetailView) convertView;
             }
             view.setText(item.getKey());
-            view.setChecked(item.getValue());
-            view.setOnClickListener(new View.OnClickListener() {
+            view.onCheckedChanged(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
-                    handleOnClick(groupPosition, childPosition);
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.v(LOG_TAG, "Postion " + groupPosition + " child: " + childPosition + " " + isChecked);
+                    Map.Entry<String, Boolean> entry = mGroups.get(groupPosition).mEntries.get(childPosition);
+                    if (entry.getValue() != isChecked) {
+                        entry.setValue(isChecked);
+                        Database.getInstance().notifyItemsChanged();
+                    }
                 }
             });
+            view.setChecked(item.getValue());
             return view;
-        }
-
-        private void handleOnClick(int groupPosition, int childPosition) {
-            Map.Entry<String, Boolean> entry = mGroups.get(groupPosition).mEntries.get(childPosition);
-            entry.setValue(entry.getValue());
         }
 
         @Override
@@ -183,7 +202,6 @@ public class ListFilteringFragment extends Fragment {
         // Inflate the layout for this fragment
         View root_view = inflater.inflate(R.layout.fragment_list_filtering, container, false);
 
-        mFilterAdapter = new FilterAdapter(root_view.getContext());
         ((ExpandableListView) root_view.findViewById(R.id.expandable_filters)).setAdapter(mFilterAdapter);
         return root_view;
     }
@@ -191,13 +209,13 @@ public class ListFilteringFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.v(LOG_TAG, "onCreateView");
+        mFilterAdapter = new FilterAdapter(getActivity());
         super.onCreate(savedInstanceState);
 
     }
     @Override
     public void onDestroyView(){
         Log.v(LOG_TAG, "onDestroyView");
-
         super.onDestroyView();
     }
 

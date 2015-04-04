@@ -35,8 +35,9 @@ public class Item implements Serializable, Comparable<Item> {
     private final int mItemType;
     private final int mItemSubType;
     private final int mClassType;
-    // private final String mJson;
-    // private final String mDefinition;
+
+    private final String mJson;
+    private final String mDefinition;
     private final String mBucketName;
     private final String mBucketDescription;
 
@@ -75,8 +76,9 @@ public class Item implements Serializable, Comparable<Item> {
         mDamageType = damageType;
         mBucketName = bucketName;
         mBucketDescription = bucketDescription;
-        // mJson = json;
-        // mDefinition = definition;
+
+        mJson = json;
+        mDefinition = definition;
 
     }
 
@@ -219,8 +221,8 @@ public class Item implements Serializable, Comparable<Item> {
                 "type " + mItemType,
                 "sub type " + mItemSubType,
                 "class type " + mClassType,
-        //        "item json " +mJson,
-        //        "item definition " + mDefinition
+                "item json " +mJson,
+                "item definition " + mDefinition,
                 "bucket name " + mBucketName,
                 "bucket description " + mBucketDescription
 
@@ -306,5 +308,9 @@ public class Item implements Serializable, Comparable<Item> {
 
     public String getBucketName() {
         return mBucketName;
+    }
+
+    public boolean getIsCompleted() {
+        return mIsGridComplete;
     }
 }

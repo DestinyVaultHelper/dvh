@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="fill_parent"
-    android:layout_height="48dp">
+<CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/detail_checkbox"
+    android:layout_width="fill_parent"
+    android:layout_height="48dp"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentTop="false"
+    android:layout_marginLeft="48dp"
+    android:singleLine="true"
+    android:text="@string/lorem_ipsum"
+    android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/detail_checkbox"
-        android:layout_alignParentTop="false"
-        android:layout_toRightOf="@+id/icon_preview"
-        android:layout_toEndOf="@+id/icon_preview"
-        android:singleLine="true"
-        android:text="@string/lorem_ipsum"
-        android:layout_alignParentBottom="true"
-        android:focusable="false"
-        android:layout_marginLeft="48dp" />
-
-
-</RelativeLayout>

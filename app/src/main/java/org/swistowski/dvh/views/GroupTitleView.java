@@ -3,6 +3,8 @@ package org.swistowski.dvh.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -35,5 +37,8 @@ public class GroupTitleView extends FrameLayout {
     public void setText(String text) {
         TextView tv = (TextView) findViewById(R.id.label_group_name);
         tv.setText(text);
+    }
+    public void setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener listener){
+        ((CheckBox) findViewById(R.id.group_checkbox)).setOnCheckedChangeListener(listener);
     }
 }

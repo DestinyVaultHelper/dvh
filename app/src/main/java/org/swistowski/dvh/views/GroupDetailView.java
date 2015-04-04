@@ -5,14 +5,15 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 
 import org.swistowski.dvh.R;
-import org.swistowski.dvh.util.ImageStorage;
 
 
-public class GroupDetailView extends FrameLayout {
-    private ImageStorage.DownloadImageTask mDownloadImageTask;
+public class GroupDetailView extends FrameLayout implements CompoundButton.OnCheckedChangeListener {
+    private static final String LOG_TAG = "GroupDetailView";
+    private CompoundButton.OnCheckedChangeListener mOnCheckedChanged;
 
     public GroupDetailView(Context context) {
         super(context);
@@ -31,6 +32,8 @@ public class GroupDetailView extends FrameLayout {
 
     private void init() {
         View root_view = LayoutInflater.from(getContext()).inflate(R.layout.group_filter_detail_view, this, true);
+        CheckBox tv = (CheckBox) findViewById(R.id.detail_checkbox);
+        tv.setOnCheckedChangeListener(this);
     }
 
     public void setText(String text) {
@@ -42,4 +45,14 @@ public class GroupDetailView extends FrameLayout {
         tv.setChecked(value);
     }
 
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if(mOnCheckedChanged!=null){
+            mOnCheckedChanged.onCheckedChanged(buttonView, isChecked);
+        }
+    }
+
+    public void onCheckedChanged(CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
+        mOnCheckedChanged = onCheckedChangeListener;
+    }
 }

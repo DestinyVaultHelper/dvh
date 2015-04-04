@@ -35,16 +35,17 @@ public class Database implements Serializable {
 
     private LinkedHashMap<String, Boolean> mBucketFilters;
     private static final LinkedHashMap<String, Boolean> BUCKET_FILTERS;
+
     static {
         BUCKET_FILTERS = new LinkedHashMap<>();
-        BUCKET_FILTERS.put("Primary Weapons", Boolean.TRUE);
-        BUCKET_FILTERS.put("Special Weapons", Boolean.TRUE);
-        BUCKET_FILTERS.put("Heavy Weapons", Boolean.TRUE);
-        BUCKET_FILTERS.put("Helmet", Boolean.TRUE);
-        BUCKET_FILTERS.put("Chest Armor", Boolean.TRUE);
-        BUCKET_FILTERS.put("Gauntlets", Boolean.TRUE);
-        BUCKET_FILTERS.put("Leg Armor", Boolean.TRUE);
-        BUCKET_FILTERS.put("Class Armor", Boolean.TRUE);
+        BUCKET_FILTERS.put("Primary Weapons", Boolean.FALSE);
+        BUCKET_FILTERS.put("Special Weapons", Boolean.FALSE);
+        BUCKET_FILTERS.put("Heavy Weapons", Boolean.FALSE);
+        BUCKET_FILTERS.put("Helmet", Boolean.FALSE);
+        BUCKET_FILTERS.put("Chest Armor", Boolean.FALSE);
+        BUCKET_FILTERS.put("Gauntlets", Boolean.FALSE);
+        BUCKET_FILTERS.put("Leg Armor", Boolean.FALSE);
+        BUCKET_FILTERS.put("Class Armor", Boolean.FALSE);
         BUCKET_FILTERS.put("Materials", Boolean.FALSE);
         BUCKET_FILTERS.put("Consumables", Boolean.FALSE);
         BUCKET_FILTERS.put("Emblems", Boolean.FALSE);
@@ -53,17 +54,33 @@ public class Database implements Serializable {
         BUCKET_FILTERS.put("Ships", Boolean.FALSE);
         BUCKET_FILTERS.put("Vehicle", Boolean.FALSE);
     }
+
     private LinkedHashMap<String, Boolean> mDamageFilters;
     private static final LinkedHashMap<String, Boolean> DAMAGE_FILTERS;
+
     static {
         DAMAGE_FILTERS = new LinkedHashMap<>();
-        DAMAGE_FILTERS.put("Arc", Boolean.TRUE);
-        DAMAGE_FILTERS.put("Solar", Boolean.TRUE);
-        DAMAGE_FILTERS.put("Void", Boolean.TRUE);
+        DAMAGE_FILTERS.put("Arc", Boolean.FALSE);
+        DAMAGE_FILTERS.put("Solar", Boolean.FALSE);
+        DAMAGE_FILTERS.put("Void", Boolean.FALSE);
     }
 
-    public LinkedHashMap<String, Boolean> getBucketFilters(){
-        if(mBucketFilters==null){
+    private LinkedHashMap<String, Boolean> mCompletedFilters;
+
+    private static final String IS_COMPLETED = "is completed";
+    private static final String IS_NOT_COMPLETED = "is not completed";
+
+    private static final LinkedHashMap<String, Boolean> COMPLETED_FILTERS;
+
+    static {
+        COMPLETED_FILTERS = new LinkedHashMap<>();
+        COMPLETED_FILTERS.put(IS_COMPLETED, Boolean.FALSE);
+        COMPLETED_FILTERS.put(IS_NOT_COMPLETED, Boolean.FALSE);
+    }
+
+
+    public LinkedHashMap<String, Boolean> getBucketFilters() {
+        if (mBucketFilters == null) {
             mBucketFilters = new LinkedHashMap<>();
             for (Map.Entry<String, Boolean> entry : BUCKET_FILTERS.entrySet()) {
                 mBucketFilters.put(entry.getKey(), entry.getValue());
@@ -71,14 +88,25 @@ public class Database implements Serializable {
         }
         return mBucketFilters;
     }
-    public LinkedHashMap<String, Boolean> getDamageFilters(){
-        if(mDamageFilters==null){
+
+    public LinkedHashMap<String, Boolean> getDamageFilters() {
+        if (mDamageFilters == null) {
             mDamageFilters = new LinkedHashMap<>();
-            for(Map.Entry<String, Boolean> entry: DAMAGE_FILTERS.entrySet()){
+            for (Map.Entry<String, Boolean> entry : DAMAGE_FILTERS.entrySet()) {
                 mDamageFilters.put(entry.getKey(), entry.getValue());
             }
         }
         return mDamageFilters;
+    }
+
+    public LinkedHashMap<String, Boolean> getCompletedFilters() {
+        if (mCompletedFilters == null) {
+            mCompletedFilters = new LinkedHashMap<>();
+            for (Map.Entry<String, Boolean> entry : COMPLETED_FILTERS.entrySet()) {
+                mCompletedFilters.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return mCompletedFilters;
     }
 
     private boolean mIsLoading = false;
@@ -136,7 +164,7 @@ public class Database implements Serializable {
 
         for (Map.Entry<String, List<Item>> entry : items.entrySet()) {
             for (Item i : entry.getValue()) {
-                if (i.isVisible()&& isVisible(i))
+                if (i.isVisible() && isVisible(i))
                     allItems.add(i);
             }
         }
@@ -155,13 +183,38 @@ public class Database implements Serializable {
         items = new HashMap<>();
         itemsOwners = new HashMap<>();
     }
-    private boolean isVisible(Item item){
-        return getBucketFilters().get(item.getBucketName()) && filterByText(item);
+
+    private boolean isVisible(Item item) {
+        return filterByBucket(item) && filterByDamage(item) && filterByCompleted(item) && filterByText(item);
         //return true;
     }
 
-    private boolean filterByText(Item item){
-        if(!mFilterText.equals("")){
+    private boolean filterByCompleted(Item item) {
+        if (getCompletedFilters().containsValue(Boolean.TRUE)) {
+            return getCompletedFilters().get(IS_COMPLETED).booleanValue() && item.getIsCompleted() ||
+                    (getCompletedFilters().get(IS_NOT_COMPLETED).booleanValue() && !item.getIsCompleted());
+        }
+        return true;
+    }
+
+    private boolean filterByDamage(Item item) {
+        if (getDamageFilters().containsValue(Boolean.TRUE)) {
+            return getDamageFilters().containsKey(item.getDamageTypeName()) && getDamageFilters().get(item.getDamageTypeName());
+        } else {
+            return true;
+        }
+    }
+
+    private boolean filterByBucket(Item item) {
+        if (getBucketFilters().values().contains(Boolean.TRUE)) {
+            return getBucketFilters().get(item.getBucketName());
+        } else {
+            return true;
+        }
+    }
+
+    private boolean filterByText(Item item) {
+        if (!mFilterText.equals("")) {
             return item.getName().toLowerCase().contains(mFilterText.toLowerCase());
         }
         return true;
@@ -203,7 +256,7 @@ public class Database implements Serializable {
 
     public String getItemOwnerName(Item item) {
         String owner = getItemOwner(item);
-        if(owner==null){
+        if (owner == null) {
             return "None";
         }
         if (owner.equals(VAULT_ID)) {
@@ -226,7 +279,7 @@ public class Database implements Serializable {
         notifyItemsChanged();
     }
 
-    private void notifyItemsChanged() {
+    public void notifyItemsChanged() {
         for (BaseAdapter adapter : registeredAdapters) {
             adapter.notifyDataSetChanged();
         }
@@ -244,7 +297,7 @@ public class Database implements Serializable {
 
     public void setBucketFilters(Set<String> bucketFilters) {
         for (String key : mBucketFilters.keySet()) {
-            if(bucketFilters.contains(key)){
+            if (bucketFilters.contains(key)) {
                 mBucketFilters.put(key, Boolean.TRUE);
             } else {
                 mBucketFilters.put(key, Boolean.FALSE);
@@ -266,12 +319,6 @@ public class Database implements Serializable {
         return mIsLoading;
     }
 
-    /*
-    public List<String> getBucketNames(){
-        List<String> names = new ArrayList<String>(this.bucketNames);
-        Collections.sort(names);
-        return names;
-    }
         /*
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static void load(Context context) {

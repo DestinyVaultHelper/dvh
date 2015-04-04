@@ -19,7 +19,7 @@
         android:gravity="center_vertical" />
 
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/group_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
