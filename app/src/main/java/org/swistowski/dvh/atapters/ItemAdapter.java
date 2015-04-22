@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 
 import org.swistowski.dvh.fragments.ItemListFragment;
 import org.swistowski.dvh.models.Item;
-import org.swistowski.dvh.util.Database;
+import org.swistowski.dvh.util.Data;
 import org.swistowski.dvh.views.ItemView;
 
 import java.util.List;
@@ -35,9 +35,9 @@ public class ItemAdapter extends BaseAdapter {
     private void reloadItems() {
         Log.v(LOG_TAG, "Loading items " + mDirection + " " + mSubject);
         if (mDirection == ItemListFragment.DIRECTION_FROM) {
-            mItems = Database.getInstance().getItemsFiltered(mSubject);
+            mItems = Data.getInstance().getItemsFiltered(mSubject);
         } else {
-            mItems = Database.getInstance().notForItems(mSubject);
+            mItems = Data.getInstance().notForItems(mSubject);
         }
     }
 
@@ -71,6 +71,12 @@ public class ItemAdapter extends BaseAdapter {
             itemView = (ItemView) convertView;
         }
         itemView.setItem(item);
+        itemView.setRequireReloadDataListener(new Runnable(){
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
         //itemView.setDetails(item.getDetails());
 
         return itemView;

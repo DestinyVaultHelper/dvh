@@ -14,7 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
 
 import org.swistowski.dvh.R;
-import org.swistowski.dvh.util.Database;
+import org.swistowski.dvh.util.Data;
 import org.swistowski.dvh.views.GroupDetailView;
 import org.swistowski.dvh.views.GroupTitleView;
 
@@ -37,21 +37,21 @@ public class ListFilteringFragment extends Fragment {
     static final FilterGetter bucketFilters = new FilterGetter(){
         @Override
         public LinkedHashMap<String, Boolean> getFilters() {
-            return Database.getInstance().getBucketFilters();
+            return Data.getInstance().getBucketFilters();
         }
     };
 
     static final FilterGetter damageFilters = new FilterGetter() {
         @Override
         public LinkedHashMap<String, Boolean> getFilters() {
-            return Database.getInstance().getDamageFilters();
+            return Data.getInstance().getDamageFilters();
         }
     };
 
     static final FilterGetter completedFilters = new FilterGetter() {
         @Override
         public LinkedHashMap<String, Boolean> getFilters() {
-            return Database.getInstance().getCompletedFilters();
+            return Data.getInstance().getCompletedFilters();
         }
     };
 
@@ -149,7 +149,7 @@ public class ListFilteringFragment extends Fragment {
                     for (Map.Entry<String, Boolean> entry : mGroups.get(groupPosition).mEntries) {
                         entry.setValue(isChecked);
                     };
-                    Database.getInstance().notifyItemsChanged();
+                    Data.getInstance().notifyItemsChanged();
                     mFilterAdapter.notifyDataSetChanged();
                 }
             });
@@ -175,7 +175,7 @@ public class ListFilteringFragment extends Fragment {
                     Map.Entry<String, Boolean> entry = mGroups.get(groupPosition).mEntries.get(childPosition);
                     if (entry.getValue() != isChecked) {
                         entry.setValue(isChecked);
-                        Database.getInstance().notifyItemsChanged();
+                        Data.getInstance().notifyItemsChanged();
                     }
                 }
             });

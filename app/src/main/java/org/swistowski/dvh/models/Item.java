@@ -3,7 +3,7 @@ package org.swistowski.dvh.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.swistowski.dvh.util.Database;
+import org.swistowski.dvh.util.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,11 +35,13 @@ public class Item implements Serializable, Comparable<Item> {
     private final int mItemType;
     private final int mItemSubType;
     private final int mClassType;
-
-    private final String mJson;
-    private final String mDefinition;
     private final String mBucketName;
-    private final String mBucketDescription;
+    private Runnable requireReloadDataListener;
+
+
+    //private final String mJson;
+    //private final String mDefinition;
+    //private final String mBucketDescription;
 
     private Item(long itemHash, int bindStatus, boolean isEquipped, int itemLevel, int stackSize, int qualityLevel, boolean canEquip, boolean isEquipment, boolean isGridComplete, String itemInstanceId,
                  String itemName, String itemDescription, String icon, String secondaryIcon, String tierTypeName, String itemTypeName, long bucketTypeHash, int itemType, int itemSubType, int classType,
@@ -75,10 +77,10 @@ public class Item implements Serializable, Comparable<Item> {
         mPrimaryStatValue = primaryStatValue;
         mDamageType = damageType;
         mBucketName = bucketName;
-        mBucketDescription = bucketDescription;
+        //mBucketDescription = bucketDescription;
 
-        mJson = json;
-        mDefinition = definition;
+        //mJson = json;
+        //mDefinition = definition;
 
     }
 
@@ -189,6 +191,14 @@ public class Item implements Serializable, Comparable<Item> {
 
     @Override
     public int compareTo(Item another) {
+        Data data = Data.getInstance();
+        boolean is_fav = data.hasLabel(getInstanceId(), "Favorites");
+        boolean other_is_fav = data.hasLabel(another.getInstanceId(), "Favorites");
+        if(is_fav && ! other_is_fav){
+            return -1;
+        } else if(other_is_fav && ! is_fav){
+            return 1;
+        };
         int t = typeToImportance(another.mItemType) - typeToImportance(mItemType);
         if (t != 0) {
             return t;
@@ -227,10 +237,10 @@ public class Item implements Serializable, Comparable<Item> {
                 "type " + mItemType,
                 "sub type " + mItemSubType,
                 "class type " + mClassType,
-                "item json " +mJson,
-                "item definition " + mDefinition,
-                "bucket name " + mBucketName,
-                "bucket description " + mBucketDescription
+                //"item json " +mJson,
+                //"item definition " + mDefinition,
+                //"bucket name " + mBucketName,
+                //"bucket description " + mBucketDescription
 
         };
         return ret;
@@ -269,7 +279,7 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     public void moveTo(String target) {
-        Database.getInstance().changeOwner(this, target);
+        Data.getInstance().changeOwner(this, target);
 
     }
 
@@ -318,5 +328,9 @@ public class Item implements Serializable, Comparable<Item> {
 
     public boolean getIsCompleted() {
         return mIsGridComplete;
+    }
+
+    public long getInstanceId() {
+        return Long.valueOf(mItemInstanceId);
     }
 }

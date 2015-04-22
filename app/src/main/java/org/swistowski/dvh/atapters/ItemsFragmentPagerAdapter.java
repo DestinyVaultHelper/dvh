@@ -4,10 +4,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import org.swistowski.dvh.fragments.AdFragment;
 import org.swistowski.dvh.fragments.ItemListFragment;
 import org.swistowski.dvh.fragments.SettingsFragment;
 import org.swistowski.dvh.models.Character;
-import org.swistowski.dvh.util.Database;
+import org.swistowski.dvh.util.Data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,8 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     public ItemsFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
-        if (Database.getInstance().getCharacters() != null) {
-            for (final Character character : Database.getInstance().getCharacters()) {
+        if (Data.getInstance().getCharacters() != null) {
+            for (final Character character : Data.getInstance().getCharacters()) {
                 mPages.add(new Page(character.toString(), new FragmentProvider() {
                     @Override
                     public Fragment getFragment() {
@@ -38,12 +39,12 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
             }
         }
 
-        if (Database.getInstance().getItems().size() > 0) {
+        if (Data.getInstance().getItems().size() > 0) {
             mPages.add(new Page("Vault", new FragmentProvider() {
 
                 @Override
                 public Fragment getFragment() {
-                    return ItemListFragment.newInstance(ItemListFragment.DIRECTION_TO, Database.VAULT_ID);
+                    return ItemListFragment.newInstance(ItemListFragment.DIRECTION_TO, Data.VAULT_ID);
                 }
             }));
             /*
@@ -64,6 +65,12 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
                 }
             }));
         }
+        mPages.add(new Page("Ad", new FragmentProvider() {
+            @Override
+            public Fragment getFragment() {
+                return AdFragment.newInstance();
+            }
+        }));
     }
 
     @Override

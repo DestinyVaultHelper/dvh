@@ -2,7 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="fill_parent"
     android:layout_height="48dp">
-
+    <CheckBox
+        android:id="@+id/favorite_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@android:drawable/btn_star"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="8dp"
+        android:focusable="false"
+        android:layout_marginRight="8dp" />
     <ImageView
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -35,10 +45,12 @@
         android:layout_gravity="right|top"
         android:layout_alignParentLeft="false"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentRight="false"
         android:paddingRight="8dp"
         android:singleLine="true"
-        android:text="lorem ipsum" />
+        android:text="lorem ipsum"
+        android:layout_toStartOf="@id/favorite_button"
+        android:layout_toLeftOf="@id/favorite_button" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -53,4 +65,6 @@
         android:text="lorem ipsum"
         android:layout_alignParentTop="true"
          />
+
+
 </RelativeLayout>

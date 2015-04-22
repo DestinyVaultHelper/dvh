@@ -14,11 +14,11 @@ import org.swistowski.dvh.models.Membership;
 
 import java.util.List;
 
-public class DatabaseLoader {
+public class DataLoader {
     private final String LOG_TAG = "DatabaseLoader";
     private final Activity act;
     private final ClientWebView webView;
-    private final Database database;
+    private final Data data;
     private Runnable mOnFinish;
     private Callback mOnError;
     private Callback mOnMessage;
@@ -28,10 +28,10 @@ public class DatabaseLoader {
         public void onMessage(String message);
     }
 
-    public DatabaseLoader(Activity act, ClientWebView webView, Database database) {
+    public DataLoader(Activity act, ClientWebView webView, Data data) {
         this.act = act;
         this.webView = webView;
-        this.database = database;
+        this.data = data;
     }
 
     public void process(Runnable onFinish, Callback onError, Callback onMessage){
@@ -56,27 +56,27 @@ public class DatabaseLoader {
     }
 
     private void doLoadAllData() {
-        Database.getInstance().setIsLoading(true);
+        Data.getInstance().setIsLoading(true);
         Log.v(LOG_TAG, "doLoadAllData");
-        if (database.getUser() == null) {
+        if (data.getUser() == null) {
             doGetCurrentUser();
             return;
         }
-        if (database.getMembership() == null) {
-            doSearchDestinyPlayer(""+database.getUser().getAccountType(), database.getUser().getAccountName());
+        if (data.getMembership() == null) {
+            doSearchDestinyPlayer(""+ data.getUser().getAccountType(), data.getUser().getAccountName());
             return;
         }
-        if (database.getCharacters() == null) {
-            doGetAccount(database.getMembership());
+        if (data.getCharacters() == null) {
+            doGetAccount(data.getMembership());
             return;
         }
-        if (database.getItems().size() == 0) {
-            doLoadItems(database.getMembership(), database.getCharacters());
+        if (data.getItems().size() == 0) {
+            doLoadItems(data.getMembership(), data.getCharacters());
             return;
         }
 
         if(mOnFinish!=null){
-            Database.getInstance().setIsLoading(false);
+            Data.getInstance().setIsLoading(false);
             mOnFinish.run();
         }
     }
@@ -90,14 +90,14 @@ public class DatabaseLoader {
             public void onAccept(String result) {
                 Log.v(LOG_TAG, "doGetCurrentUser in service");
                 try {
-                    database.loadUserFromJson(new JSONObject(result));
+                    data.loadUserFromJson(new JSONObject(result));
                     Log.v(LOG_TAG, "doGetCurrentUser database loaded");
                     doLoadAllData();
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "exception", e);
                     onError("Cannot get user data");
                 }
-                Log.v(LOG_TAG, "got displayname: " + Database.getInstance().getUser().getAccountName());
+                Log.v(LOG_TAG, "got displayname: " + Data.getInstance().getUser().getAccountName());
             }
 
             @Override
@@ -117,7 +117,7 @@ public class DatabaseLoader {
                 Log.v(LOG_TAG, "doSearchDestinyPlayer onAccept");
                 //JSONObject json = null;
                 try {
-                    Database.getInstance().loadMembershipFromJson(new JSONArray(result).getJSONObject(0));
+                    Data.getInstance().loadMembershipFromJson(new JSONArray(result).getJSONObject(0));
                     Log.v(LOG_TAG, "doSearchDestinyPlayer loaded");
                     doLoadAllData();
                 } catch (JSONException e) {
@@ -145,7 +145,7 @@ public class DatabaseLoader {
             public void onAccept(String result) {
                 Log.v(LOG_TAG, "account fetched");
                 try {
-                    Database.getInstance().loadCharactersFromJson(new JSONObject(result).getJSONObject("data").getJSONArray("characters"));
+                    Data.getInstance().loadCharactersFromJson(new JSONObject(result).getJSONObject("data").getJSONArray("characters"));
                     doLoadAllData();
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "exception", e);
@@ -193,7 +193,7 @@ public class DatabaseLoader {
             public void onAccept(String result) {
                 Log.v("Got character info", result);
                 try {
-                    Database.getInstance().putItems(character.getId(), Item.fromJson(result));
+                    Data.getInstance().putItems(character.getId(), Item.fromJson(result));
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "exception", e);
                     onError("Cannot get character inventory data");
@@ -217,7 +217,7 @@ public class DatabaseLoader {
             @Override
             public void onAccept(String result) {
                 try {
-                    Database.getInstance().putItems(Database.VAULT_ID, Item.fromJson(result, true));
+                    Data.getInstance().putItems(Data.VAULT_ID, Item.fromJson(result, true));
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "exception", e);
                 }

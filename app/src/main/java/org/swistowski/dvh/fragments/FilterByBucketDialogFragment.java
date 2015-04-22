@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 
-import org.swistowski.dvh.util.Database;
+import org.swistowski.dvh.util.Data;
 import org.swistowski.dvh.R;
 
 import java.util.HashSet;
@@ -22,7 +22,7 @@ public class FilterByBucketDialogFragment extends DialogFragment implements Dial
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        LinkedHashMap<String, Boolean> items = Database.getInstance().getBucketFilters();
+        LinkedHashMap<String, Boolean> items = Data.getInstance().getBucketFilters();
         labels = new String[items.size()];
         values = new boolean[items.size()];
         int i = 0;
@@ -60,7 +60,7 @@ public class FilterByBucketDialogFragment extends DialogFragment implements Dial
                 bucketsToShow.add(labels[i]);
             }
         }
-        Database.getInstance().setBucketFilters(bucketsToShow);
+        Data.getInstance().setBucketFilters(bucketsToShow);
     }
 
     @Override

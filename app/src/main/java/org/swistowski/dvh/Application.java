@@ -3,6 +3,7 @@ package org.swistowski.dvh;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
+import org.swistowski.dvh.util.Data;
 import org.swistowski.dvh.util.ImageStorage;
 import org.swistowski.dvh.views.ClientWebView;
 
@@ -15,6 +16,7 @@ public class Application extends android.app.Application {
     {
         mWebView = new ClientWebView(getApplicationContext());
         ImageStorage.getInstance().setContext(getApplicationContext());
+        Data.getInstance().setContext(getApplicationContext());
         super.onCreate();
     }
 

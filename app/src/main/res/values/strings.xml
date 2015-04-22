@@ -27,4 +27,9 @@
     <string name="toggle_filters">filters</string>
     <string name="bucket_filter_label">Bucket</string>
     <string name="damage_type_filter_label">Damage</string>
+
+    <string name="ad_fullscreen">ca-app-pub-4225324557097072/4297656148</string>
+    <string name="ad_small">ca-app-pub-4225324557097072/5774389341</string>
+    <string name="ad_text">Do you know that programmers have to buy groceries, pay rent, go for vacations? If you aware of it you can just click the ad below to support one developer, or you can buy some in app products to support me even more.</string>
+    <string name="buy_pro" >Support the developer</string>
 </resources>

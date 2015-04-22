@@ -12,7 +12,7 @@ import android.widget.AdapterView;
 import org.swistowski.dvh.R;
 import org.swistowski.dvh.atapters.ItemAdapter;
 import org.swistowski.dvh.models.Item;
-import org.swistowski.dvh.util.Database;
+import org.swistowski.dvh.util.Data;
 
 public class ItemListFragment extends Fragment implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -48,12 +48,12 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
         }
 
         mAdapter = new ItemAdapter(getActivity(), mDirection, mSubject);
-        Database.getInstance().registerItemAdapter(mAdapter);
+        Data.getInstance().registerItemAdapter(mAdapter);
     }
 
     @Override
     public void onDestroy() {
-        Database.getInstance().unregisterItemAdapter(mAdapter);
+        Data.getInstance().unregisterItemAdapter(mAdapter);
         super.onDestroy();
     }
 

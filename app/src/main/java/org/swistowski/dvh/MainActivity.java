@@ -30,26 +30,33 @@ import org.swistowski.dvh.activities.ItemDetailActivity;
 import org.swistowski.dvh.activities.LoginActivity;
 import org.swistowski.dvh.activities.WebViewActivity;
 import org.swistowski.dvh.atapters.ItemsFragmentPagerAdapter;
+import org.swistowski.dvh.fragments.AdFragment;
 import org.swistowski.dvh.fragments.ItemListFragment;
 import org.swistowski.dvh.fragments.SettingsFragment;
 import org.swistowski.dvh.models.Character;
 import org.swistowski.dvh.models.Item;
 import org.swistowski.dvh.models.ItemMover;
-import org.swistowski.dvh.util.Database;
-import org.swistowski.dvh.util.DatabaseLoader;
+import org.swistowski.dvh.purchase.IabHelper;
+import org.swistowski.dvh.purchase.IabResult;
+import org.swistowski.dvh.purchase.Purchase;
+import org.swistowski.dvh.util.Data;
+import org.swistowski.dvh.util.DataLoader;
 import org.swistowski.dvh.util.ImageStorage;
 import org.swistowski.dvh.views.ClientWebView;
 import org.swistowski.dvh.views.DisableableViewPager;
 
 
-public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener {
+public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener, AdFragment.OnAdIterationListener {
     private static final String LOG_TAG = "MainActivity";
+    private static final String SKU_PREMIUM = "dvh_1";
 
     private FragmentStatePagerAdapter mPagerAdapter;
     private DisableableViewPager mViewPager;
     private PagerTabStrip mPageTabs;
     private MenuItem mFilterMenuItem;
     private boolean filtersVisible = false;
+
+    IabHelper mHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +68,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         t.send(new HitBuilders.ScreenViewBuilder().build());
 
         if (!getWebView().isPrepared()) {
-            Database.getInstance().setIsLoading(true);
+            Data.getInstance().setIsLoading(true);
             getWebView().prepare(new Runnable() {
                 @Override
                 public void run() {
@@ -75,7 +82,28 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         }
         setContentView(R.layout.items_tabs);
         initUI();
+        // TODO: hide it
+        String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAie9nvNN+AqBa7aheimLk+9mx588PCR4R0BQXmGeKYeMf9kVwJmfh1Y7TqIOyk8ujNgiNDJDcD8l+3L3LuJZgGGDCvGG0BK9GJvAsctJ077HitX31AEmkD8e+xgWzjtJsNw4xosdetLaJ0cQgMHWrj5z+Ox5UN3jPuIDLu5dnOd8cMqotWkkLoh9ETm3QX8l/oag9gWDt3vWhZ5+apco8VI72kXHq4VL+WuKUpBuJfJu3lwkKyL/0Cz1FJQZ36Dl2OMx59UVRbc8aHX+Cp+i+IKjmKDwtguP9CpGjpXVvcfeg2e+G5WUdrppib5MS/0Q+Z47NMcpvjV1jk2qSnQhDlQIDAQAB";
+        //
+        mHelper = new IabHelper(this, base64EncodedPublicKey);
+        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+            public void onIabSetupFinished(IabResult result) {
+                if (!result.isSuccess()) {
+                    // Oh noes, there was a problem.
+                    Log.d(LOG_TAG, "Problem setting up In-app Billing: " + result);
+                }
+                // Hooray, IAB is fully set up!
+            }
+        });
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mHelper != null) mHelper.dispose();
+        mHelper = null;
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle stateToSave){
         super.onSaveInstanceState(stateToSave);
@@ -106,9 +134,47 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         Log.v(LOG_TAG, "got view: "+mFilterMenuItem);
 
         setFiltersVisible(filtersVisible);
-        if (!Database.getInstance().getIsLoading()) {
+        if (!Data.getInstance().getIsLoading()) {
             findViewById(R.id.waiting_screen).setVisibility(View.GONE);
             mViewPager = (DisableableViewPager) findViewById(R.id.pager);
+            /*
+            mViewPager.setPageTransformer(true, new ViewPager.PageTransformer() {
+                private static final float MIN_SCALE = 0.75f;
+
+                public void transformPage(View view, float position) {
+                    int pageWidth = view.getWidth();
+
+                    if (position < -1) { // [-Infinity,-1)
+                        // This page is way off-screen to the left.
+                        view.setAlpha(0);
+
+                    } else if (position <= 0) { // [-1,0]
+                        // Use the default slide transition when moving to the left page
+                        view.setAlpha(1);
+                        view.setTranslationX(0);
+                        view.setScaleX(1);
+                        view.setScaleY(1);
+
+                    } else if (position <= 1) { // (0,1]
+                        // Fade the page out.
+                        view.setAlpha(1 - position);
+
+                        // Counteract the default slide transition
+                        view.setTranslationX(pageWidth * -position);
+
+                        // Scale the page down (between MIN_SCALE and 1)
+                        float scaleFactor = MIN_SCALE
+                                + (1 - MIN_SCALE) * (1 - Math.abs(position));
+                        view.setScaleX(scaleFactor);
+                        view.setScaleY(scaleFactor);
+
+                    } else { // (1,+Infinity]
+                        // This page is way off-screen to the right.
+                        view.setAlpha(0);
+                    }
+                }
+            });
+            */
             mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager());
             mPageTabs = (PagerTabStrip) findViewById(R.id.pager_title_strip);
             mViewPager.setOnPageChangeListener(this);
@@ -151,7 +217,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 actionRefresh();
                 return;
             case R.id.button_logout:
-                Database.getInstance().clean();
+                Data.getInstance().clean();
                 intent = new Intent(this, WebViewActivity.class);
                 intent.putExtra(LoginActivity.URL, "https://www.bungie.net/en/User/SignOut");
                 startActivityForResult(intent, LoginActivity.LOGIN_REQUEST);
@@ -165,7 +231,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     private void reloadDatabase() {
-        (new DatabaseLoader(this, getWebView(), Database.getInstance())).process(new Runnable() {
+        (new DataLoader(this, getWebView(), Data.getInstance())).process(new Runnable() {
             @Override
             public void run() {
                 getTracker().send(new HitBuilders.EventBuilder()
@@ -174,10 +240,10 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                         .setLabel("Success")
                         .build());
                 Log.v(LOG_TAG, "web view data loaded");
-                Database.getInstance().setIsLoading(false);
+                Data.getInstance().setIsLoading(false);
                 initUI();
             }
-        }, new DatabaseLoader.Callback() {
+        }, new DataLoader.Callback() {
             @Override
             public void onMessage(final String message) {
                 getTracker().send(new HitBuilders.EventBuilder()
@@ -199,14 +265,14 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 goLogin();
                 builder.show();
             }
-        }, new DatabaseLoader.Callback() {
+        }, new DataLoader.Callback() {
             @Override
             public void onMessage(final String message) {
                 Log.v("ON message", message);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (Database.getInstance().getIsLoading()) {
+                        if (Data.getInstance().getIsLoading()) {
                             Log.v(LOG_TAG, message);
                             ((TextView) findViewById(R.id.progress_text)).setText(message);
                         }
@@ -274,14 +340,14 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     @Override
     public void refreshRequest(final Runnable finished) {
-        if (!Database.getInstance().getIsLoading()) {
+        if (!Data.getInstance().getIsLoading()) {
             mViewPager.setDisabled(true);
-            Database.getInstance().cleanCharacters();
-            Database.getInstance().setIsLoading(true);
-            (new DatabaseLoader(this, getWebView(), Database.getInstance())).process(new Runnable() {
+            Data.getInstance().cleanCharacters();
+            Data.getInstance().setIsLoading(true);
+            (new DataLoader(this, getWebView(), Data.getInstance())).process(new Runnable() {
                 @Override
                 public void run() {
-                    Database.getInstance().setIsLoading(false);
+                    Data.getInstance().setIsLoading(false);
                     mViewPager.setDisabled(false);
                     initUI();
                     finished.run();
@@ -317,7 +383,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
             @Override
             public boolean onQueryTextChange(String s) {
-                Database.getInstance().setFilterText(s);
+                Data.getInstance().setFilterText(s);
                 return false;
             }
         });
@@ -385,8 +451,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
 
     private void actionRefresh() {
-        Database.getInstance().cleanCharacters();
-        Database.getInstance().setIsLoading(true);
+        Data.getInstance().cleanCharacters();
+        Data.getInstance().setIsLoading(true);
         initUI();
         reloadDatabase();
     }
@@ -398,15 +464,16 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     @Override
     public void onPageSelected(int position) {
-        if(Database.getInstance().getCharacters()!=null && position<Database.getInstance().getCharacters().size()){
-            Character c = Database.getInstance().getCharacters().get(position);
-            if (ImageStorage.getInstance().getImage(c.getId())!=null) {
+        if(Data.getInstance().getCharacters()!=null && position< Data.getInstance().getCharacters().size()){
+            Character c = Data.getInstance().getCharacters().get(position);
+            String itemHash = c.getBackgroundPath().replace('/', '-');
+            if (ImageStorage.getInstance().getImage(itemHash)!=null) {
                 Log.v(LOG_TAG, "Set backround from cache");
 
-                mPageTabs.setBackgroundDrawable(new BitmapDrawable(getResources(), ImageStorage.getInstance().getImage(c.getId())));
+                mPageTabs.setBackgroundDrawable(new BitmapDrawable(getResources(), ImageStorage.getInstance().getImage(itemHash)));
             } else {
                 Log.v(LOG_TAG, "Set backround from url");
-                ImageStorage.getInstance().fetchImage(c.getId(), c.getBackgroundPath(), new ImageStorage.UrlFetchWaiter() {
+                ImageStorage.getInstance().fetchImage(itemHash, c.getBackgroundPath(), new ImageStorage.UrlFetchWaiter() {
                     @Override
                     public void onImageFetched(Bitmap bitmap) {
                         mPageTabs.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
@@ -423,5 +490,22 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    public void onRequestSupportDev() {
+        IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
+            @Override
+            public void onIabPurchaseFinished(IabResult result, Purchase info) {
+                if (result.isFailure()) {
+                    Log.d(LOG_TAG, "Error purchasing: " + result);
+                    return;
+                }
+                else if (info.getSku().equals(SKU_PREMIUM)) {
+                    new AlertDialog.Builder(getApplicationContext()).setTitle("Thank you").setMessage("I will have cold beer tonight").create().show();
+                }
+            }
+        };
+        mHelper.launchPurchaseFlow(this, SKU_PREMIUM, 10001, mPurchaseFinishedListener);
     }
 }

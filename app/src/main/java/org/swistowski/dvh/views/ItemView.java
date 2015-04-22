@@ -4,18 +4,23 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.swistowski.dvh.util.Database;
 import org.swistowski.dvh.R;
 import org.swistowski.dvh.models.Item;
+import org.swistowski.dvh.util.Data;
 import org.swistowski.dvh.util.ImageStorage;
 
 
 public class ItemView extends FrameLayout {
+    private static final String LOG_TAG = "ItemView";
+    private final String FAVORITES_LABEL = "Favorites";
     private ImageStorage.DownloadImageTask mDownloadImageTask;
+    private Runnable requireReloadDataListener;
 
     public ItemView(Context context) {
         super(context);
@@ -57,7 +62,29 @@ public class ItemView extends FrameLayout {
         setDetails(details);
         setLabel(item.getName());
         setUrl(item);
-        setOwner(Database.getInstance().getItemOwnerName(item));
+        setOwner(Data.getInstance().getItemOwnerName(item));
+        CheckBox cb = ((CheckBox) findViewById(R.id.favorite_button));
+        final long item_id = item.getInstanceId();
+
+        boolean hasLabel = Data.getInstance().hasLabel(item_id, FAVORITES_LABEL);
+        cb.setOnCheckedChangeListener(null);
+        cb.setChecked(hasLabel);
+        /*
+        final DB db = new DB(getContext());
+        cb.setChecked(db.itemHasLabel(item.getItemHash(), FAVORITES_LABEL));
+        */
+        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    Data.getInstance().addLabel(item_id, FAVORITES_LABEL);
+                } else {
+                    Data.getInstance().deleteLabel(item_id, FAVORITES_LABEL);
+                }
+                requireReloadDataListener.run();
+            }
+        });
+
 
     }
     private void setLabel(String text) {
@@ -91,5 +118,9 @@ public class ItemView extends FrameLayout {
                 }
             });
         }
+    }
+
+    public void setRequireReloadDataListener(Runnable requireReloadDataListener) {
+        this.requireReloadDataListener = requireReloadDataListener;
     }
 }

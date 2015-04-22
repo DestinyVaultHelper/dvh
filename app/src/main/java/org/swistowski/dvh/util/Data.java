@@ -1,11 +1,13 @@
 package org.swistowski.dvh.util;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.BaseAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.swistowski.dvh.db.DB;
 import org.swistowski.dvh.models.Character;
 import org.swistowski.dvh.models.Item;
 import org.swistowski.dvh.models.Membership;
@@ -21,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Database implements Serializable {
+public class Data implements Serializable {
     public static final String VAULT_ID = "VAULT";
     private static final String LOG_TAG = "Database";
-    private static final Database ourInstance = new Database();
+    private static final Data ourInstance = new Data();
     private User mUser;
     private Membership mMembership;
     private List<Character> mCharacters;
@@ -64,6 +66,7 @@ public class Database implements Serializable {
         DAMAGE_FILTERS.put("Solar", Boolean.FALSE);
         DAMAGE_FILTERS.put("Void", Boolean.FALSE);
     }
+    private HashMap<String, Set<Long>> mLabels = new HashMap<>();
 
     private LinkedHashMap<String, Boolean> mCompletedFilters;
 
@@ -78,6 +81,8 @@ public class Database implements Serializable {
         COMPLETED_FILTERS.put(IS_NOT_COMPLETED, Boolean.FALSE);
     }
 
+    private DB mDb;
+    private Context context;
 
     public LinkedHashMap<String, Boolean> getBucketFilters() {
         if (mBucketFilters == null) {
@@ -113,10 +118,10 @@ public class Database implements Serializable {
 
     private String mFilterText = "";
 
-    private Database() {
+    private Data() {
     }
 
-    public static Database getInstance() {
+    public static Data getInstance() {
         return ourInstance;
     }
 
@@ -317,6 +322,46 @@ public class Database implements Serializable {
 
     public boolean getIsLoading() {
         return mIsLoading;
+    }
+
+    public DB getDb() {
+        if (mDb == null) {
+            mDb = new DB(getContext());
+        }
+        return mDb;
+    }
+
+    private Set<Long> getLabelItems(String label){
+        Set<Long> labels = mLabels.get(label);
+        if(labels == null){
+            labels = getDb().labelItems(label);
+            mLabels.put(label, labels);
+        }
+        return labels;
+    }
+
+    public void addLabel(long item_id, String label) {
+        getDb().addLabel(item_id, label);
+        getLabelItems(label).add(item_id);
+    }
+
+    public void deleteLabel(long item_id, String label) {
+        getDb().deleteLabel(item_id, label);
+        getLabelItems(label).remove(item_id);
+    }
+
+    public boolean hasLabel(long item_id, String label) {
+        return getLabelItems(label).contains(item_id);
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
         /*

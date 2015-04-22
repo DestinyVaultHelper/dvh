@@ -5,8 +5,8 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.swistowski.dvh.util.Data;
 import org.swistowski.dvh.views.ClientWebView;
-import org.swistowski.dvh.util.Database;
 import org.swistowski.dvh.fragments.ItemListFragment;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class ItemMover {
         try {
             obj.put("characterId", owner);
             obj.put("itemId", item.getItemId());
-            obj.put("membershipType", Database.getInstance().getMembership().getType());
+            obj.put("membershipType", Data.getInstance().getMembership().getType());
         } catch (JSONException e) {
             Log.e(LOG_TAG, "exception", e);
             e.printStackTrace();
@@ -50,10 +50,10 @@ public class ItemMover {
         if (item.isEquipped()) {
             /* find items from the same hash */
             List<Item> proposed = new ArrayList<>();
-            String item_owner = Database.getInstance().getItemOwner(item);
-            for (Item tested_item : Database.getInstance().getAllItems()) {
-                if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Database.getInstance().getItemOwner(tested_item).equals(item_owner)) {
-                    Log.v(LOG_TAG, "other: " + tested_item + Database.getInstance().getItemOwner(tested_item));
+            String item_owner = Data.getInstance().getItemOwner(item);
+            for (Item tested_item : Data.getInstance().getAllItems()) {
+                if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Data.getInstance().getItemOwner(tested_item).equals(item_owner)) {
+                    Log.v(LOG_TAG, "other: " + tested_item + Data.getInstance().getItemOwner(tested_item));
                     proposed.add(tested_item);
                 }
             }
@@ -102,7 +102,7 @@ public class ItemMover {
                 webView.queueRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        item.moveTo(Database.VAULT_ID);
+                        item.moveTo(Data.VAULT_ID);
                         p.onSuccess();
                         p_inner.onSuccess();
                     }
@@ -147,9 +147,9 @@ public class ItemMover {
     public static Promise move(final ClientWebView webView, final Item item, final int direction, final String subject) {
         final Promise p = new Promise();
 
-        final String owner = Database.getInstance().getItemOwner(item);
-        if (direction == ItemListFragment.DIRECTION_TO && (owner.equals(Database.VAULT_ID) || subject.equals(Database.VAULT_ID))) {
-            if (subject.equals(Database.VAULT_ID)) {
+        final String owner = Data.getInstance().getItemOwner(item);
+        if (direction == ItemListFragment.DIRECTION_TO && (owner.equals(Data.VAULT_ID) || subject.equals(Data.VAULT_ID))) {
+            if (subject.equals(Data.VAULT_ID)) {
                 moveToVault(webView, owner, item, p);
             } else {
                 moveFromVault(webView, subject, item, p);
@@ -192,7 +192,7 @@ public class ItemMover {
             json.put("characterId", characterId);
             json.put("itemId", item.getItemId());
             json.put("itemReferenceHash", item.getItemHash());
-            json.put("membershipType", Database.getInstance().getMembership().getType());
+            json.put("membershipType", Data.getInstance().getMembership().getType());
             json.put("stackSize", item.getStackSize());
             json.put("transferToVault", transferToVault);
         } catch (JSONException e) {
