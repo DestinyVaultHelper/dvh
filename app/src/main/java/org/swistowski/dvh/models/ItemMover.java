@@ -52,12 +52,21 @@ public class ItemMover {
             List<Item> proposed = new ArrayList<>();
             String item_owner = Data.getInstance().getItemOwner(item);
             for (Item tested_item : Data.getInstance().getAllItems()) {
-                if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Data.getInstance().getItemOwner(tested_item).equals(item_owner)) {
+                if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Data.getInstance().getItemOwner(tested_item).equals(item_owner) && tested_item.getCanEquip()) {
                     Log.v(LOG_TAG, "other: " + tested_item + Data.getInstance().getItemOwner(tested_item));
                     proposed.add(tested_item);
                 }
             }
             Collections.sort(proposed);
+
+
+            Runnable go = new Runnable(){
+
+                @Override
+                public void run() {
+
+                }
+            };
 
             if(proposed.size()>0){
                 final Item to_equip = proposed.get(proposed.size()-1);
@@ -70,6 +79,7 @@ public class ItemMover {
                             @Override
                             public void onSuccess() {
                                 p_inner.onSuccess();
+
                             }
 
                             @Override
@@ -86,13 +96,14 @@ public class ItemMover {
                         p_inner.onError(e);
                     }
                 });
-            } else
-            webView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    p.onError("Cannot move equipped item, Do not know how to unequip "+item);
-                }
-            }, 1);
+            } else {
+                webView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        p.onError("Cannot move equipped item, Do not know how to unequip " + item);
+                    }
+                }, 1);
+            }
             return p_inner;
         }
         Log.v(LOG_TAG, "item: " + item.isEquipped());

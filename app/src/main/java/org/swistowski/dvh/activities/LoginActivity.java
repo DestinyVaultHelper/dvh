@@ -1,5 +1,7 @@
 package org.swistowski.dvh.activities;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -18,13 +20,34 @@ import org.swistowski.dvh.R;
 public class LoginActivity extends ActionBarActivity {
     public final static String URL = "org.swistowski.destinyshelve.URL";
     public final static int LOGIN_REQUEST = 60;
-    private static final String PSN_URL = "https://www.bungie.net/en/User/SignIn/Psnid";
-    private static final String XONE_URL = "https://www.bungie.net/en/User/SignIn/Xuid";
+    private static final String PSN_URL_DEFAULT = "https://www.bungie.net/en/User/SignIn/Psnid";
+    private String psn_url = PSN_URL_DEFAULT;
+    private String xone_url = XONE_URL_DEFAULT;
+    private static final String XONE_URL_DEFAULT = "https://www.bungie.net/en/User/SignIn/Xuid";
     private static final String LOG_TAG = "LoginActivity";
+    private static final String XONE_URL_ID = "Xone";
+    private static final String PSN_URL_ID = "psn";
+
+    public static void goLogin(Activity c, String xBoxUrl, String psnUrl){
+        Intent intent = new Intent(c, LoginActivity.class);
+        intent.putExtra(XONE_URL_ID, xBoxUrl);
+        intent.putExtra(PSN_URL_ID, psnUrl);
+        c.startActivityForResult(intent, LoginActivity.LOGIN_REQUEST);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        String url = intent.getStringExtra(XONE_URL_ID);
+        if(url!=null){
+            xone_url = url;
+        }
+        url = intent.getStringExtra(PSN_URL_ID);
+        if(url!=null){
+            psn_url = url;
+        }
+
         setContentView(R.layout.activity_login);
         TextView loginInformation = (TextView)findViewById(R.id.loginDetailInformation);
         loginInformation.setText(Html.fromHtml(getString(R.string.login_information)));
@@ -46,16 +69,17 @@ public class LoginActivity extends ActionBarActivity {
                 .setAction(getString(R.string.tracker_action_click))
                 .setLabel("Psn button")
                 .build());
-        goToUrl(PSN_URL);
+        goToUrl(psn_url);
     }
 
-    public void onOneButtonClick(View view){
+    public void onOneButtonClick(View view) {
         getTracker().send(new HitBuilders.EventBuilder()
                 .setCategory(getString(R.string.tracker_category_user_action))
                 .setAction(getString(R.string.tracker_action_click))
                 .setLabel("One button")
                 .build());
-        goToUrl(XONE_URL);
+        Log.v(LOG_TAG, "go to: "+xone_url);
+        goToUrl(xone_url);
     }
 
     @Override

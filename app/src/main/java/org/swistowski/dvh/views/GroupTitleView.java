@@ -41,4 +41,8 @@ public class GroupTitleView extends FrameLayout {
     public void setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener listener){
         ((CheckBox) findViewById(R.id.group_checkbox)).setOnCheckedChangeListener(listener);
     }
+
+    public void setCheck(boolean value){
+        ((CheckBox) findViewById(R.id.group_checkbox)).setChecked(value);
+    }
 }

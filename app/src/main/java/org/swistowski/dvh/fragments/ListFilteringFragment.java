@@ -32,9 +32,11 @@ public class ListFilteringFragment extends Fragment {
 
     public interface FilterGetter {
         LinkedHashMap<String, Boolean> getFilters();
-    };
+    }
 
-    static final FilterGetter bucketFilters = new FilterGetter(){
+    ;
+
+    static final FilterGetter bucketFilters = new FilterGetter() {
         @Override
         public LinkedHashMap<String, Boolean> getFilters() {
             return Data.getInstance().getBucketFilters();
@@ -61,14 +63,14 @@ public class ListFilteringFragment extends Fragment {
         private final ArrayList<Map.Entry<String, Boolean>> mEntries;
 
 
-        public FilterGroup(String title, FilterGetter filterGetter){
+        public FilterGroup(String title, FilterGetter filterGetter) {
             mTitle = title;
             mFilterGetter = filterGetter;
             mEntries = new ArrayList<>();
             reloadEntries();
         }
 
-        private void reloadEntries(){
+        private void reloadEntries() {
             mEntries.clear();
             mEntries.addAll(mFilterGetter.getFilters().entrySet());
         }
@@ -88,14 +90,15 @@ public class ListFilteringFragment extends Fragment {
         private static final String LOG_TAG = "FilterAdapter";
         private Context mContext;
 
-        public FilterAdapter(Context context){
+        public FilterAdapter(Context context) {
             super();
             mContext = context;
             mGroups = new ArrayList<>();
             mGroups.add(new FilterGroup(getResources().getString(R.string.bucket_filter_label), bucketFilters));
             mGroups.add(new FilterGroup(getResources().getString(R.string.damage_type_filter_label), damageFilters));
-            mGroups.add(new FilterGroup("Completed", completedFilters));
+            mGroups.add(new FilterGroup(getResources().getString(R.string.completed_filter_label), completedFilters));
         }
+
         Context getContext() {
             return mContext;
         }
@@ -103,7 +106,7 @@ public class ListFilteringFragment extends Fragment {
         @Override
         public int getGroupCount() {
             return mGroups.size();
-         }
+        }
 
         @Override
         public int getChildrenCount(int groupPosition) {
@@ -112,12 +115,12 @@ public class ListFilteringFragment extends Fragment {
 
         @Override
         public Object getGroup(int groupPosition) {
-            return ""+groupPosition;
+            return "" + groupPosition;
         }
 
         @Override
         public Object getChild(int groupPosition, int childPosition) {
-            return ""+childPosition;
+            return "" + childPosition;
         }
 
         @Override
@@ -127,7 +130,7 @@ public class ListFilteringFragment extends Fragment {
 
         @Override
         public long getChildId(int groupPosition, int childPosition) {
-            return groupPosition*100+childPosition;
+            return groupPosition * 100 + childPosition;
         }
 
         @Override
@@ -143,16 +146,31 @@ public class ListFilteringFragment extends Fragment {
             } else {
                 view = (GroupTitleView) convertView;
             }
+            view.setOnCheckedChangeListener(null);
+
+            boolean need_check = false;
+
+            for (Map.Entry<String, Boolean> entry : mGroups.get(groupPosition).mEntries) {
+                if (entry.getValue()) {
+                    need_check = true;
+                    break;
+                }
+            }
+            view.setCheck(need_check);
+
             view.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    for (Map.Entry<String, Boolean> entry : mGroups.get(groupPosition).mEntries) {
-                        entry.setValue(isChecked);
-                    };
-                    Data.getInstance().notifyItemsChanged();
-                    mFilterAdapter.notifyDataSetChanged();
+                    if (!isChecked) {
+                        for (Map.Entry<String, Boolean> entry : mGroups.get(groupPosition).mEntries) {
+                            entry.setValue(false);
+                        }
+                        Data.getInstance().notifyItemsChanged();
+                        mFilterAdapter.notifyDataSetChanged();
+                    }
                 }
             });
+
             view.setText(mGroups.get(groupPosition).getTitle());
             return view;
         }
@@ -162,7 +180,7 @@ public class ListFilteringFragment extends Fragment {
             final GroupDetailView view;
             final Map.Entry<String, Boolean> item = mGroups.get(groupPosition).getChild(childPosition);
 
-            if(convertView==null){
+            if (convertView == null) {
                 view = new GroupDetailView(getContext());
             } else {
                 view = (GroupDetailView) convertView;
@@ -175,7 +193,14 @@ public class ListFilteringFragment extends Fragment {
                     Map.Entry<String, Boolean> entry = mGroups.get(groupPosition).mEntries.get(childPosition);
                     if (entry.getValue() != isChecked) {
                         entry.setValue(isChecked);
+                        /*
+                        if (isChecked) {
+                            //parent.
+                            ((GroupTitleView) parent).doCheck();
+                        }
+                        */
                         Data.getInstance().notifyItemsChanged();
+                        mFilterAdapter.notifyDataSetChanged();
                     }
                 }
             });
@@ -188,6 +213,7 @@ public class ListFilteringFragment extends Fragment {
             return true;
         }
     }
+
     private FilterAdapter mFilterAdapter;
 
     public ListFilteringFragment() {
@@ -213,26 +239,28 @@ public class ListFilteringFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
+
     @Override
-    public void onDestroyView(){
+    public void onDestroyView() {
         Log.v(LOG_TAG, "onDestroyView");
         super.onDestroyView();
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         Log.v(LOG_TAG, "onDestroy");
         super.onDestroy();
 
     }
+
     @Override
-    public void onAttach(Activity act){
+    public void onAttach(Activity act) {
         Log.v(LOG_TAG, "onAttach");
         super.onAttach(act);
     }
 
     @Override
-    public void onDetach(){
+    public void onDetach() {
         Log.v(LOG_TAG, "onDetach");
         super.onDetach();
     }

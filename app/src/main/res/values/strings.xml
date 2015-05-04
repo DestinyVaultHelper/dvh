@@ -32,4 +32,5 @@
     <string name="ad_small">ca-app-pub-4225324557097072/5774389341</string>
     <string name="ad_text">Do you know that programmers have to buy groceries, pay rent, go for vacations? If you aware of it you can just click the ad below to support one developer, or you can buy some in app products to support me even more.</string>
     <string name="buy_pro" >Support the developer</string>
+    <string name="completed_filter_label">Completed</string>
 </resources>

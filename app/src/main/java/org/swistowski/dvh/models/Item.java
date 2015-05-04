@@ -333,4 +333,8 @@ public class Item implements Serializable, Comparable<Item> {
     public long getInstanceId() {
         return Long.valueOf(mItemInstanceId);
     }
+
+    public boolean getCanEquip() {
+        return mCanEquip;
+    }
 }

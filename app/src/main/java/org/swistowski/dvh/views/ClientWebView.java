@@ -47,17 +47,21 @@ public class ClientWebView extends WebView {
 
     @SuppressLint("AddJavascriptInterface")
     public void prepare(final Runnable onInit) {
+
         Log.v("ClientWebView", "ready = true");
         if (!mPrepared) {
+
             mPrepared = true;
+            /*
             setWebChromeClient(new WebChromeClient() {
                 public boolean onConsoleMessage(ConsoleMessage cm) {
                     Log.d(LOG_TAG + " js", cm.message() + " -- From line "
                             + cm.lineNumber() + " of "
-                            + cm.sourceId() );
+                            + cm.sourceId());
                     return true;
                 }
             });
+            */
 
             setWebViewClient(new WebViewClient() {
                 @Override
@@ -72,25 +76,37 @@ public class ClientWebView extends WebView {
 
                 @Override
                 public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                    Log.v(LOG_TAG, "onReceivedError "+errorCode+ " "+description + "failingUrl: "+failingUrl);
+                    Log.v(LOG_TAG, "onReceivedError " + errorCode + " " + description + "failingUrl: " + failingUrl);
                     super.onReceivedError(view, errorCode, description, failingUrl);
                 }
             });
             getSettings().setJavaScriptEnabled(true);
             addJavascriptInterface(new JsObject(mPromises), "clientHandler");
-            loadUrl("https://www.bungie.net/");
+            loadUrl("http://www.bungie.net/");
+
         } else
             onInit.run();
+
     }
+
 
     public boolean isPrepared() {
         return mPrepared;
     }
 
+    public Promise callAny(String javascript) {
+        final Promise p = new Promise();
+        final int promiseId = identityHashCode(p);
+        Log.v(LOG_TAG, "promise created Any: " + promiseId);
+        mPromises.put("" + promiseId, p);
+        queueJavascript("window.clientHandler.accept(\"" + promiseId + "\", " + javascript + ")");
+        return p;
+    }
+
     public Promise call(String methodName, JSONObject parameters) {
         final Promise p = new Promise();
         final int promiseId = identityHashCode(p);
-        Log.v(LOG_TAG, "promise created JSON: "+promiseId);
+        Log.v(LOG_TAG, "promise created JSON: " + promiseId);
         mPromises.put("" + promiseId, p);
         queueJavascript("bungieNetPlatform." + methodName + "(" + parameters.toString() + " , function(data){window.clientHandler.accept(\"" + promiseId + "\", JSON.stringify(data))}, function(data){window.clientHandler.error(\"" + promiseId + "\", JSON.stringify(data))})");
         return p;
@@ -112,8 +128,8 @@ public class ClientWebView extends WebView {
             processedArguments += '"' + arg + '"';
         }
         mPromises.put("" + promiseId, p);
-        Log.v(LOG_TAG, "promise created STRING: "+promiseId + " " + processedArguments);
-        queueJavascript("bungieNetPlatform." + methodName + "(" + processedArguments + (!processedArguments.equals("") ? ", " : "") + "function(data){window.clientHandler.accept(" +'"' + promiseId + '"' +", JSON.stringify(data))}, function(data){window.clientHandler.error(\"" + promiseId + "\", JSON.stringify(data))})");
+        Log.v(LOG_TAG, "promise created STRING: " + promiseId + " " + processedArguments);
+        queueJavascript("bungieNetPlatform." + methodName + "(" + processedArguments + (!processedArguments.equals("") ? ", " : "") + "function(data){window.clientHandler.accept(" + '"' + promiseId + '"' + ", JSON.stringify(data))}, function(data){window.clientHandler.error(\"" + promiseId + "\", JSON.stringify(data))})");
         return p;
     }
 
@@ -124,7 +140,7 @@ public class ClientWebView extends WebView {
             public void run() {
                 Log.v(LOG_TAG, "queue executed javascript: " + javascript);
                 if (android.os.Build.VERSION.SDK_INT < 19) {
-                    Log.v(LOG_TAG, "debug js: " + "javascript:" + "window.clientHandler.log(\"\"+ "+javascript+")");
+                    Log.v(LOG_TAG, "debug js: " + "javascript:" + "window.clientHandler.log(\"\"+ " + javascript + ")");
                     loadUrl("javascript:" + "window.clientHandler.log(\"\"+ " + javascript + ")");
                 } else {
                     evaluateJavascript("javascript:" + javascript, null);
@@ -160,14 +176,20 @@ public class ClientWebView extends WebView {
         @JavascriptInterface
         public void error(String promiseId, String result) {
             Log.v(LOG_TAG, "interface error " + promiseId);
-            Log.v(LOG_TAG, "error value"+ result);
+            Log.v(LOG_TAG, "error value" + result);
             mPromises.get(promiseId).error(result);
             mPromises.remove(promiseId);
         }
+
         @JavascriptInterface
-        public boolean log(String data){
-            Log.v(LOG_TAG, "log: "+data);
+        public boolean log(String data) {
+            Log.v(LOG_TAG, "log: " + data);
             return true;
+        }
+
+        public String getString(String value) {
+            Log.v(LOG_TAG, "getString " + value);
+            return value;
         }
     }
 

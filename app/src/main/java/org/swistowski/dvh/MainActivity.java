@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
@@ -61,7 +63,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Tracker t = getTracker();
         t.setScreenName("MainScreen");
 
@@ -69,6 +70,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
         if (!getWebView().isPrepared()) {
             Data.getInstance().setIsLoading(true);
+
+
             getWebView().prepare(new Runnable() {
                 @Override
                 public void run() {
@@ -76,25 +79,34 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                     reloadDatabase();
                 }
             });
+
         }
-        if(savedInstanceState!=null){
+
+        if (savedInstanceState != null) {
             filtersVisible = savedInstanceState.getBoolean("filtersVisible");
         }
+
         setContentView(R.layout.items_tabs);
         initUI();
+
         // TODO: hide it
         String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAie9nvNN+AqBa7aheimLk+9mx588PCR4R0BQXmGeKYeMf9kVwJmfh1Y7TqIOyk8ujNgiNDJDcD8l+3L3LuJZgGGDCvGG0BK9GJvAsctJ077HitX31AEmkD8e+xgWzjtJsNw4xosdetLaJ0cQgMHWrj5z+Ox5UN3jPuIDLu5dnOd8cMqotWkkLoh9ETm3QX8l/oag9gWDt3vWhZ5+apco8VI72kXHq4VL+WuKUpBuJfJu3lwkKyL/0Cz1FJQZ36Dl2OMx59UVRbc8aHX+Cp+i+IKjmKDwtguP9CpGjpXVvcfeg2e+G5WUdrppib5MS/0Q+Z47NMcpvjV1jk2qSnQhDlQIDAQAB";
         //
         mHelper = new IabHelper(this, base64EncodedPublicKey);
-        mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-            public void onIabSetupFinished(IabResult result) {
-                if (!result.isSuccess()) {
-                    // Oh noes, there was a problem.
-                    Log.d(LOG_TAG, "Problem setting up In-app Billing: " + result);
+        try {
+            mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+                public void onIabSetupFinished(IabResult result) {
+                    if (!result.isSuccess()) {
+                        // Oh noes, there was a problem.
+                        Log.d(LOG_TAG, "Problem setting up In-app Billing: " + result);
+                    }
+                    // Hooray, IAB is fully set up!
                 }
-                // Hooray, IAB is fully set up!
-            }
-        });
+            });
+        } catch (NullPointerException e) {
+
+        }
+
     }
 
     @Override
@@ -105,10 +117,11 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle stateToSave){
+    protected void onSaveInstanceState(Bundle stateToSave) {
         super.onSaveInstanceState(stateToSave);
         stateToSave.putBoolean("filtersVisible", filtersVisible);
     }
+
     private boolean isFirstTime() {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         boolean ranBefore = preferences.getBoolean("RanBefore", false);
@@ -122,16 +135,16 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         editor.apply();
     }
 
-    void initUI(){
+    void initUI() {
         try {
             initUIInner();
-        } catch(IllegalStateException e){
-            Log.e(LOG_TAG, "init fallback ",e );
+        } catch (IllegalStateException e) {
+            Log.e(LOG_TAG, "init fallback ", e);
         }
     }
 
     void initUIInner() {
-        Log.v(LOG_TAG, "got view: "+mFilterMenuItem);
+        Log.v(LOG_TAG, "got view: " + mFilterMenuItem);
 
         setFiltersVisible(filtersVisible);
         if (!Data.getInstance().getIsLoading()) {
@@ -225,9 +238,24 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         }
     }
 
-    private void goLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, LoginActivity.LOGIN_REQUEST);
+    private void goLogin(){
+        Log.v(LOG_TAG, "go login");
+        getWebView().callAny("document.getElementsByClassName(\"btn_login psn\")[0].href+\"#\"+document.getElementsByClassName(\"btn_login live\")[0].href").then(new ClientWebView.Callback() {
+            @Override
+            public void onAccept(String result) {
+                String[] urls = result.split("#");
+                Log.v(LOG_TAG, "Xbox url:" + urls[1]);
+                LoginActivity.goLogin(MainActivity.this, urls[1], urls[0]);
+            }
+
+            @Override
+            public void onError(String result) {
+                Log.v(LOG_TAG, "error url:" + result);
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivityForResult(intent, LoginActivity.LOGIN_REQUEST);
+            }
+        });
+
     }
 
     private void reloadDatabase() {
@@ -251,19 +279,34 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                         .setAction(getString(R.string.tracker_action_loaded))
                         .setLabel("Failure")
                         .build());
-                String errorMesssage = "";
+                String errorMesssage = null;
+                String errorStatus = null;
                 try {
-                    errorMesssage = new JSONObject(message).getString("errorMessage");
+                    JSONObject errorObj = new JSONObject(message);
+                    errorMesssage = errorObj.getString("errorMessage");
+                    errorStatus = errorObj.optString("errorStatus");
+
                 } catch (JSONException e) {
                     errorMesssage = message;
                 }
-                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-                builder.setMessage(errorMesssage)
-                        .setTitle("Bungie Api error");
-                Log.v(LOG_TAG, "error " + message);
-                Log.v(LOG_TAG, "i'm not logged in");
-                goLogin();
-                builder.show();
+                Log.v(LOG_TAG, "Error status "+errorStatus);
+                if (errorStatus.equals("WebAuthRequired")) {
+                    goLogin();
+                } else {
+                    final String messageToShow = errorMesssage;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setMessage(messageToShow)
+                                    .setTitle("Bungie Api error");
+                            Log.v(LOG_TAG, "error " + message);
+                            Log.v(LOG_TAG, "i'm not logged in");
+                            builder.show();
+                        }
+                    });
+                }
+
             }
         }, new DataLoader.Callback() {
             @Override
@@ -274,7 +317,11 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                     public void run() {
                         if (Data.getInstance().getIsLoading()) {
                             Log.v(LOG_TAG, message);
-                            ((TextView) findViewById(R.id.progress_text)).setText(message);
+                            try {
+                                ((TextView) findViewById(R.id.progress_text)).setText(message);
+                            } catch (NullPointerException e) {
+                                Log.e(LOG_TAG, "null point exception on text show, skipping");
+                            }
                         }
                     }
                 });
@@ -369,12 +416,29 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
+        Log.v(LOG_TAG, "foo " + Build.VERSION.SDK_INT);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_actions, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        SupportMenuItem searchItem = (SupportMenuItem) menu.findItem(R.id.action_search);
+
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
+        /*
+        searchItem.setSupportOnActionExpandListener(new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // do work
+                return true;
+            }
 
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // do work
+                return true;
+            }
+        });
+        */
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -387,26 +451,25 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 return false;
             }
         });
-
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         mFilterMenuItem = menu.findItem(R.id.toggle_filters);
-        if(mFilterMenuItem!=null) {
+        if (mFilterMenuItem != null) {
             //mFilterMenuItem.setChecked(false);
             mFilterMenuItem.setChecked(filtersVisible);
         }
         return true;
     }
 
-    private void setFiltersVisible(boolean visibility){
+    private void setFiltersVisible(boolean visibility) {
         filtersVisible = visibility;
         View container = findViewById(R.id.fragment_container);
         Log.v(LOG_TAG, "filters show: " + container + " " + visibility);
-        if(container!=null){
-            if(visibility){
+        if (container != null) {
+            if (visibility) {
                 container.setVisibility(View.VISIBLE);
             } else {
                 container.setVisibility(View.GONE);
@@ -415,10 +478,10 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             Log.v(LOG_TAG, "Back button!");
-            if(filtersVisible){
+            if (filtersVisible) {
                 setFiltersVisible(false);
                 return true;
             }
@@ -449,7 +512,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
 
-
     private void actionRefresh() {
         Data.getInstance().cleanCharacters();
         Data.getInstance().setIsLoading(true);
@@ -464,10 +526,10 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     @Override
     public void onPageSelected(int position) {
-        if(Data.getInstance().getCharacters()!=null && position< Data.getInstance().getCharacters().size()){
+        if (Data.getInstance().getCharacters() != null && position < Data.getInstance().getCharacters().size()) {
             Character c = Data.getInstance().getCharacters().get(position);
             String itemHash = c.getBackgroundPath().replace('/', '-');
-            if (ImageStorage.getInstance().getImage(itemHash)!=null) {
+            if (ImageStorage.getInstance().getImage(itemHash) != null) {
                 Log.v(LOG_TAG, "Set backround from cache");
 
                 mPageTabs.setBackgroundDrawable(new BitmapDrawable(getResources(), ImageStorage.getInstance().getImage(itemHash)));
@@ -482,7 +544,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 });
             }
         } else {
-            mPageTabs.setBackgroundDrawable(new BitmapDrawable(Bitmap.createBitmap(1,1, Bitmap.Config.ALPHA_8)));
+            mPageTabs.setBackgroundDrawable(new BitmapDrawable(Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8)));
             mPageTabs.setBackgroundColor(getResources().getColor(R.color.background_material_dark));
         }
     }
@@ -500,8 +562,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 if (result.isFailure()) {
                     Log.d(LOG_TAG, "Error purchasing: " + result);
                     return;
-                }
-                else if (info.getSku().equals(SKU_PREMIUM)) {
+                } else if (info.getSku().equals(SKU_PREMIUM)) {
                     new AlertDialog.Builder(getApplicationContext()).setTitle("Thank you").setMessage("I will have cold beer tonight").create().show();
                 }
             }
