@@ -7,6 +7,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.swistowski.dvh.R;
 import org.swistowski.dvh.views.ClientWebView;
 import org.swistowski.dvh.models.Character;
 import org.swistowski.dvh.models.Item;
@@ -82,7 +83,7 @@ public class DataLoader {
     }
 
     void doGetCurrentUser() {
-        mOnMessage.onMessage("Loading User");
+        mOnMessage.onMessage(act.getString(R.string.loading_user_message));
         Log.v(LOG_TAG, "doGetCurrentUser");
         // getting current user from bungie
         webView.call("userService.GetCurrentUser").then(new ClientWebView.Callback() {
@@ -108,7 +109,7 @@ public class DataLoader {
         });
     }
     void doSearchDestinyPlayer(String type, String displayName) {
-        mOnMessage.onMessage("Searching your account");
+        mOnMessage.onMessage(act.getString(R.string.searching_your_account_message));
         Log.v(LOG_TAG, "doSearchDestinyPlayer "+type+" "+displayName);
         // know that i'm logged in, search me as the player
         webView.call("destinyService.SearchDestinyPlayer", type, displayName).then(new ClientWebView.Callback() {
@@ -137,7 +138,7 @@ public class DataLoader {
     }
 
     void doGetAccount(final Membership membership) {
-        mOnMessage.onMessage("Downloading information about your account");
+        mOnMessage.onMessage(act.getString(R.string.downloading_message));
         Log.v("MainActivity", "doGetAccount");
         // i know my membershipId, so i'm destiny player, get my characters
         webView.call("destinyService.GetAccount", membership.getTigerType(), "" + membership.getId(), "true").then(new ClientWebView.Callback() {
@@ -162,7 +163,7 @@ public class DataLoader {
     }
 
     private void doLoadItems(Membership membership, List<Character> characters) {
-        mOnMessage.onMessage("Loading your items");
+        mOnMessage.onMessage(act.getString(R.string.loading_your_items_message));
         Log.v(LOG_TAG, "doLoadItems");
         WaitForAll waiter = new WaitForAll() {
             @Override
@@ -187,7 +188,7 @@ public class DataLoader {
 
     void doGetCharacterInventory(final Membership membership, final Character character, final WaitForAll waiter) {
         Log.v(LOG_TAG, "doGetCharacterInventory");
-        mOnMessage.onMessage("Loading inventory for "+character);
+        mOnMessage.onMessage(String.format(act.getString(R.string.loading_inventory_message), character));
         webView.call("destinyService.GetCharacterInventory", "" + membership.getType(), "" + membership.getId(), character.getId(), "true").then(new ClientWebView.Callback() {
             @Override
             public void onAccept(String result) {
@@ -211,7 +212,7 @@ public class DataLoader {
 
 
     private void doGetVaultInventory(final Membership membership, final WaitForAll waiter) {
-        mOnMessage.onMessage("Loading vault inventory");
+        mOnMessage.onMessage(act.getString(R.string.loading_vault_inventory_message));
         Log.v(LOG_TAG, "doGetVaultInventory");
         webView.call("destinyService.GetVault", "" + membership.getType(), "true", membership.getId()).then(new ClientWebView.Callback() {
             @Override

@@ -34,4 +34,10 @@
     <string name="completed_filter_label">Completed</string>
     <string name="critical_error">Critical error</string>
     <string name="no_url_error">Cannot connect to %s site</string>
+    <string name="loading_vault_inventory_message">Loading vault inventory</string>
+    <string name="loading_user_message">Loading user</string>
+    <string name="searching_your_account_message">Searching your account</string>
+    <string name="downloading_message">Downloading information about your account</string>
+    <string name="loading_your_items_message">Loading your items</string>
+    <string name="loading_inventory_message">Loading inventory for %s</string>
 </resources>
