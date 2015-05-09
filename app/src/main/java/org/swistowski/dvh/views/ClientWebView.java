@@ -1,7 +1,10 @@
 package org.swistowski.dvh.views;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
@@ -13,6 +16,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.json.JSONObject;
+import org.swistowski.dvh.Application;
+import org.swistowski.dvh.MainActivity;
+import org.swistowski.dvh.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +31,7 @@ public class ClientWebView extends WebView {
     private boolean mInitialized = false;
     private final Map<String, Promise> mPromises = new HashMap<String, Promise>();
     private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private Activity currentActivity;
 
     public ClientWebView(Context context) {
         super(context);
@@ -48,11 +55,10 @@ public class ClientWebView extends WebView {
     @SuppressLint("AddJavascriptInterface")
     public void prepare(final Runnable onInit) {
 
-        Log.v("ClientWebView", "ready = true");
+        Log.v(LOG_TAG, "ready = true");
         if (!mPrepared) {
 
             mPrepared = true;
-            /*
             setWebChromeClient(new WebChromeClient() {
                 public boolean onConsoleMessage(ConsoleMessage cm) {
                     Log.d(LOG_TAG + " js", cm.message() + " -- From line "
@@ -61,7 +67,6 @@ public class ClientWebView extends WebView {
                     return true;
                 }
             });
-            */
 
             setWebViewClient(new WebViewClient() {
                 @Override
@@ -77,6 +82,20 @@ public class ClientWebView extends WebView {
                 @Override
                 public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                     Log.v(LOG_TAG, "onReceivedError " + errorCode + " " + description + "failingUrl: " + failingUrl);
+                        if(currentActivity!=null) {
+                            new AlertDialog.Builder(currentActivity).setTitle(getContext().getString(R.string.critical_error)).setMessage(
+                                    String.format(getContext().getString(R.string.no_url_error), failingUrl)
+                            ).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    System.exit(0);
+                                }
+                            }).setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+                        } else {
+                            System.exit(0);
+                        }
+
                     super.onReceivedError(view, errorCode, description, failingUrl);
                 }
             });
@@ -151,6 +170,10 @@ public class ClientWebView extends WebView {
 
     public void queueRunnable(Runnable r) {
         mHandler.post(r);
+    }
+
+    public void setCurrentActivity(Activity currentActivity) {
+        this.currentActivity = currentActivity;
     }
 
     public interface Callback {

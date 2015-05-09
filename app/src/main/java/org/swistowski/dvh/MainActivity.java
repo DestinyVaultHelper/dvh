@@ -106,7 +106,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         } catch (NullPointerException e) {
 
         }
-
+        getWebView().setCurrentActivity(this);
     }
 
     @Override
@@ -114,6 +114,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         super.onDestroy();
         if (mHelper != null) mHelper.dispose();
         mHelper = null;
+        getWebView().setCurrentActivity(null);
     }
 
     @Override
@@ -217,7 +218,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     private ClientWebView getWebView() {
         return ((Application) getApplication()).getWebView();
     }
-
 
     @Override
     public void onButtonPressed(int ButtonId) {
