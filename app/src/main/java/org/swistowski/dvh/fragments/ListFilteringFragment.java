@@ -31,28 +31,28 @@ public class ListFilteringFragment extends Fragment {
     private static final String LOG_TAG = "ListFilteringFragment";
 
     public interface FilterGetter {
-        LinkedHashMap<String, Boolean> getFilters();
+        LinkedHashMap<Integer, Boolean> getFilters();
     }
 
     ;
 
     static final FilterGetter bucketFilters = new FilterGetter() {
         @Override
-        public LinkedHashMap<String, Boolean> getFilters() {
+        public LinkedHashMap<Integer, Boolean> getFilters() {
             return Data.getInstance().getBucketFilters();
         }
     };
 
     static final FilterGetter damageFilters = new FilterGetter() {
         @Override
-        public LinkedHashMap<String, Boolean> getFilters() {
+        public LinkedHashMap<Integer, Boolean> getFilters() {
             return Data.getInstance().getDamageFilters();
         }
     };
 
     static final FilterGetter completedFilters = new FilterGetter() {
         @Override
-        public LinkedHashMap<String, Boolean> getFilters() {
+        public LinkedHashMap<Integer, Boolean> getFilters() {
             return Data.getInstance().getCompletedFilters();
         }
     };
@@ -60,7 +60,7 @@ public class ListFilteringFragment extends Fragment {
     private class FilterGroup {
         final private String mTitle;
         final private FilterGetter mFilterGetter;
-        private final ArrayList<Map.Entry<String, Boolean>> mEntries;
+        private final ArrayList<Map.Entry<Integer, Boolean>> mEntries;
 
 
         public FilterGroup(String title, FilterGetter filterGetter) {
@@ -80,7 +80,7 @@ public class ListFilteringFragment extends Fragment {
         }
 
 
-        public Map.Entry<String, Boolean> getChild(int childPosition) {
+        public Map.Entry<Integer, Boolean> getChild(int childPosition) {
             return mEntries.get(childPosition);
         }
     }
@@ -150,7 +150,7 @@ public class ListFilteringFragment extends Fragment {
 
             boolean need_check = false;
 
-            for (Map.Entry<String, Boolean> entry : mGroups.get(groupPosition).mEntries) {
+            for (Map.Entry<Integer, Boolean> entry : mGroups.get(groupPosition).mEntries) {
                 if (entry.getValue()) {
                     need_check = true;
                     break;
@@ -162,7 +162,7 @@ public class ListFilteringFragment extends Fragment {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (!isChecked) {
-                        for (Map.Entry<String, Boolean> entry : mGroups.get(groupPosition).mEntries) {
+                        for (Map.Entry<Integer, Boolean> entry : mGroups.get(groupPosition).mEntries) {
                             entry.setValue(false);
                         }
                         Data.getInstance().notifyItemsChanged();
@@ -178,19 +178,19 @@ public class ListFilteringFragment extends Fragment {
         @Override
         public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
             final GroupDetailView view;
-            final Map.Entry<String, Boolean> item = mGroups.get(groupPosition).getChild(childPosition);
+            final Map.Entry<Integer, Boolean> item = mGroups.get(groupPosition).getChild(childPosition);
 
             if (convertView == null) {
                 view = new GroupDetailView(getContext());
             } else {
                 view = (GroupDetailView) convertView;
             }
-            view.setText(item.getKey());
+            view.setText(getContext().getString(item.getKey()));
             view.onCheckedChanged(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Log.v(LOG_TAG, "Postion " + groupPosition + " child: " + childPosition + " " + isChecked);
-                    Map.Entry<String, Boolean> entry = mGroups.get(groupPosition).mEntries.get(childPosition);
+                    Map.Entry<Integer, Boolean> entry = mGroups.get(groupPosition).mEntries.get(childPosition);
                     if (entry.getValue() != isChecked) {
                         entry.setValue(isChecked);
                         /*

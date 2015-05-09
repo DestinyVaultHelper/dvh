@@ -7,6 +7,7 @@ import android.widget.BaseAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.swistowski.dvh.R;
 import org.swistowski.dvh.db.DB;
 import org.swistowski.dvh.models.Character;
 import org.swistowski.dvh.models.Item;
@@ -35,79 +36,120 @@ public class Data implements Serializable {
     private Set<String> bucketNames = new HashSet<>();
     private final Set<BaseAdapter> registeredAdapters = new HashSet<>();
 
-    private LinkedHashMap<String, Boolean> mBucketFilters;
-    private static final LinkedHashMap<String, Boolean> BUCKET_FILTERS;
+    private LinkedHashMap<Integer, Boolean> mBucketFilters;
+    private static final LinkedHashMap<Integer, Boolean> BUCKET_FILTERS;
 
     static {
         BUCKET_FILTERS = new LinkedHashMap<>();
-        BUCKET_FILTERS.put("Primary Weapons", Boolean.FALSE);
-        BUCKET_FILTERS.put("Special Weapons", Boolean.FALSE);
-        BUCKET_FILTERS.put("Heavy Weapons", Boolean.FALSE);
-        BUCKET_FILTERS.put("Helmet", Boolean.FALSE);
-        BUCKET_FILTERS.put("Chest Armor", Boolean.FALSE);
-        BUCKET_FILTERS.put("Gauntlets", Boolean.FALSE);
-        BUCKET_FILTERS.put("Leg Armor", Boolean.FALSE);
-        BUCKET_FILTERS.put("Class Armor", Boolean.FALSE);
-        BUCKET_FILTERS.put("Materials", Boolean.FALSE);
-        BUCKET_FILTERS.put("Consumables", Boolean.FALSE);
-        BUCKET_FILTERS.put("Emblems", Boolean.FALSE);
-        BUCKET_FILTERS.put("Ghost", Boolean.FALSE);
-        BUCKET_FILTERS.put("Shaders", Boolean.FALSE);
-        BUCKET_FILTERS.put("Ships", Boolean.FALSE);
-        BUCKET_FILTERS.put("Vehicle", Boolean.FALSE);
+
+        BUCKET_FILTERS.put(R.string.primary_weapons_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.special_weapons_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.heavy_weapons_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.helmets_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.cheast_armors_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.gauntlets_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.leg_armor_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.class_armor_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.materials_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.consumables_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.emblems_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.ghosts_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.shaders_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.ships_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.vehicle_bucket, Boolean.FALSE);
     }
 
-    private LinkedHashMap<String, Boolean> mDamageFilters;
-    private static final LinkedHashMap<String, Boolean> DAMAGE_FILTERS;
+    private static final LinkedHashMap<String, Integer> BUCKET_FILTERS_LABELS;
+
+    static {
+        BUCKET_FILTERS_LABELS = new LinkedHashMap<>();
+        BUCKET_FILTERS_LABELS.put("Primary Weapons", R.string.primary_weapons_bucket);
+        BUCKET_FILTERS_LABELS.put("Special Weapons", R.string.special_weapons_bucket);
+        BUCKET_FILTERS_LABELS.put("Heavy Weapons", R.string.heavy_weapons_bucket);
+        BUCKET_FILTERS_LABELS.put("Helmet", R.string.helmets_bucket);
+        BUCKET_FILTERS_LABELS.put("Chest Armor", R.string.cheast_armors_bucket);
+        BUCKET_FILTERS_LABELS.put("Gauntlets", R.string.gauntlets_bucket);
+        BUCKET_FILTERS_LABELS.put("Leg Armor", R.string.leg_armor_bucket);
+        BUCKET_FILTERS_LABELS.put("Class Armor", R.string.class_armor_bucket);
+        BUCKET_FILTERS_LABELS.put("Materials", R.string.materials_bucket);
+        BUCKET_FILTERS_LABELS.put("Consumables", R.string.consumables_bucket);
+        BUCKET_FILTERS_LABELS.put("Emblems", R.string.emblems_bucket);
+        BUCKET_FILTERS_LABELS.put("Ghost", R.string.ghosts_bucket);
+        BUCKET_FILTERS_LABELS.put("Shaders", R.string.shaders_bucket);
+        BUCKET_FILTERS_LABELS.put("Ships", R.string.ships_bucket);
+        BUCKET_FILTERS_LABELS.put("Vehicle", R.string.vehicle_bucket);
+    }
+
+    private LinkedHashMap<Integer, Boolean> mDamageFilters;
+    private static final LinkedHashMap<Integer, Boolean> DAMAGE_FILTERS;
 
     static {
         DAMAGE_FILTERS = new LinkedHashMap<>();
-        DAMAGE_FILTERS.put("Arc", Boolean.FALSE);
-        DAMAGE_FILTERS.put("Solar", Boolean.FALSE);
-        DAMAGE_FILTERS.put("Void", Boolean.FALSE);
+        DAMAGE_FILTERS.put(R.string.arc_damage, Boolean.FALSE);
+        DAMAGE_FILTERS.put(R.string.solar_damage, Boolean.FALSE);
+        DAMAGE_FILTERS.put(R.string.void_damage, Boolean.FALSE);
     }
+
+    private static final LinkedHashMap<String, Integer> DAMAGE_FILTERS_LABELS;
+
+    static {
+        DAMAGE_FILTERS_LABELS = new LinkedHashMap<>();
+        DAMAGE_FILTERS_LABELS.put("Arc", R.string.arc_damage);
+        DAMAGE_FILTERS_LABELS.put("Solar", R.string.solar_damage);
+        DAMAGE_FILTERS_LABELS.put("Void", R.string.void_damage);
+    }
+
     private HashMap<String, Set<Long>> mLabels = new HashMap<>();
 
-    private LinkedHashMap<String, Boolean> mCompletedFilters;
+    private LinkedHashMap<Integer, Boolean> mCompletedFilters;
 
+    /*
     private static final String IS_COMPLETED = "is completed";
     private static final String IS_NOT_COMPLETED = "is not completed";
+    */
 
-    private static final LinkedHashMap<String, Boolean> COMPLETED_FILTERS;
+    private static final LinkedHashMap<Integer, Boolean> COMPLETED_FILTERS;
 
     static {
         COMPLETED_FILTERS = new LinkedHashMap<>();
-        COMPLETED_FILTERS.put(IS_COMPLETED, Boolean.FALSE);
-        COMPLETED_FILTERS.put(IS_NOT_COMPLETED, Boolean.FALSE);
+        COMPLETED_FILTERS.put(R.string.is_completed, Boolean.FALSE);
+        COMPLETED_FILTERS.put(R.string.is_not_completed, Boolean.FALSE);
+    }
+
+    private static final LinkedHashMap<Integer, String> COMPLETED_FILTERS_LABELS;
+
+    static {
+        COMPLETED_FILTERS_LABELS = new LinkedHashMap<>();
+
     }
 
     private DB mDb;
     private Context context;
 
-    public LinkedHashMap<String, Boolean> getBucketFilters() {
+    public LinkedHashMap<Integer, Boolean> getBucketFilters() {
         if (mBucketFilters == null) {
             mBucketFilters = new LinkedHashMap<>();
-            for (Map.Entry<String, Boolean> entry : BUCKET_FILTERS.entrySet()) {
+            for (Map.Entry<Integer, Boolean> entry : BUCKET_FILTERS.entrySet()) {
                 mBucketFilters.put(entry.getKey(), entry.getValue());
             }
         }
         return mBucketFilters;
     }
 
-    public LinkedHashMap<String, Boolean> getDamageFilters() {
+    public LinkedHashMap<Integer, Boolean> getDamageFilters() {
         if (mDamageFilters == null) {
             mDamageFilters = new LinkedHashMap<>();
-            for (Map.Entry<String, Boolean> entry : DAMAGE_FILTERS.entrySet()) {
+            for (Map.Entry<Integer, Boolean> entry : DAMAGE_FILTERS.entrySet()) {
                 mDamageFilters.put(entry.getKey(), entry.getValue());
             }
         }
         return mDamageFilters;
     }
 
-    public LinkedHashMap<String, Boolean> getCompletedFilters() {
+    public LinkedHashMap<Integer, Boolean> getCompletedFilters() {
         if (mCompletedFilters == null) {
             mCompletedFilters = new LinkedHashMap<>();
-            for (Map.Entry<String, Boolean> entry : COMPLETED_FILTERS.entrySet()) {
+            for (Map.Entry<Integer, Boolean> entry : COMPLETED_FILTERS.entrySet()) {
                 mCompletedFilters.put(entry.getKey(), entry.getValue());
             }
         }
@@ -196,15 +238,15 @@ public class Data implements Serializable {
 
     private boolean filterByCompleted(Item item) {
         if (getCompletedFilters().containsValue(Boolean.TRUE)) {
-            return getCompletedFilters().get(IS_COMPLETED).booleanValue() && item.getIsCompleted() ||
-                    (getCompletedFilters().get(IS_NOT_COMPLETED).booleanValue() && !item.getIsCompleted());
+            return getCompletedFilters().get(R.string.is_completed).booleanValue() && item.getIsCompleted() ||
+                    (getCompletedFilters().get(R.string.is_not_completed).booleanValue() && !item.getIsCompleted());
         }
         return true;
     }
 
     private boolean filterByDamage(Item item) {
         if (getDamageFilters().containsValue(Boolean.TRUE)) {
-            return getDamageFilters().containsKey(item.getDamageTypeName()) && getDamageFilters().get(item.getDamageTypeName());
+            return getDamageFilters().containsKey(DAMAGE_FILTERS_LABELS.get(item.getDamageTypeName())) && getDamageFilters().get(DAMAGE_FILTERS_LABELS.get(item.getDamageTypeName()));
         } else {
             return true;
         }
@@ -212,7 +254,7 @@ public class Data implements Serializable {
 
     private boolean filterByBucket(Item item) {
         if (getBucketFilters().values().contains(Boolean.TRUE)) {
-            return getBucketFilters().get(item.getBucketName());
+            return getBucketFilters().get(BUCKET_FILTERS_LABELS.get(item.getBucketName()));
         } else {
             return true;
         }
@@ -300,8 +342,8 @@ public class Data implements Serializable {
         registeredAdapters.remove(adapter);
     }
 
-    public void setBucketFilters(Set<String> bucketFilters) {
-        for (String key : mBucketFilters.keySet()) {
+    public void setBucketFilters(Set<Integer> bucketFilters) {
+        for (Integer key : mBucketFilters.keySet()) {
             if (bucketFilters.contains(key)) {
                 mBucketFilters.put(key, Boolean.TRUE);
             } else {
@@ -362,6 +404,7 @@ public class Data implements Serializable {
 
     public void setContext(Context context) {
         this.context = context;
+
     }
 
         /*

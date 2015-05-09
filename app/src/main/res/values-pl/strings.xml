@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="app_name">Vault Helper dla Destiny</string>
+    <string name="title_activity_login">Zaloguj</string>
+    <string name="refresh">Odświerz</string>
+    <string name="login">Login</string>
+    <string name="relogin">Przeloguj</string>
+    <string name="reload">Przeładuj</string>
+  <string name="login_information"><![CDATA[
+<p>Nie przejmój się, Vault Helper dla Destiny nie przechowuje żadnych informacji twoich kontach</p>
+<p>Kiedy klikniesz przycisk zaloguj, wewnętrzna przeglądarka internetowe zostanie przekierowana do strony logowania na konto psn lub microsoft. Cały proces odbędzie się tak samo jakbyś łączył się ze stroną bungie za pomocą zwykłej przeglądarki internetowej. Po zakończeniu autoryzacji przeglądarka zostanie ukryta, a ty będziesz mógł używać wygodniejszego interface do wszystkich operacji na twoich przedmiotach.
+]]></string>
+    <string name="tracker_category_user_action">UserAction</string>
+    <string name="tracker_action_click">Click</string>
+    <string name="tracker_category_database">Database</string>
+    <string name="tracker_action_loaded">Załadowany</string>
+    <string name="login_message">Wybierz swoje konto</string>
+    <string name="ok">@android:string/ok</string>
+    <string name="cancel">Rezygnuj</string>
+    <string name="bucket_filter_title">Widoczne pojemniki</string>
+    <string name="app_name_short">Pomocnik</string>
+    <string name="search">Szukaj</string>
+    <string name="search_hint">Szukaj przedmiotów</string>
+    <!--TODO: Remove or change this placeholder text-->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="toggle_filters">filtry</string>
+    <string name="bucket_filter_label">Pojemnik</string>
+    <string name="damage_type_filter_label">Uszkodzania</string>
+    <string name="ad_fullscreen">ca-app-pub-4225324557097072/4297656148</string>
+    <string name="ad_small">ca-app-pub-4225324557097072/5774389341</string>
+    <string name="ad_text">Czy wiesz, że programiści robią zakupy, płacą czynsz i zbierają na wakacje? Jeśli jesteś tego świadomy, możesz po prostu kliknąć na reklamę poniżej aby wesprzeć jednego developera. Możesz kupić także wewnętrzny produkt... aby wspomóc mnie bardziej.</string>
+    <string name="buy_pro">Wesprzyj programistę</string>
+    <string name="completed_filter_label">Zakończone</string>
+    <string name="critical_error">Błąd krytyczny</string>
+    <string name="no_url_error">Nie mogę połączyć się ze stroną %s</string>
+    <string name="loading_vault_inventory_message">Wczytuje skarbiec</string>
+    <string name="loading_user_message">Wczytuje użytkownika</string>
+    <string name="searching_your_account_message">Odszukuje twoje konto</string>
+    <string name="downloading_message">Pobieram informację o twoim koncie</string>
+    <string name="loading_your_items_message">Wczytuje twoje przedmioty</string>
+    <string name="loading_inventory_message">Wczytuje przedmioty dla %s</string>
+</resources>

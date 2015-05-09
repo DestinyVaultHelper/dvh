@@ -1,9 +1,11 @@
 package org.swistowski.dvh.atapters;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import org.swistowski.dvh.R;
 import org.swistowski.dvh.fragments.AdFragment;
 import org.swistowski.dvh.fragments.ItemListFragment;
 import org.swistowski.dvh.fragments.SettingsFragment;
@@ -16,7 +18,7 @@ import java.util.List;
 public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
     private final List<Page> mPages = new ArrayList<Page>();
 
-    public ItemsFragmentPagerAdapter(FragmentManager fm) {
+    public ItemsFragmentPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         if (Data.getInstance().getCharacters() != null) {
             for (final Character character : Data.getInstance().getCharacters()) {
@@ -40,7 +42,7 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
         }
 
         if (Data.getInstance().getItems().size() > 0) {
-            mPages.add(new Page("Vault", new FragmentProvider() {
+            mPages.add(new Page(context.getString(R.string.vault), new FragmentProvider() {
 
                 @Override
                 public Fragment getFragment() {
@@ -58,14 +60,14 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
             */
         }
         if(mPages.size()==0) {
-            mPages.add(new Page("Setting", new FragmentProvider() {
+            mPages.add(new Page(context.getString(R.string.settings), new FragmentProvider() {
                 @Override
                 public Fragment getFragment() {
                     return SettingsFragment.newInstance();
                 }
             }));
         }
-        mPages.add(new Page("Ad", new FragmentProvider() {
+        mPages.add(new Page(context.getString(R.string.ad), new FragmentProvider() {
             @Override
             public Fragment getFragment() {
                 return AdFragment.newInstance();

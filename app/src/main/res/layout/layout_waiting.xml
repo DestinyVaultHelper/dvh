@@ -30,7 +30,7 @@
         android:paddingLeft="48dp"
         android:paddingRight="48dp"
         android:autoText="false"
-        android:text="Connecting to bungie"
+        android:text="@string/connecting_to_bungie"
         android:layout_marginTop="48dp" />
 
 </LinearLayout>

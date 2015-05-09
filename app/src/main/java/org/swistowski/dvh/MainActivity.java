@@ -189,7 +189,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 }
             });
             */
-            mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager());
+            mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager(), this);
             mPageTabs = (PagerTabStrip) findViewById(R.id.pager_title_strip);
             mViewPager.setOnPageChangeListener(this);
 
@@ -494,10 +494,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
-            /*case R.id.action_filter:
-                new FilterByBucketDialogFragment().show(getSupportFragmentManager(), "FilterByBucketDialogFragment");
-                return true;
-                */
             case R.id.toggle_filters:
                 Log.v(LOG_TAG, "item checked: " + item.isChecked());
                 item.setChecked(!item.isChecked());
