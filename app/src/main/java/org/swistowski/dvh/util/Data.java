@@ -46,7 +46,7 @@ public class Data implements Serializable {
         BUCKET_FILTERS.put(R.string.special_weapons_bucket, Boolean.FALSE);
         BUCKET_FILTERS.put(R.string.heavy_weapons_bucket, Boolean.FALSE);
         BUCKET_FILTERS.put(R.string.helmets_bucket, Boolean.FALSE);
-        BUCKET_FILTERS.put(R.string.cheast_armors_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.chest_armors_bucket, Boolean.FALSE);
         BUCKET_FILTERS.put(R.string.gauntlets_bucket, Boolean.FALSE);
         BUCKET_FILTERS.put(R.string.leg_armor_bucket, Boolean.FALSE);
         BUCKET_FILTERS.put(R.string.class_armor_bucket, Boolean.FALSE);
@@ -67,7 +67,7 @@ public class Data implements Serializable {
         BUCKET_FILTERS_LABELS.put("Special Weapons", R.string.special_weapons_bucket);
         BUCKET_FILTERS_LABELS.put("Heavy Weapons", R.string.heavy_weapons_bucket);
         BUCKET_FILTERS_LABELS.put("Helmet", R.string.helmets_bucket);
-        BUCKET_FILTERS_LABELS.put("Chest Armor", R.string.cheast_armors_bucket);
+        BUCKET_FILTERS_LABELS.put("Chest Armor", R.string.chest_armors_bucket);
         BUCKET_FILTERS_LABELS.put("Gauntlets", R.string.gauntlets_bucket);
         BUCKET_FILTERS_LABELS.put("Leg Armor", R.string.leg_armor_bucket);
         BUCKET_FILTERS_LABELS.put("Class Armor", R.string.class_armor_bucket);

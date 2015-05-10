@@ -4,7 +4,6 @@
     <string name="refresh">Refresh</string>
     <string name="login">Login</string>
     <string name="relogin">Relogin</string>
-    <string name="reload">Reload</string>
     <string name="login_information"><![CDATA[
 <p>Don\'t be afraid, Vault Helper for Destiny does not store any of your <b>psn</b> or <b>xbox</b> account information.</p>
 <p>When you click login button, your internal web browser will be pointed to psn or microsoft account authorization site in the same way as you were on bungie page. When you provide correct authorization data, internet browser will be hidden but all operation on you will be done using that browser.
@@ -14,14 +13,14 @@
     <string name="tracker_category_database">Database</string>
     <string name="tracker_action_loaded">Loaded</string>
     <string name="login_message">Please select your console</string>
-    <string name="ok" >@android:string/ok</string>
-    <string name="cancel" >Cancel</string>
+    <string name="ok">@android:string/ok</string>
+    <string name="cancel">Cancel</string>
     <string name="bucket_filter_title">Visible buckets</string>
     <string name="app_name_short">Vault Helper</string>
     <string name="search">Search</string>
     <string name="search_hint">Search items</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="toggle_filters">filters</string>
     <string name="bucket_filter_label">Bucket</string>
@@ -30,7 +29,7 @@
     <string name="ad_fullscreen">ca-app-pub-4225324557097072/4297656148</string>
     <string name="ad_small">ca-app-pub-4225324557097072/5774389341</string>
     <string name="ad_text">Do you know that programmers have to buy groceries, pay rent, go for vacations? If you aware of it you can just click the ad below to support one developer, or you can buy some in app products to support me even more.</string>
-    <string name="buy_pro" >Support the developer</string>
+    <string name="buy_pro">Support the developer</string>
     <string name="completed_filter_label">Completed</string>
     <string name="critical_error">Critical error</string>
     <string name="no_url_error">Cannot connect to %s site</string>
@@ -48,7 +47,7 @@
     <string name="special_weapons_bucket">Special Weapons</string>
     <string name="heavy_weapons_bucket">Heavy Weapons</string>
     <string name="helmets_bucket">Helmets</string>
-    <string name="cheast_armors_bucket">Cheast Armors</string>
+    <string name="chest_armors_bucket">Chest Armors</string>
     <string name="gauntlets_bucket">Gauntlets</string>
     <string name="leg_armor_bucket">Leg Armor</string>
     <string name="class_armor_bucket">Class Armor</string>

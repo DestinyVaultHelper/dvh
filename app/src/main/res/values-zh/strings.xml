@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="app_name">Destiny 仓库管理员</string>
+    <string name="title_activity_login">登录</string>
+    <string name="refresh">刷新</string>
+    <string name="login">登录</string>
+    <string name="relogin">重新登录</string>
+    <string name="reload">载入</string>
+  <string name="login_information"><![CDATA[
+<p>请不要担心，此应用不能获取您的 <b>PSN</b> 或 <b>XBL</b> 用户名或密码。</p>
+<p>当您轻按按钮之后，网页浏览器将打开相关网站并要求您输入帐户信息。随后将使用此帐户登录 Bungie.net 网站。您的一切操作都是在 Bungie.net 上进行的，应用程序不会储存任何隐私数据。
+]]></string>
+    <string name="tracker_category_user_action">用户操作</string>
+    <string name="tracker_action_click">轻按</string>
+    <string name="tracker_category_database">数据库</string>
+    <string name="tracker_action_loaded">已加载</string>
+    <string name="login_message">请选择您的游戏平台：</string>
+    <string name="cancel">取消</string>
+    <string name="bucket_filter_title">可见物品</string>
+    <string name="app_name_short">仓库管理</string>
+    <string name="search">搜索</string>
+    <string name="search_hint">搜索物品</string>
+    <!--TODO: Remove or change this placeholder text-->
+    <string name="toggle_filters">过滤器</string>
+    <string name="bucket_filter_label">物品分类</string>
+    <string name="damage_type_filter_label">伤害属性</string>
+    <string name="ad_text">你知道吗？辛苦的程序员也需要收入来维持日常生活。如果您热爱这款免费应用程序，请轻按下方的广告以支持我的工作。您也可以解囊相助，通过下方的按钮捐助我一杯啤酒钱。</string>
+    <string name="buy_pro">购买捐助项目</string>
+    <string name="completed_filter_label">升级状态</string>
+    <string name="critical_error">严重错误</string>
+    <string name="no_url_error">无法连接到 %s 的服务器</string>
+    <string name="loading_vault_inventory_message">正在加载仓库内物品</string>
+    <string name="loading_user_message">正在加载用户信息</string>
+    <string name="searching_your_account_message">正在搜索相关玩家</string>
+    <string name="downloading_message">正在下载附加数据</string>
+    <string name="loading_your_items_message">正在加载玩家物品栏</string>
+    <string name="loading_inventory_message">正在为 %s 加载数据</string>
+    <string name="vault">仓库</string>
+    <string name="settings">设置</string>
+    <string name="ad">广告</string>
+    <string name="connecting_to_bungie">正在连接到 Bungie</string>
+    <string name="primary_weapons_bucket">主手武器</string>
+    <string name="special_weapons_bucket">特殊武器</string>
+    <string name="heavy_weapons_bucket">重型武器</string>
+    <string name="helmets_bucket">头盔</string>
+    <string name="chest_armors_bucket">胸甲</string>
+    <string name="gauntlets_bucket">手套</string>
+    <string name="leg_armor_bucket">护腿</string>
+    <string name="class_armor_bucket">职业物品</string>
+    <string name="materials_bucket">材料</string>
+    <string name="consumables_bucket">消耗品</string>
+    <string name="emblems_bucket">铭牌</string>
+    <string name="ghosts_bucket">Ghost 皮肤</string>
+    <string name="shaders_bucket">护甲染料</string>
+    <string name="ships_bucket">飞船</string>
+    <string name="vehicle_bucket">载具</string>
+    <string name="arc_damage">雷电 (Arc)</string>
+    <string name="solar_damage">火焰 (Solar)</string>
+    <string name="void_damage">虚空 (Void)</string>
+    <string name="is_completed">已完成升级</string>
+    <string name="is_not_completed">未完成升级</string>
+</resources>
