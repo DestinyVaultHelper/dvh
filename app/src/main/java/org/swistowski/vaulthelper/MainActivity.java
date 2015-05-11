@@ -90,7 +90,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         initUI();
 
         // TODO: hide it
-        String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAie9nvNN+AqBa7aheimLk+9mx588PCR4R0BQXmGeKYeMf9kVwJmfh1Y7TqIOyk8ujNgiNDJDcD8l+3L3LuJZgGGDCvGG0BK9GJvAsctJ077HitX31AEmkD8e+xgWzjtJsNw4xosdetLaJ0cQgMHWrj5z+Ox5UN3jPuIDLu5dnOd8cMqotWkkLoh9ETm3QX8l/oag9gWDt3vWhZ5+apco8VI72kXHq4VL+WuKUpBuJfJu3lwkKyL/0Cz1FJQZ36Dl2OMx59UVRbc8aHX+Cp+i+IKjmKDwtguP9CpGjpXVvcfeg2e+G5WUdrppib5MS/0Q+Z47NMcpvjV1jk2qSnQhDlQIDAQAB";
+        String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj+meLAIC0Ys0xHGcrT9m5cRf1kfbR06t5BhzyGElZQm+NRIrIiYpt96I/PwnE4qD7SyXFJIv69FRd2eFMe6M4q5q+ltisrHsj+2QNfa9Nnu45DmBbwEUMP9keo2eA/w3ek1KaCNyjRXzqp4lXSbfXCuijbcp4y6T7PSvX8dOmtUFk0+/6rTxpJU5gIGN+iPA17pAqdVdF3JU0a4+LuSsH/gpQ9CUt2u8q9vk8yk+P4t6yum6z9GBCpRBoMoOOCPcHmb+8uTSO+s+LuCSwiup4x3C7qmW1mvC8FyqNZJCi3rSVMU92SuAd/AxO/+Nth4NrZHDAzw4sR/bTmlazsujAQIDAQAB";
         //
         mHelper = new IabHelper(this, base64EncodedPublicKey);
         try {
