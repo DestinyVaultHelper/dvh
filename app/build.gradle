@@ -8,11 +8,11 @@ android {
     compileSdkVersion 22
     buildToolsVersion "21.1.2"
     defaultConfig {
-        applicationId 'org.swistowski.dvh'
+        applicationId 'org.swistowski.vaulthelper'
         minSdkVersion 10
         targetSdkVersion 22
-        versionCode 15
-        versionName "1.3.2.s"
+        versionCode 1
+        versionName "1.0"
         signingConfig signingConfigs.release
     }
     buildTypes {

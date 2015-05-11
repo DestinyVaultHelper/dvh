@@ -6,7 +6,7 @@
     <string name="relogin">Relogin</string>
     <string name="login_information"><![CDATA[
 <p>Don\'t be afraid, Vault Helper for Destiny does not store any of your <b>psn</b> or <b>xbox</b> account information.</p>
-<p>When you click login button, your internal web browser will be pointed to psn or microsoft account authorization site in the same way as you were on bungie page. When you provide correct authorization data, internet browser will be hidden but all operation on you will be done using that browser.
+<p>When you click login button, your internal web browser will be pointed to psn or microsoft account authorization site. When you provide correct authorization data, internet browser will be hidden but all operation on you will be done using that browser.
 ]]></string>
     <string name="tracker_category_user_action">UserAction</string>
     <string name="tracker_action_click">Click</string>
@@ -42,7 +42,7 @@
     <string name="vault">Vault</string>
     <string name="settings">Settings</string>
     <string name="ad">Ad</string>
-    <string name="connecting_to_bungie">Connecting to bungie</string>
+    <string name="connecting_to_bungie">Connecting to http://www.bungie.com/ site</string>
     <string name="primary_weapons_bucket">Primary Weapons</string>
     <string name="special_weapons_bucket">Special Weapons</string>
     <string name="heavy_weapons_bucket">Heavy Weapons</string>
@@ -63,4 +63,5 @@
     <string name="void_damage">Void</string>
     <string name="is_completed">Is completed</string>
     <string name="is_not_completed">Is not completed</string>
+    <string name="reload">Reload</string>
 </resources>

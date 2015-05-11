@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.com
+
+[dvh.stringsxml]
+source_file = app/src/main/res/values/strings.xml
+source_lang = en
+trans.pl = app/src/main/res/values-pl/strings.xml
+trans.zh = app/src/main/res/values-zh/strings.xml

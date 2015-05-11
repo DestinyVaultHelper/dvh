@@ -5,11 +5,11 @@
 
 
 
-        <org.swistowski.dvh.views.DisableableViewPager xmlns:tools="http://schemas.android.com/tools"
+        <org.swistowski.vaulthelper.views.DisableableViewPager xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="org.swistowski.dvh.MainActivity"
+            tools:context="org.swistowski.vaulthelper.MainActivity"
            >
 
             <android.support.v4.view.PagerTabStrip
@@ -22,7 +22,7 @@
                 style="@style/Base.TextAppearance.AppCompat.Large.Inverse" />
 
 
-        </org.swistowski.dvh.views.DisableableViewPager>
+        </org.swistowski.vaulthelper.views.DisableableViewPager>
 
 
     <RelativeLayout

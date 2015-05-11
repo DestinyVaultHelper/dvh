@@ -9,12 +9,12 @@
         <fragment
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="org.swistowski.dvh.fragments.ListFilteringFragment"
+            android:name="org.swistowski.vaulthelper.fragments.ListFilteringFragment"
             android:id="@+id/fragment"
             android:layout_gravity="center|bottom|left|top"
             tools:layout="@layout/fragment_list_filtering"
             android:layout_weight="1"
-            class="org.swistowski.dvh.fragments.ListFilteringFragment" />
+            class="org.swistowski.vaulthelper.fragments.ListFilteringFragment" />
 
         <include
             layout="@layout/items_tabs_inner"
