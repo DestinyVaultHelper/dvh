@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="app_name">Destiny 倉庫管理者</string>
+  <string name="title_activity_login">ログイン</string>
+  <string name="refresh">リフレッシュ</string>
+  <string name="login">ログイン</string>
+  <string name="relogin">再ログイン</string>
+  <string name="login_information"><![CDATA[
+<p>アプリケーションは、<b>PSN</b> や <b>XBL</b> のログイン情報を保存しません。</p>
+<p>ログイン情報をお使いの Bungie.net キャラクターにアクセスするために必要とされます。
+]]></string>
+  <string name="tracker_category_user_action">使用者の動作</string>
+  <string name="tracker_action_click">クリック</string>
+  <string name="tracker_category_database">データベース</string>
+  <string name="tracker_action_loaded">ロードが終了します</string>
+  <string name="login_message">ログインするネットワークを選択してください</string>
+  <string name="ok">@android:string/ok</string>
+  <string name="cancel">取消</string>
+  <string name="bucket_filter_title">可視カテゴリ</string>
+  <string name="app_name_short">倉庫管理者</string>
+  <string name="search">検索</string>
+  <string name="search_hint">項目を検索</string>
+  <!--TODO: Remove or change this placeholder text-->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="toggle_filters">フィルタ</string>
+  <string name="bucket_filter_label">カテゴリ</string>
+  <string name="damage_type_filter_label">ダメージ種類</string>
+  <string name="ad_fullscreen">ca-app-pub-4225324557097072/4297656148</string>
+  <string name="ad_small">ca-app-pub-4225324557097072/5774389341</string>
+  <string name="ad_text">開発者をサポートするために、広告をクリックしてください。または寄付するには、以下のボタンを使用します。</string>
+  <string name="buy_pro">サポート開発者</string>
+  <string name="completed_filter_label">強化ステータス</string>
+  <string name="critical_error">致命的なエラー</string>
+  <string name="no_url_error">%s に接続できません</string>
+  <string name="loading_vault_inventory_message">ローディング倉庫の在庫</string>
+  <string name="loading_user_message">ローディングプレーヤー</string>
+  <string name="searching_your_account_message">アカウントを検索します</string>
+  <string name="downloading_message">ダウンロード情報</string>
+  <string name="loading_your_items_message">ローディング項目</string>
+  <string name="loading_inventory_message">%sの在庫をロードします</string>
+  <string name="vault">保管庫</string>
+  <string name="settings">設定</string>
+  <string name="ad">広告</string>
+  <string name="connecting_to_bungie">Bungie.net への接続を確立します</string>
+  <string name="primary_weapons_bucket">プライマリウェポン</string>
+  <string name="special_weapons_bucket">特殊ウェポン</string>
+  <string name="heavy_weapons_bucket">ヘビーウェポン</string>
+  <string name="helmets_bucket">ヘルメット</string>
+  <string name="chest_armors_bucket">ボディアーマー</string>
+  <string name="gauntlets_bucket">ガントレット</string>
+  <string name="leg_armor_bucket">レッグアーマー</string>
+  <string name="class_armor_bucket">クラスアイテム</string>
+  <string name="materials_bucket">材料</string>
+  <string name="consumables_bucket">消費アイテム</string>
+  <string name="emblems_bucket">エンブレム</string>
+  <string name="ghosts_bucket">ゴーストの外殻</string>
+  <string name="shaders_bucket">アーマーシェーダー</string>
+  <string name="ships_bucket">船</string>
+  <string name="vehicle_bucket">ビークル</string>
+  <string name="arc_damage">アーク・ダメージ</string>
+  <string name="solar_damage">ソーラーダメージ</string>
+  <string name="void_damage">ボイド・ダメージ</string>
+  <string name="is_completed">強化完了</string>
+  <string name="is_not_completed">未完成の強化</string>
+  <string name="reload">Reload</string>
+</resources>
