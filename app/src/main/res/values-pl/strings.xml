@@ -41,7 +41,7 @@
   <string name="vault">Skarbiec</string>
   <string name="settings">Ustawienia</string>
   <string name="ad">Reklama</string>
-  <string name="connecting_to_bungie">Łącze z bungie</string>
+  <string name="connecting_to_bungie">Łącze z http://www.bungie.com/ </string>
   <string name="primary_weapons_bucket">Bronie główne</string>
   <string name="special_weapons_bucket">Bronie specjalne</string>
   <string name="heavy_weapons_bucket">Ciężkie bronie</string>
@@ -62,4 +62,5 @@
   <string name="void_damage">Pustka (Void)</string>
   <string name="is_completed">Są całkowicie uaktualnione</string>
   <string name="is_not_completed">Do uaktualnienia</string>
+  <string name="reload">Reload</string>
 </resources>
