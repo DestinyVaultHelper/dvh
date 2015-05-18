@@ -3,6 +3,7 @@ package org.swistowski.vaulthelper.views;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -21,6 +22,8 @@ public class ItemView extends FrameLayout {
     private final String FAVORITES_LABEL = "Favorites";
     private ImageStorage.DownloadImageTask mDownloadImageTask;
     private Runnable requireReloadDataListener;
+    private boolean isGrayed;
+    private Item mItem;
 
     public ItemView(Context context) {
         super(context);
@@ -43,6 +46,7 @@ public class ItemView extends FrameLayout {
 
     public void setItem(Item item){
         String details = "";
+        mItem = item;
         /*
         if(item.getBucketName()!=null){
             details += item.getBucketName()+ " ";
@@ -122,5 +126,20 @@ public class ItemView extends FrameLayout {
 
     public void setRequireReloadDataListener(Runnable requireReloadDataListener) {
         this.requireReloadDataListener = requireReloadDataListener;
+    }
+
+    public void setIsGrayed(boolean isGrayed) {
+        this.isGrayed = isGrayed;
+        Log.v(LOG_TAG, mItem.toString()+" "+(isGrayed?"yes":"no"));
+
+        if(isGrayed) {
+            findViewById(R.id.item_view_root).setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+        } else {
+            findViewById(R.id.item_view_root).setBackgroundColor(getResources().getColor(android.R.color.background_light));
+        }
+    }
+
+    public boolean getIsGrayed(){
+        return this.isGrayed;
     }
 }

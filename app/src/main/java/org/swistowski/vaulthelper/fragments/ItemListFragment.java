@@ -13,19 +13,17 @@ import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.atapters.ItemAdapter;
 import org.swistowski.vaulthelper.models.Item;
 import org.swistowski.vaulthelper.util.Data;
+import org.swistowski.vaulthelper.views.ItemView;
 
 public class ItemListFragment extends Fragment implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     public static final int DIRECTION_TO = 1;
-    public static final int DIRECTION_FROM = 2;
     private static final String ARG_DIRECTION = "direction";
     private static final String ARG_SUBJECT = "subject";
     private ItemAdapter mAdapter;
     private OnItemIterationListener mListener;
-    private int mDirection;
 
     private String mSubject;
-    private SwipeRefreshLayout mSwipeLayout;
     private boolean mEnabled=true;
 
 
@@ -43,11 +41,10 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mDirection = getArguments().getInt(ARG_DIRECTION);
             mSubject = getArguments().getString(ARG_SUBJECT);
         }
 
-        mAdapter = new ItemAdapter(getActivity(), mDirection, mSubject);
+        mAdapter = new ItemAdapter(getActivity(), mSubject);
         Data.getInstance().registerItemAdapter(mAdapter);
     }
 
@@ -68,10 +65,6 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
         listView.setOnItemClickListener(this);
         listView.setOnItemLongClickListener(this);
 
-        /*
-        mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
-        mSwipeLayout.setOnRefreshListener(this);
-        */
         return rootView;
     }
 
@@ -99,7 +92,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
             return false;
         }
         if (null != mListener) {
-            return mListener.onItemLongClicked(this, mAdapter.getItem(position), mSubject, mDirection);
+            return mListener.onItemLongClicked(this, mAdapter.getItem(position), mSubject);
         }
         return false;
     }
@@ -110,7 +103,11 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
             return;
         }
         if (null != mListener) {
-            mListener.onItemClicked(this, mAdapter.getItem(position), mSubject, mDirection);
+            if(!((ItemView)view).getIsGrayed()) {
+                mListener.onItemClicked(this, mAdapter.getItem(position), mSubject);
+            } else {
+                mListener.onItemLongClicked(this, mAdapter.getItem(position), mSubject);
+            }
         }
     }
 
@@ -120,15 +117,14 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
         mListener.refreshRequest(new Runnable() {
             @Override
             public void run() {
-                mSwipeLayout.setRefreshing(false);
                 mEnabled = true;
             }
         });
     }
 
     public interface OnItemIterationListener {
-        public void onItemClicked(ItemListFragment fragment, Item item, String subject, int direction);
-        public boolean onItemLongClicked(ItemListFragment fragment, Item item, String subject, int direction);
+        public void onItemClicked(ItemListFragment fragment, Item item, String subject);
+        public boolean onItemLongClicked(ItemListFragment fragment, Item item, String subject);
         void refreshRequest(Runnable finished);
     }
 }

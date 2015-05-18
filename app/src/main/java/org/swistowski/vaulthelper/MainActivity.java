@@ -5,7 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -145,8 +150,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     void initUIInner() {
-        Log.v(LOG_TAG, "got view: " + mFilterMenuItem);
-
         setFiltersVisible(filtersVisible);
         if (!Data.getInstance().getIsLoading()) {
             findViewById(R.id.waiting_screen).setVisibility(View.GONE);
@@ -238,7 +241,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         }
     }
 
-    private void goLogin(){
+    private void goLogin() {
         Log.v(LOG_TAG, "go login");
         getWebView().callAny("document.getElementsByClassName(\"btn_login psn\")[0].href+\"#\"+document.getElementsByClassName(\"btn_login live\")[0].href").then(new ClientWebView.Callback() {
             @Override
@@ -289,7 +292,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 } catch (JSONException e) {
                     errorMesssage = message;
                 }
-                Log.v(LOG_TAG, "Error status "+errorStatus);
+                Log.v(LOG_TAG, "Error status " + errorStatus);
                 if (errorStatus.equals("WebAuthRequired")) {
                     goLogin();
                 } else {
@@ -342,8 +345,9 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     @Override
-    public void onItemClicked(ItemListFragment fragment, final Item item, String subject, int direction) {
-        ItemMover.move(getWebView(), item, direction, subject).then(
+    public void onItemClicked(ItemListFragment fragment, final Item item, String subject) {
+
+        ItemMover.move(getWebView(), item, subject).then(
                 new ItemMover.Result() {
                     @Override
                     public void onSuccess() {
@@ -376,12 +380,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     @Override
-    public boolean onItemLongClicked(ItemListFragment fragment, Item item, String subject, int direction) {
-        Intent intent = new Intent(this, ItemDetailActivity.class);
-        Bundle b = new Bundle();
-        b.putSerializable(ItemDetailActivity.ITEM, item);
-        intent.putExtras(b);
-        startActivity(intent);
+    public boolean onItemLongClicked(ItemListFragment fragment, Item item, String subject) {
+        ItemDetailActivity.showItemItent(this, item);
         return true;
     }
 
@@ -416,7 +416,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
-        Log.v(LOG_TAG, "foo " + Build.VERSION.SDK_INT);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_actions, menu);
 
@@ -439,6 +438,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             }
         });
         */
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -460,6 +460,10 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         if (mFilterMenuItem != null) {
             //mFilterMenuItem.setChecked(false);
             mFilterMenuItem.setChecked(filtersVisible);
+        }
+        MenuItem mShowAllMenuItem = menu.findItem(R.id.show_all);
+        if (mShowAllMenuItem != null) {
+            mShowAllMenuItem.setChecked(Data.getInstance().showAll());
         }
         return true;
     }
@@ -502,6 +506,11 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             case R.id.action_refresh:
                 actionRefresh();
                 return true;
+            case R.id.show_all:
+                Log.v(LOG_TAG, "item checked: " + item.isChecked());
+                item.setChecked(!item.isChecked());
+                Data.getInstance().setShowAll(item.isChecked());
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -520,11 +529,66 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     }
 
+    class BackgroundDrawable extends Drawable {
+        private Paint mPaint;
+        private final String mEmblemHash;
+        private final String mBackgroupdHash;
+
+        public BackgroundDrawable(String emblemPath, String backgroundPath) {
+            mPaint = new Paint();
+
+            mEmblemHash = emblemPath.replace('/', '-');
+            mBackgroupdHash = backgroundPath.replace('/', '-');
+            if (ImageStorage.getInstance().getImage(mEmblemHash) == null) {
+                ImageStorage.getInstance().fetchImage(mEmblemHash, emblemPath, new ImageStorage.UrlFetchWaiter() {
+                    @Override
+                    public void onImageFetched(Bitmap bitmap) {
+                        invalidateSelf();
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            int width = canvas.getWidth();
+            int height = canvas.getHeight();
+            Bitmap emblem = ImageStorage.getInstance().getImage(mEmblemHash);
+
+            Bitmap background = ImageStorage.getInstance().getImage(mBackgroupdHash);
+            if (background != null) {
+                canvas.drawBitmap(background, new Rect(0,0,background.getWidth(), background.getHeight()), new Rect(0,0, width, height), mPaint);
+            }
+            if (emblem != null) {
+                int margin = (height-emblem.getHeight())/2;
+                canvas.drawBitmap(emblem, margin, margin, mPaint);
+            }
+        }
+
+        @Override
+        public void setAlpha(int i) {
+
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter colorFilter) {
+
+        }
+
+        @Override
+        public int getOpacity() {
+            return 0;
+        }
+    }
+
+
     @Override
     public void onPageSelected(int position) {
         if (Data.getInstance().getCharacters() != null && position < Data.getInstance().getCharacters().size()) {
             Character c = Data.getInstance().getCharacters().get(position);
             String itemHash = c.getBackgroundPath().replace('/', '-');
+            mPageTabs.setBackgroundDrawable(new BackgroundDrawable(c.getEmblemPath(), c.getBackgroundPath()));
+            /*
             if (ImageStorage.getInstance().getImage(itemHash) != null) {
                 Log.v(LOG_TAG, "Set backround from cache");
 
@@ -535,10 +599,12 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                     @Override
                     public void onImageFetched(Bitmap bitmap) {
                         mPageTabs.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
+
                         //invalidate();
                     }
                 });
             }
+            */
         } else {
             mPageTabs.setBackgroundDrawable(new BitmapDrawable(Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8)));
             mPageTabs.setBackgroundColor(getResources().getColor(R.color.background_material_dark));

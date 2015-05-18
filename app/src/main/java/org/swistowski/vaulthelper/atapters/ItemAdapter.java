@@ -15,29 +15,27 @@ import java.util.List;
 
 public class ItemAdapter extends BaseAdapter {
     private static final String LOG_TAG = "ItemArrayAdapter";
-    private final int mDirection;
     private final String mSubject;
     private final Context mContext;
     private List<Item> mItems;
 
-    public ItemAdapter(Context context, int direction, String subject) {
+    public ItemAdapter(Context context, String subject) {
         mContext = context;
-        mDirection = direction;
         mSubject = subject;
         reloadItems();
     }
 
     @Override
     public String toString() {
-        return "item adapter: " + mDirection + " " + mSubject;
+        return "item adapter: " + mSubject;
     }
 
     private void reloadItems() {
-        Log.v(LOG_TAG, "Loading items " + mDirection + " " + mSubject);
-        if (mDirection == ItemListFragment.DIRECTION_FROM) {
-            mItems = Data.getInstance().getItemsFiltered(mSubject);
-        } else {
+        Log.v(LOG_TAG, "Loading items " + mSubject);
+        if(mSubject!=null) {
             mItems = Data.getInstance().notForItems(mSubject);
+        } else {
+            mItems = Data.getInstance().getAllItems();
         }
     }
 
@@ -71,13 +69,14 @@ public class ItemAdapter extends BaseAdapter {
             itemView = (ItemView) convertView;
         }
         itemView.setItem(item);
-        itemView.setRequireReloadDataListener(new Runnable(){
+        itemView.setRequireReloadDataListener(new Runnable() {
             @Override
             public void run() {
                 notifyDataSetChanged();
             }
         });
-        //itemView.setDetails(item.getDetails());
+        Log.v(LOG_TAG, Data.getInstance().getItemOwner(item) + " " + mSubject);
+        itemView.setIsGrayed(Data.getInstance().getItemOwner(item).equals(mSubject));
 
         return itemView;
     }

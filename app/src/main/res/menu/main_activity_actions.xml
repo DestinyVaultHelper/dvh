@@ -11,6 +11,15 @@
         dvh:showAsAction="ifRoom"
         android:title="@string/toggle_filters"
         />
+    <item
+        android:id="@+id/show_all"
+        android:checkable="true"
+        android:icon="@drawable/abc_ic_menu_selectall_mtrl_alpha"
+        dvh:showAsAction="ifRoom"
+        android:title="@string/show_all" />
+
     <item android:id="@+id/action_refresh"
         android:title="@string/refresh" />
+
+
 </menu>

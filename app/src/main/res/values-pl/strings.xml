@@ -63,4 +63,10 @@
   <string name="is_completed">Są całkowicie uaktualnione</string>
   <string name="is_not_completed">Do uaktualnienia</string>
   <string name="reload">Reload</string>
+  <string name="equip">Wyposaż</string>
+  <string name="show_all">Wszystko</string>
+  <string name="do_equip_finished">Item %s is equipped</string>
+  <string name="do_equip_in_progress">Equipping item</string>
+  <string name="move_to">Move to %s</string>
+  <string name="rate_me">Rate Me</string>
 </resources>

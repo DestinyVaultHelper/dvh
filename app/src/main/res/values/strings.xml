@@ -22,7 +22,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="toggle_filters">filters</string>
+    <string name="toggle_filters">Filters</string>
     <string name="bucket_filter_label">Bucket</string>
     <string name="damage_type_filter_label">Damage</string>
 
@@ -64,4 +64,10 @@
     <string name="is_completed">Is completed</string>
     <string name="is_not_completed">Is not completed</string>
     <string name="reload">Reload</string>
+    <string name="show_all">Show all</string>
+    <string name="equip">Equip</string>
+    <string name="rate_me">Rate Me</string>
+    <string name="do_equip_in_progress">Equipping item</string>
+    <string name="do_equip_finished">Item %s is equipped</string>
+    <string name="move_to">Move to %s</string>
 </resources>

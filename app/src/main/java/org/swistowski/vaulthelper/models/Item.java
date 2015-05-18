@@ -1,13 +1,27 @@
 package org.swistowski.vaulthelper.models;
 
+import android.app.Activity;
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.swistowski.vaulthelper.Application;
+import org.swistowski.vaulthelper.R;
+import org.swistowski.vaulthelper.fragments.ItemListFragment;
 import org.swistowski.vaulthelper.util.Data;
+import org.swistowski.vaulthelper.views.ClientWebView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Item implements Serializable, Comparable<Item> {
@@ -21,7 +35,7 @@ public class Item implements Serializable, Comparable<Item> {
     private final int mItemLevel;
     private final int mStackSize;
     private final int mQualityLevel;
-    private final boolean mCanEquip;
+    private boolean mCanEquip;
     private boolean mIsEquipment;
     private final boolean mIsGridComplete;
 
@@ -44,6 +58,7 @@ public class Item implements Serializable, Comparable<Item> {
     //private final String mBucketDescription;
 
     private Item(long itemHash, int bindStatus, boolean isEquipped, int itemLevel, int stackSize, int qualityLevel, boolean canEquip, boolean isEquipment, boolean isGridComplete, String itemInstanceId,
+
                  String itemName, String itemDescription, String icon, String secondaryIcon, String tierTypeName, String itemTypeName, long bucketTypeHash, int itemType, int itemSubType, int classType,
                  int primaryStatValue,
                  int damageType,
@@ -295,6 +310,8 @@ public class Item implements Serializable, Comparable<Item> {
         mIsEquipped = isEquipped;
     }
 
+
+
     public int getPrimaryStatValue() {
         return mPrimaryStatValue;
     }
@@ -336,5 +353,183 @@ public class Item implements Serializable, Comparable<Item> {
 
     public boolean getCanEquip() {
         return mCanEquip;
+    }
+    public void setCanEquip(boolean canEquip){
+        mCanEquip = canEquip;
+    }
+
+    public List<Action> posibleActions() {
+
+        List<Action> actions = new LinkedList<>();
+        if(mCanEquip){
+            actions.add(new Action(R.string.equip, new Action.ActionRunnable(){
+                @Override
+                public void run(Activity activity) {
+                    doEquip(activity);
+                }
+            }));
+        }
+        Data data = Data.getInstance();
+        for (final String owner : data.getItems().keySet()) {
+            if(!owner.equals(data.getItemOwner(this))){
+                String ownerLabel = owner;
+                if(data.getCharacter(owner)!=null){
+                    ownerLabel = data.getCharacter(owner).toString();
+                }
+                Item item = null;
+                for (Item tmp_item : data.getAllItems()) {
+                    if(Item.this.getItemHash()==tmp_item.getItemHash()){
+                        item = tmp_item;
+                        break;
+                    }
+                }
+                final Item finalItem = item;
+                actions.add(new Action(R.string.move_to, new Action.ActionRunnable() {
+                    @Override
+                    public void run(final Activity activity) {
+                        ItemMover.move(((Application) activity.getApplication()).getWebView(), finalItem, owner).then(
+                                new ItemMover.Result() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Log.v(LOG_TAG, "Move success " + Item.this);
+                                        activity.finish();
+                                    }
+
+                                    @Override
+                                    public void onError(String e) {
+                                        // onMoveError(e);
+                                    }
+                                }
+                        );
+                    }
+                }, ownerLabel));
+            }
+        }
+
+        return actions;
+    }
+
+    private void doEquip(final Activity activity) {
+        Toast.makeText(activity, activity.getString(R.string.do_equip_in_progress), Toast.LENGTH_SHORT).show();
+        // activity.finish();
+
+        final ClientWebView webView = ((Application) activity.getApplication()).getWebView();
+        final String owner = Data.getInstance().getItemOwner(this);
+        Log.v(LOG_TAG, "owner: "+owner);
+        ItemMover.equip(webView, owner, this, null).then(
+                new ItemMover.Result() {
+                    @Override
+                    public void onSuccess() {
+                        Log.v(LOG_TAG, "doGetCharacterInventory");
+                        Membership membership = Data.getInstance().getMembership();
+                        Log.v(LOG_TAG, "owner: "+owner);
+                        org.swistowski.vaulthelper.models.Character character = Data.getInstance().getCharacter(owner);
+                        webView.call("destinyService.GetCharacterInventory", "" + membership.getType(), "" + membership.getId(), character.getId(), "true").then(new ClientWebView.Callback() {
+                            @Override
+                            public void onAccept(String result) {
+                                Log.v("Got character info", result);
+                                List<Item> items = Data.getInstance().getItems().get(owner);
+                                Log.v(LOG_TAG, Data.getInstance().getItems().keySet().toString());
+                                HashMap<Long, Item> hash2item = new HashMap<Long, Item>();
+                                for (Item ii : items) {
+                                    hash2item.put(ii.getInstanceId(), ii);
+                                }
+
+                                try {
+                                    JSONObject loadedItems = new JSONObject(result);
+                                    //Log.v(LOG_TAG, loadedItems.optJSONObject("data").optJSONObject("buckets").toString());
+                                    for (Iterator<String> iter = loadedItems.optJSONObject("data").optJSONObject("buckets").keys(); iter.hasNext(); ) {
+                                        JSONArray bucketData = loadedItems.optJSONObject("data").optJSONObject("buckets").optJSONArray(iter.next());
+                                        for (int i = 0; i < bucketData.length(); i++) {
+                                            JSONArray bucketItems = bucketData.optJSONObject(i).optJSONArray("items");
+                                            for (int j = 0; j < bucketItems.length(); j++) {
+                                                JSONObject bi = bucketData.optJSONObject(j);
+                                                if (bi != null) {
+                                                    Log.v(LOG_TAG, "bi"+bi.toString());
+                                                    Item currentItem = hash2item.get(bi.optLong("itemHash"));
+                                                    if (currentItem != null) {
+                                                        if(currentItem.getCanEquip()!=bi.optBoolean("canEquip")) {
+                                                            Log.v(LOG_TAG, "ci" + currentItem.toString());
+                                                        }
+                                                        if(currentItem.getIsEquipped()!=bi.opt("isEquipped")){
+                                                            Log.v(LOG_TAG, "is equipped update" + currentItem.toString());
+                                                        }
+                                                        currentItem.setIsEquipped(bi.optBoolean("isEquipped"));
+                                                        currentItem.setCanEquip(bi.optBoolean("canEquip"));
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Data.getInstance().notifyItemsChanged();
+                                        Toast.makeText(activity, String.format(activity.getString(R.string.do_equip_finished), Item.this.toString() ), Toast.LENGTH_SHORT).show();
+                                        activity.finish();
+                                    }
+                                });
+
+                            }
+
+                            @Override
+                            public void onError(String result) {
+                                Log.e("doGetCharacterInventory", "unsucessfull " + result);
+                                //onMoveError(result);
+                            }
+                        });
+
+
+                    }
+
+                    @Override
+                    public void onError(String e) {
+                        //onMoveError(e);
+                    }
+                }
+
+        );
+
+    }
+
+    public Object getIsEquipped() {
+        return mIsEquipped;
+    }
+
+    public static class Action {
+        private final int mLabel;
+        private final ActionRunnable mAction;
+        private String[] mArgs;
+
+        public Action(int label, ActionRunnable action) {
+            mLabel = label;
+            mAction = action;
+        }
+
+        public Action(int label, ActionRunnable action, String... args) {
+            this(label, action);
+            mArgs = args;
+        }
+
+        public void doAction(Activity activity){
+            mAction.run(activity);
+        }
+
+        public int getLabel() {
+            return mLabel;
+        }
+
+        public String[] getArgs() {
+            return mArgs;
+        }
+
+        public interface ActionRunnable {
+            void run(Activity activity);
+        }
     }
 }

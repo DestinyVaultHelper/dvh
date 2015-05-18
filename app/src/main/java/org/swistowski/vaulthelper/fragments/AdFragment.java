@@ -1,11 +1,15 @@
 package org.swistowski.vaulthelper.fragments;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -46,8 +50,36 @@ public class AdFragment extends Fragment {
                 mListener.onRequestSupportDev();
             }
         });
-
+        view.findViewById(R.id.rate_me_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleRateMeClick(view);
+            }
+        });
         return view;
+    }
+
+    private boolean startActivityHelper(Intent aIntent) {
+        try
+        {
+            startActivity(aIntent);
+            return true;
+        }
+        catch (ActivityNotFoundException e)
+        {
+            return false;
+        }
+    }
+
+    private void handleRateMeClick(View view) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("market://details?id=org.swistowski.vaulthelper"));
+            if (!startActivityHelper(intent)) {
+                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=org.swistowski.vaulthelper"));
+                if (!startActivityHelper(intent)) {
+                    Toast.makeText(getActivity(), "Could not open Android market, please install the market app.", Toast.LENGTH_SHORT).show();
+                }
+            }
     }
 
     @Override

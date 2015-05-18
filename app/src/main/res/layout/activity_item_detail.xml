@@ -34,14 +34,21 @@
             android:paddingBottom="8dp"
             android:maxHeight="80dp" />
 
-        <ListView
+        <!--ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/detail_list_view"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/do_equip" /-->
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/item_actions_list"
             android:layout_below="@+id/detail_icon"
-            android:layout_alignParentBottom="true" />
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.swistowski.vaulthelper.Application;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.fragments.ItemListFragment;
@@ -16,9 +17,8 @@ import java.util.List;
 public class ItemMover {
     private static final String LOG_TAG = "ItemMover";
 
-    private static Promise equip(final ClientWebView webView, final String owner, final Item item, final Promise p) {
+    public static Promise equip(final ClientWebView webView, final String owner, final Item item, final Promise p) {
         final Promise p_inner = new Promise();
-
 
         JSONObject obj = new JSONObject();
         try {
@@ -29,10 +29,18 @@ public class ItemMover {
             Log.e(LOG_TAG, "exception", e);
             e.printStackTrace();
         }
+        Log.v(LOG_TAG, "equip "+obj.toString());
 
-        webView.call("destinyService.EquipItem", obj).then(new ClientWebView.Callback(){
+        webView.call("destinyService.EquipItem", obj).then(new ClientWebView.Callback() {
             @Override
             public void onAccept(String result) {
+                for (Item tested_item : Data.getInstance().getAllItems()) {
+                    if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Data.getInstance().getItemOwner(tested_item).equals(owner) && tested_item.getCanEquip()) {
+                        tested_item.setIsEquipped(false);
+                        item.setIsEquipped(true);
+                        break;
+                    }
+                }
                 p_inner.onSuccess();
             }
 
@@ -59,14 +67,6 @@ public class ItemMover {
             }
             Collections.sort(proposed);
 
-
-            Runnable go = new Runnable(){
-
-                @Override
-                public void run() {
-
-                }
-            };
 
             if(proposed.size()>0){
                 final Item to_equip = proposed.get(proposed.size()-1);
@@ -114,7 +114,8 @@ public class ItemMover {
                     @Override
                     public void run() {
                         item.moveTo(Data.VAULT_ID);
-                        p.onSuccess();
+                        if(p!=null)
+                            p.onSuccess();
                         p_inner.onSuccess();
                     }
                 });
@@ -122,7 +123,15 @@ public class ItemMover {
 
             @Override
             public void onError(String result) {
-                p.onError(result);
+                try {
+                    if(new JSONObject(result).optInt("errorCode")==1656){
+                        // do reload database
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(p!=null)
+                    p.onError(result);
                 p_inner.onError(result);
             }
         });
@@ -155,18 +164,18 @@ public class ItemMover {
     }
 
 
-    public static Promise move(final ClientWebView webView, final Item item, final int direction, final String subject) {
+    public static Promise move(final ClientWebView webView, final Item item, final String subject) {
         final Promise p = new Promise();
 
         final String owner = Data.getInstance().getItemOwner(item);
-        if (direction == ItemListFragment.DIRECTION_TO && (owner.equals(Data.VAULT_ID) || subject.equals(Data.VAULT_ID))) {
+        if ((owner.equals(Data.VAULT_ID) || subject.equals(Data.VAULT_ID))) {
             if (subject.equals(Data.VAULT_ID)) {
                 moveToVault(webView, owner, item, p);
             } else {
                 moveFromVault(webView, subject, item, p);
             }
-        } else if (direction == ItemListFragment.DIRECTION_TO) {
-            moveToVault(webView, owner, item, p).then(new Result() {
+        } else  {
+            moveToVault(webView, owner, item, null).then(new Result() {
                 @Override
                 public void onSuccess() {
                     webView.postDelayed(new Runnable() {
@@ -183,14 +192,6 @@ public class ItemMover {
                 }
             });
 
-        } else {
-
-            webView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    p.onError("Move this item is not implemented yet " + direction + " " + subject + "->" + " " + owner);
-                }
-            }, 1);
         }
 
 

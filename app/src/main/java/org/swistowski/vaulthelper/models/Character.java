@@ -68,4 +68,7 @@ public class Character implements Serializable {
     public String getBackgroundPath() {
         return mBackgroundPath;
     }
+    public String getEmblemPath(){
+        return mEmblemPath;
+    }
 }

@@ -63,4 +63,10 @@
   <string name="is_completed">已完成升级</string>
   <string name="is_not_completed">未完成升级</string>
   <string name="reload">Reload</string>
+  <string name="equip">Equip</string>
+  <string name="show_all">Show all</string>
+  <string name="do_equip_finished">Item %s is equipped</string>
+  <string name="do_equip_in_progress">Equipping item</string>
+  <string name="move_to">Move to %s</string>
+  <string name="rate_me">Rate Me</string>
 </resources>

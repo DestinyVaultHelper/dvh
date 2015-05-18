@@ -125,6 +125,7 @@ public class Data implements Serializable {
 
     private DB mDb;
     private Context context;
+    private boolean mShowAll = true;
 
     public LinkedHashMap<Integer, Boolean> getBucketFilters() {
         if (mBucketFilters == null) {
@@ -270,7 +271,7 @@ public class Data implements Serializable {
     public List<Item> notForItems(String key) {
         List<Item> allItems = new ArrayList<Item>();
         for (Map.Entry<String, List<Item>> entry : items.entrySet()) {
-            if (!entry.getKey().equals(key)) {
+            if (showAll() || !entry.getKey().equals(key)) {
                 for (Item i : entry.getValue()) {
                     if (i.isVisible() && isVisible(i))
                         allItems.add(i);
@@ -279,6 +280,18 @@ public class Data implements Serializable {
         }
         Collections.sort(allItems);
         return allItems;
+    }
+
+    /**
+     * @return true if show all filter is enabled
+     */
+    public boolean showAll() {
+        return mShowAll;
+    }
+
+    public void setShowAll(boolean showall){
+        mShowAll = showall;
+        notifyItemsChanged();
     }
 
 
@@ -298,7 +311,15 @@ public class Data implements Serializable {
     }
 
     public String getItemOwner(Item item) {
-        return itemsOwners.get(item);
+        String owner = itemsOwners.get(item);
+        if(owner == null){
+            for (Map.Entry<Item, String> entry : itemsOwners.entrySet()) {
+                if(entry.getKey().getItemHash()==item.getItemHash()){
+                    return entry.getValue();
+                }
+            }
+        }
+        return owner;
     }
 
     public String getItemOwnerName(Item item) {
@@ -322,7 +343,6 @@ public class Data implements Serializable {
         items.get(owner).remove(item);
         items.get(target).add(item);
         itemsOwners.put(item, target);
-
         notifyItemsChanged();
     }
 
@@ -342,16 +362,6 @@ public class Data implements Serializable {
         registeredAdapters.remove(adapter);
     }
 
-    public void setBucketFilters(Set<Integer> bucketFilters) {
-        for (Integer key : mBucketFilters.keySet()) {
-            if (bucketFilters.contains(key)) {
-                mBucketFilters.put(key, Boolean.TRUE);
-            } else {
-                mBucketFilters.put(key, Boolean.FALSE);
-            }
-        }
-        notifyItemsChanged();
-    }
 
     public void setFilterText(String filterText) {
         this.mFilterText = filterText;
@@ -372,6 +382,10 @@ public class Data implements Serializable {
         }
         return mDb;
     }
+    /*
+    public List<String> getAllLabels(){
+        mLabels.keySet();
+    };*/
 
     private Set<Long> getLabelItems(String label){
         Set<Long> labels = mLabels.get(label);
@@ -407,50 +421,13 @@ public class Data implements Serializable {
 
     }
 
-        /*
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static void load(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            FileInputStream fis = null;
-            try {
-                fis = context.openFileInput("database");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return;
-            }
-            try {
-                try (ObjectInputStream is = new ObjectInputStream(fis)) {
-                    try {
-                        ourInstance = (Database) is.readObject();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    is.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                fis.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+    public Character getCharacter(String owner) {
+        for (Character character : getCharacters()) {
+            if(character.getId().equals(owner)){
+                return character;
             }
         }
-
+        return null;
     }
-
-        @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static void save(Context context) throws IOException {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try (FileOutputStream fos = context.openFileOutput("database", Context.MODE_PRIVATE)) {
-                try (ObjectOutputStream os = new ObjectOutputStream(fos)) {
-                    os.writeObject(ourInstance);
-                    os.close();
-                }
-                fos.close();
-            }
-        }
-    }
-    */
-
 }
