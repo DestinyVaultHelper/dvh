@@ -5,10 +5,7 @@
   <string name="refresh">Odświerz</string>
   <string name="login">Login</string>
   <string name="relogin">Przeloguj</string>
-  <string name="login_information"><![CDATA[
-<p>Nie przejmój się, Vault Helper dla Destiny nie przechowuje żadnych informacji twoich kontach</p>
-<p>Kiedy klikniesz przycisk zaloguj, wewnętrzna przeglądarka internetowe zostanie przekierowana do strony logowania na konto psn lub microsoft. Cały proces odbędzie się tak samo jakbyś łączył się ze stroną bungie za pomocą zwykłej przeglądarki internetowej. Po zakończeniu autoryzacji przeglądarka zostanie ukryta, a ty będziesz mógł używać wygodniejszego interface do wszystkich operacji na twoich przedmiotach.
-]]></string>
+  <string name="login_information"><![CDATA[ <p>Nie przejmój się, Vault Helper dla Destiny nie przechowuje żadnych informacji twoich kontach</p> <p>Kiedy klikniesz przycisk zaloguj, wewnętrzna przeglądarka internetowe zostanie przekierowana do strony logowania na konto psn lub microsoft. Cały proces odbędzie się tak samo jakbyś łączył się ze stroną bungie za pomocą zwykłej przeglądarki internetowej. Po zakończeniu autoryzacji przeglądarka zostanie ukryta, a ty będziesz mógł używać wygodniejszego interface do wszystkich operacji na twoich przedmiotach. ]]></string>
   <string name="tracker_category_user_action">UserAction</string>
   <string name="tracker_action_click">Click</string>
   <string name="tracker_category_database">Database</string>
@@ -41,7 +38,7 @@
   <string name="vault">Skarbiec</string>
   <string name="settings">Ustawienia</string>
   <string name="ad">Reklama</string>
-  <string name="connecting_to_bungie">Łącze z http://www.bungie.com/ </string>
+  <string name="connecting_to_bungie">Łączę z http://www.bungie.com/</string>
   <string name="primary_weapons_bucket">Bronie główne</string>
   <string name="special_weapons_bucket">Bronie specjalne</string>
   <string name="heavy_weapons_bucket">Ciężkie bronie</string>
@@ -62,11 +59,11 @@
   <string name="void_damage">Pustka (Void)</string>
   <string name="is_completed">Są całkowicie uaktualnione</string>
   <string name="is_not_completed">Do uaktualnienia</string>
-  <string name="reload">Reload</string>
-  <string name="equip">Wyposaż</string>
-  <string name="show_all">Wszystko</string>
-  <string name="do_equip_finished">Item %s is equipped</string>
-  <string name="do_equip_in_progress">Equipping item</string>
-  <string name="move_to">Move to %s</string>
-  <string name="rate_me">Rate Me</string>
+  <string name="reload">Przeładuj</string>
+  <string name="show_all">Wyświetl wszystko</string>
+  <string name="equip">Załóż</string>
+  <string name="rate_me">Oceń mnie</string>
+  <string name="do_equip_in_progress">Zakładam przedmiot</string>
+  <string name="do_equip_finished">Przedmiot %s jest założony</string>
+  <string name="move_to">Przenieś do %s</string>
 </resources>
