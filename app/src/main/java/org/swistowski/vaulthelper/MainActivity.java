@@ -5,13 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.internal.view.SupportMenuItem;
@@ -26,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -35,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.swistowski.vaulthelper.activities.ItemDetailActivity;
 import org.swistowski.vaulthelper.activities.LoginActivity;
+import org.swistowski.vaulthelper.activities.SendLogActivity;
 import org.swistowski.vaulthelper.activities.WebViewActivity;
 import org.swistowski.vaulthelper.atapters.ItemsFragmentPagerAdapter;
 import org.swistowski.vaulthelper.fragments.AdFragment;
@@ -46,14 +42,14 @@ import org.swistowski.vaulthelper.models.ItemMover;
 import org.swistowski.vaulthelper.purchase.IabHelper;
 import org.swistowski.vaulthelper.purchase.IabResult;
 import org.swistowski.vaulthelper.purchase.Purchase;
+import org.swistowski.vaulthelper.util.BackgroundDrawable;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.util.DataLoader;
-import org.swistowski.vaulthelper.util.ImageStorage;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.views.DisableableViewPager;
 
 
-public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener, AdFragment.OnAdIterationListener {
+public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener, AdFragment.OnAdIterationListener, ClientWebView.ErrorHandler {
     private static final String LOG_TAG = "MainActivity";
     private static final String SKU_PREMIUM = "dvh_1";
 
@@ -112,6 +108,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
         }
         getWebView().setCurrentActivity(this);
+        getWebView().setErrorHandler(this);
     }
 
     @Override
@@ -120,6 +117,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         if (mHelper != null) mHelper.dispose();
         mHelper = null;
         getWebView().setCurrentActivity(null);
+        getWebView().setErrorHandler(null);
     }
 
     @Override
@@ -154,44 +152,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         if (!Data.getInstance().getIsLoading()) {
             findViewById(R.id.waiting_screen).setVisibility(View.GONE);
             mViewPager = (DisableableViewPager) findViewById(R.id.pager);
-            /*
-            mViewPager.setPageTransformer(true, new ViewPager.PageTransformer() {
-                private static final float MIN_SCALE = 0.75f;
 
-                public void transformPage(View view, float position) {
-                    int pageWidth = view.getWidth();
-
-                    if (position < -1) { // [-Infinity,-1)
-                        // This page is way off-screen to the left.
-                        view.setAlpha(0);
-
-                    } else if (position <= 0) { // [-1,0]
-                        // Use the default slide transition when moving to the left page
-                        view.setAlpha(1);
-                        view.setTranslationX(0);
-                        view.setScaleX(1);
-                        view.setScaleY(1);
-
-                    } else if (position <= 1) { // (0,1]
-                        // Fade the page out.
-                        view.setAlpha(1 - position);
-
-                        // Counteract the default slide transition
-                        view.setTranslationX(pageWidth * -position);
-
-                        // Scale the page down (between MIN_SCALE and 1)
-                        float scaleFactor = MIN_SCALE
-                                + (1 - MIN_SCALE) * (1 - Math.abs(position));
-                        view.setScaleX(scaleFactor);
-                        view.setScaleY(scaleFactor);
-
-                    } else { // (1,+Infinity]
-                        // This page is way off-screen to the right.
-                        view.setAlpha(0);
-                    }
-                }
-            });
-            */
             mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager(), this);
             mPageTabs = (PagerTabStrip) findViewById(R.id.pager_title_strip);
             mViewPager.setOnPageChangeListener(this);
@@ -213,7 +174,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             onPageSelected(0);
         } else {
             findViewById(R.id.waiting_screen).setVisibility(View.VISIBLE);
-            //setContentView(R.layout.layout_waiting);
         }
     }
 
@@ -345,9 +305,9 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     @Override
-    public void onItemClicked(ItemListFragment fragment, final Item item, String subject) {
-
-        ItemMover.move(getWebView(), item, subject).then(
+    public void onItemClicked(ItemListFragment fragment, final Item item, final String subject) {
+        int stackSize = item.getStackSize();
+        ItemMover.move(getWebView(), item, subject, stackSize).then(
                 new ItemMover.Result() {
                     @Override
                     public void onSuccess() {
@@ -423,21 +383,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
-        /*
-        searchItem.setSupportOnActionExpandListener(new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                // do work
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                // do work
-                return true;
-            }
-        });
-        */
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -511,6 +456,12 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 item.setChecked(!item.isChecked());
                 Data.getInstance().setShowAll(item.isChecked());
                 return true;
+            case R.id.send_logs:
+                collectAndSendLog();
+                return true;
+            case R.id.show_login_page:
+                goLogin();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -529,82 +480,13 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     }
 
-    class BackgroundDrawable extends Drawable {
-        private Paint mPaint;
-        private final String mEmblemHash;
-        private final String mBackgroupdHash;
-
-        public BackgroundDrawable(String emblemPath, String backgroundPath) {
-            mPaint = new Paint();
-
-            mEmblemHash = emblemPath.replace('/', '-');
-            mBackgroupdHash = backgroundPath.replace('/', '-');
-            if (ImageStorage.getInstance().getImage(mEmblemHash) == null) {
-                ImageStorage.getInstance().fetchImage(mEmblemHash, emblemPath, new ImageStorage.UrlFetchWaiter() {
-                    @Override
-                    public void onImageFetched(Bitmap bitmap) {
-                        invalidateSelf();
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void draw(Canvas canvas) {
-            int width = canvas.getWidth();
-            int height = canvas.getHeight();
-            Bitmap emblem = ImageStorage.getInstance().getImage(mEmblemHash);
-
-            Bitmap background = ImageStorage.getInstance().getImage(mBackgroupdHash);
-            if (background != null) {
-                canvas.drawBitmap(background, new Rect(0,0,background.getWidth(), background.getHeight()), new Rect(0,0, width, height), mPaint);
-            }
-            if (emblem != null) {
-                int margin = (height-emblem.getHeight())/2;
-                canvas.drawBitmap(emblem, margin, margin, mPaint);
-            }
-        }
-
-        @Override
-        public void setAlpha(int i) {
-
-        }
-
-        @Override
-        public void setColorFilter(ColorFilter colorFilter) {
-
-        }
-
-        @Override
-        public int getOpacity() {
-            return 0;
-        }
-    }
-
 
     @Override
     public void onPageSelected(int position) {
         if (Data.getInstance().getCharacters() != null && position < Data.getInstance().getCharacters().size()) {
             Character c = Data.getInstance().getCharacters().get(position);
-            String itemHash = c.getBackgroundPath().replace('/', '-');
             mPageTabs.setBackgroundDrawable(new BackgroundDrawable(c.getEmblemPath(), c.getBackgroundPath()));
-            /*
-            if (ImageStorage.getInstance().getImage(itemHash) != null) {
-                Log.v(LOG_TAG, "Set backround from cache");
 
-                mPageTabs.setBackgroundDrawable(new BitmapDrawable(getResources(), ImageStorage.getInstance().getImage(itemHash)));
-            } else {
-                Log.v(LOG_TAG, "Set backround from url");
-                ImageStorage.getInstance().fetchImage(itemHash, c.getBackgroundPath(), new ImageStorage.UrlFetchWaiter() {
-                    @Override
-                    public void onImageFetched(Bitmap bitmap) {
-                        mPageTabs.setBackgroundDrawable(new BitmapDrawable(getResources(), bitmap));
-
-                        //invalidate();
-                    }
-                });
-            }
-            */
         } else {
             mPageTabs.setBackgroundDrawable(new BitmapDrawable(Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8)));
             mPageTabs.setBackgroundColor(getResources().getColor(R.color.background_material_dark));
@@ -630,5 +512,20 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             }
         };
         mHelper.launchPurchaseFlow(this, SKU_PREMIUM, 10001, mPurchaseFinishedListener);
+    }
+
+    void collectAndSendLog() {
+        final Intent intent = new Intent(this, SendLogActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean processError(ConsoleMessage cm) {
+        /*
+        if (cm.message().contains("has no method 'showSignInAlert'")) {
+            goLogin();
+        }
+        */
+        return false;
     }
 }

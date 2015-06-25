@@ -16,6 +16,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.json.JSONObject;
+import org.swistowski.vaulthelper.MainActivity;
 import org.swistowski.vaulthelper.R;
 
 import java.util.HashMap;
@@ -24,6 +25,14 @@ import java.util.Map;
 import static java.lang.System.identityHashCode;
 
 public class ClientWebView extends WebView {
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
+    public interface ErrorHandler {
+        boolean processError(ConsoleMessage cm);
+    }
+    private ErrorHandler errorHandler;
     private final String LOG_TAG = "ClientWebView";
     private boolean mPrepared = false;
     private boolean mInitialized = false;
@@ -59,6 +68,9 @@ public class ClientWebView extends WebView {
             mPrepared = true;
             setWebChromeClient(new WebChromeClient() {
                 public boolean onConsoleMessage(ConsoleMessage cm) {
+                    if(errorHandler!=null){
+                        errorHandler.processError(cm);
+                    }
                     Log.d(LOG_TAG + " js", cm.message() + " -- From line "
                             + cm.lineNumber() + " of "
                             + cm.sourceId());
@@ -156,12 +168,20 @@ public class ClientWebView extends WebView {
             @Override
             public void run() {
                 Log.v(LOG_TAG, "queue executed javascript: " + javascript);
+                loadUrl("javascript:" + "window.clientHandler.log(\"\"+ " + javascript + ")");
+                /*
                 if (android.os.Build.VERSION.SDK_INT < 19) {
                     Log.v(LOG_TAG, "debug js: " + "javascript:" + "window.clientHandler.log(\"\"+ " + javascript + ")");
                     loadUrl("javascript:" + "window.clientHandler.log(\"\"+ " + javascript + ")");
                 } else {
-                    evaluateJavascript("javascript:" + javascript, null);
+                    try {
+                        evaluateJavascript("javascript:" + javascript, null);
+                    } catch (Exception e){
+                        loadUrl("javascript:" + "window.clientHandler.log(\"\"+ " + javascript + ")");
+                    }
+
                 }
+                */
             }
         });
     }

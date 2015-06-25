@@ -1,11 +1,9 @@
 package org.swistowski.vaulthelper.models;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -13,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.swistowski.vaulthelper.Application;
 import org.swistowski.vaulthelper.R;
-import org.swistowski.vaulthelper.fragments.ItemListFragment;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.views.ClientWebView;
 
@@ -33,7 +30,7 @@ public class Item implements Serializable, Comparable<Item> {
     private final int mPrimaryStatValue;
     private boolean mIsEquipped;
     private final int mItemLevel;
-    private final int mStackSize;
+    private int mStackSize;
     private final int mQualityLevel;
     private boolean mCanEquip;
     private boolean mIsEquipment;
@@ -106,7 +103,7 @@ public class Item implements Serializable, Comparable<Item> {
                 JSONObject item = bucket_items.optJSONObject(k);
                 JSONObject definition = items_definitions.optJSONObject(item.optString("itemHash"));
                 JSONObject bucket;
-                if(definition!=null) {
+                if (definition != null) {
                     if (bucket_definitions != null)
                         bucket = bucket_definitions.optJSONObject(definition.optString("bucketTypeHash"));
                     else
@@ -145,7 +142,7 @@ public class Item implements Serializable, Comparable<Item> {
     private static Item createItem(String key, JSONObject item, JSONObject definition, JSONObject bucket) {
         JSONObject primaryStat = item.optJSONObject("primaryStat");
         int primaryStatValue = 0;
-        if(primaryStat!=null){
+        if (primaryStat != null) {
             primaryStatValue = primaryStat.optInt("value", 0);
         }
         return new Item(
@@ -174,8 +171,8 @@ public class Item implements Serializable, Comparable<Item> {
 
                 primaryStatValue,
                 item.optInt("damageType", 0),
-                bucket!=null?bucket.optString("bucketName"):"",
-                bucket!=null?bucket.optString("bucketDescription"):"",
+                bucket != null ? bucket.optString("bucketName") : "",
+                bucket != null ? bucket.optString("bucketDescription") : "",
                 item.toString(),
                 definition.toString()
         );
@@ -189,8 +186,8 @@ public class Item implements Serializable, Comparable<Item> {
         return fromJson(result, false);
     }
 
-    private static final int typeToImportance(int type){
-        switch (type){
+    private static final int typeToImportance(int type) {
+        switch (type) {
             case 3: // weapon
                 return 100;
             case 2: // armor
@@ -209,11 +206,12 @@ public class Item implements Serializable, Comparable<Item> {
         Data data = Data.getInstance();
         boolean is_fav = data.hasLabel(getInstanceId(), "Favorites");
         boolean other_is_fav = data.hasLabel(another.getInstanceId(), "Favorites");
-        if(is_fav && ! other_is_fav){
+        if (is_fav && !other_is_fav) {
             return -1;
-        } else if(other_is_fav && ! is_fav){
+        } else if (other_is_fav && !is_fav) {
             return 1;
-        };
+        }
+        ;
         int t = typeToImportance(another.mItemType) - typeToImportance(mItemType);
         if (t != 0) {
             return t;
@@ -223,9 +221,10 @@ public class Item implements Serializable, Comparable<Item> {
             return ql;
         }
         int compare = mBucketName.compareTo(another.mBucketName);
-        if(compare!=0){
+        if (compare != 0) {
             return compare;
-        };
+        }
+        ;
         return mName.compareTo(another.mName);
     }
 
@@ -295,7 +294,6 @@ public class Item implements Serializable, Comparable<Item> {
 
     public void moveTo(String target) {
         Data.getInstance().changeOwner(this, target);
-
     }
 
     public boolean isEquipped() {
@@ -311,7 +309,6 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
 
-
     public int getPrimaryStatValue() {
         return mPrimaryStatValue;
     }
@@ -321,11 +318,11 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     public String getDamageTypeName() {
-        if(mDamageType==3){
+        if (mDamageType == 3) {
             return "Solar";
-        } else if(mDamageType==2){
+        } else if (mDamageType == 2) {
             return "Arc";
-        } else if(mDamageType==4){
+        } else if (mDamageType == 4) {
             return "Void";
         }
         return "";
@@ -335,7 +332,7 @@ public class Item implements Serializable, Comparable<Item> {
         return mItemType;
     }
 
-    public int getStackSize(){
+    public int getStackSize() {
         return mStackSize;
     }
 
@@ -354,15 +351,16 @@ public class Item implements Serializable, Comparable<Item> {
     public boolean getCanEquip() {
         return mCanEquip;
     }
-    public void setCanEquip(boolean canEquip){
+
+    public void setCanEquip(boolean canEquip) {
         mCanEquip = canEquip;
     }
 
     public List<Action> posibleActions() {
 
-        List<Action> actions = new LinkedList<>();
-        if(mCanEquip){
-            actions.add(new Action(R.string.equip, new Action.ActionRunnable(){
+        List<Action> actions = new LinkedList<Action>();
+        if (mCanEquip) {
+            actions.add(new Action(R.string.equip, new Action.ActionRunnable() {
                 @Override
                 public void run(Activity activity) {
                     doEquip(activity);
@@ -371,14 +369,14 @@ public class Item implements Serializable, Comparable<Item> {
         }
         Data data = Data.getInstance();
         for (final String owner : data.getItems().keySet()) {
-            if(!owner.equals(data.getItemOwner(this))){
+            if (!owner.equals(data.getItemOwner(this))) {
                 String ownerLabel = owner;
-                if(data.getCharacter(owner)!=null){
+                if (data.getCharacter(owner) != null) {
                     ownerLabel = data.getCharacter(owner).toString();
                 }
                 Item item = null;
                 for (Item tmp_item : data.getAllItems()) {
-                    if(Item.this.getItemHash()==tmp_item.getItemHash()){
+                    if (Item.this.getItemHash() == tmp_item.getItemHash()) {
                         item = tmp_item;
                         break;
                     }
@@ -387,7 +385,7 @@ public class Item implements Serializable, Comparable<Item> {
                 actions.add(new Action(R.string.move_to, new Action.ActionRunnable() {
                     @Override
                     public void run(final Activity activity) {
-                        ItemMover.move(((Application) activity.getApplication()).getWebView(), finalItem, owner).then(
+                        ItemMover.move(((Application) activity.getApplication()).getWebView(), finalItem, owner, finalItem.getStackSize()).then(
                                 new ItemMover.Result() {
                                     @Override
                                     public void onSuccess() {
@@ -415,14 +413,14 @@ public class Item implements Serializable, Comparable<Item> {
 
         final ClientWebView webView = ((Application) activity.getApplication()).getWebView();
         final String owner = Data.getInstance().getItemOwner(this);
-        Log.v(LOG_TAG, "owner: "+owner);
+        Log.v(LOG_TAG, "owner: " + owner);
         ItemMover.equip(webView, owner, this, null).then(
                 new ItemMover.Result() {
                     @Override
                     public void onSuccess() {
                         Log.v(LOG_TAG, "doGetCharacterInventory");
                         Membership membership = Data.getInstance().getMembership();
-                        Log.v(LOG_TAG, "owner: "+owner);
+                        Log.v(LOG_TAG, "owner: " + owner);
                         org.swistowski.vaulthelper.models.Character character = Data.getInstance().getCharacter(owner);
                         webView.call("destinyService.GetCharacterInventory", "" + membership.getType(), "" + membership.getId(), character.getId(), "true").then(new ClientWebView.Callback() {
                             @Override
@@ -445,13 +443,13 @@ public class Item implements Serializable, Comparable<Item> {
                                             for (int j = 0; j < bucketItems.length(); j++) {
                                                 JSONObject bi = bucketData.optJSONObject(j);
                                                 if (bi != null) {
-                                                    Log.v(LOG_TAG, "bi"+bi.toString());
+                                                    Log.v(LOG_TAG, "bi" + bi.toString());
                                                     Item currentItem = hash2item.get(bi.optLong("itemHash"));
                                                     if (currentItem != null) {
-                                                        if(currentItem.getCanEquip()!=bi.optBoolean("canEquip")) {
+                                                        if (currentItem.getCanEquip() != bi.optBoolean("canEquip")) {
                                                             Log.v(LOG_TAG, "ci" + currentItem.toString());
                                                         }
-                                                        if(currentItem.getIsEquipped()!=bi.opt("isEquipped")){
+                                                        if (currentItem.getIsEquipped() != bi.opt("isEquipped")) {
                                                             Log.v(LOG_TAG, "is equipped update" + currentItem.toString());
                                                         }
                                                         currentItem.setIsEquipped(bi.optBoolean("isEquipped"));
@@ -470,7 +468,7 @@ public class Item implements Serializable, Comparable<Item> {
                                     @Override
                                     public void run() {
                                         Data.getInstance().notifyItemsChanged();
-                                        Toast.makeText(activity, String.format(activity.getString(R.string.do_equip_finished), Item.this.toString() ), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(activity, String.format(activity.getString(R.string.do_equip_finished), Item.this.toString()), Toast.LENGTH_SHORT).show();
                                         activity.finish();
                                     }
                                 });
@@ -516,7 +514,7 @@ public class Item implements Serializable, Comparable<Item> {
             mArgs = args;
         }
 
-        public void doAction(Activity activity){
+        public void doAction(Activity activity) {
             mAction.run(activity);
         }
 

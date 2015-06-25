@@ -52,12 +52,12 @@ public class ItemMover {
         return p_inner;
     }
 
-    private static Promise moveToVault(final ClientWebView webView, final String owner, final Item item, final Promise p) {
-        JSONObject obj = generateMoveJson(owner, item, true);
+    private static Promise moveToVault(final ClientWebView webView, final String owner, final Item item, final int stackSize, final Promise p) {
+        JSONObject obj = generateMoveJson(owner, item, true, stackSize);
         final Promise p_inner = new Promise();
         if (item.isEquipped()) {
             /* find items from the same hash */
-            List<Item> proposed = new ArrayList<>();
+            List<Item> proposed = new ArrayList<Item>();
             String item_owner = Data.getInstance().getItemOwner(item);
             for (Item tested_item : Data.getInstance().getAllItems()) {
                 if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Data.getInstance().getItemOwner(tested_item).equals(item_owner) && tested_item.getCanEquip()) {
@@ -75,7 +75,7 @@ public class ItemMover {
                     public void onSuccess() {
                         item.setIsEquipped(false);
                         to_equip.setIsEquipped(true);
-                        moveToVault(webView, owner, item, p).then(new Result() {
+                        moveToVault(webView, owner, item, stackSize, p).then(new Result() {
                             @Override
                             public void onSuccess() {
                                 p_inner.onSuccess();
@@ -138,8 +138,8 @@ public class ItemMover {
         return p_inner;
     }
 
-    private static Promise moveFromVault(final ClientWebView webView, final String subject, final Item item, final Promise p) {
-        JSONObject obj = generateMoveJson(subject, item, false);
+    private static Promise moveFromVault(final ClientWebView webView, final String subject, final Item item, int stackSize, final Promise p) {
+        JSONObject obj = generateMoveJson(subject, item, false, stackSize);
         final Promise p_inner = new Promise();
         webView.call("destinyService.TransferItem", obj).then(new ClientWebView.Callback() {
             @Override
@@ -164,24 +164,24 @@ public class ItemMover {
     }
 
 
-    public static Promise move(final ClientWebView webView, final Item item, final String subject) {
+    public static Promise move(final ClientWebView webView, final Item item, final String subject, final int stackSize) {
         final Promise p = new Promise();
 
         final String owner = Data.getInstance().getItemOwner(item);
         if ((owner.equals(Data.VAULT_ID) || subject.equals(Data.VAULT_ID))) {
             if (subject.equals(Data.VAULT_ID)) {
-                moveToVault(webView, owner, item, p);
+                moveToVault(webView, owner, item, stackSize, p);
             } else {
-                moveFromVault(webView, subject, item, p);
+                moveFromVault(webView, subject, item, stackSize, p);
             }
         } else  {
-            moveToVault(webView, owner, item, null).then(new Result() {
+            moveToVault(webView, owner, item, stackSize, null).then(new Result() {
                 @Override
                 public void onSuccess() {
                     webView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            moveFromVault(webView, subject, item, p);
+                            moveFromVault(webView, subject, item, stackSize, p);
                         }
                     }, 1000);
                 }
@@ -198,14 +198,14 @@ public class ItemMover {
         return p;
     }
 
-    private static JSONObject generateMoveJson(String characterId, Item item, boolean transferToVault) {
+    private static JSONObject generateMoveJson(String characterId, Item item, boolean transferToVault, int stackSize) {
         JSONObject json = new JSONObject();
         try {
             json.put("characterId", characterId);
             json.put("itemId", item.getItemId());
             json.put("itemReferenceHash", item.getItemHash());
             json.put("membershipType", Data.getInstance().getMembership().getType());
-            json.put("stackSize", item.getStackSize());
+            json.put("stackSize", stackSize);
             json.put("transferToVault", transferToVault);
         } catch (JSONException e) {
             Log.e(LOG_TAG, "exception", e);

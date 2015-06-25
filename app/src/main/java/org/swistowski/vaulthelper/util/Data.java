@@ -1,6 +1,7 @@
 package org.swistowski.vaulthelper.util;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 import android.widget.BaseAdapter;
 
@@ -31,16 +32,16 @@ public class Data implements Serializable {
     private User mUser;
     private Membership mMembership;
     private List<Character> mCharacters;
-    private Map<String, List<Item>> items = new HashMap<>();
-    private Map<Item, String> itemsOwners = new HashMap<>();
-    private Set<String> bucketNames = new HashSet<>();
-    private final Set<BaseAdapter> registeredAdapters = new HashSet<>();
+    private Map<String, List<Item>> items = new HashMap<String, List<Item>>();
+    private Map<Item, String> itemsOwners = new HashMap<Item, String>();
+    private Set<String> bucketNames = new HashSet<String>();
+    private final Set<BaseAdapter> registeredAdapters = new HashSet<BaseAdapter>();
 
     private LinkedHashMap<Integer, Boolean> mBucketFilters;
     private static final LinkedHashMap<Integer, Boolean> BUCKET_FILTERS;
 
     static {
-        BUCKET_FILTERS = new LinkedHashMap<>();
+        BUCKET_FILTERS = new LinkedHashMap<Integer, Boolean>();
 
         BUCKET_FILTERS.put(R.string.primary_weapons_bucket, Boolean.FALSE);
         BUCKET_FILTERS.put(R.string.special_weapons_bucket, Boolean.FALSE);
@@ -62,7 +63,7 @@ public class Data implements Serializable {
     private static final LinkedHashMap<String, Integer> BUCKET_FILTERS_LABELS;
 
     static {
-        BUCKET_FILTERS_LABELS = new LinkedHashMap<>();
+        BUCKET_FILTERS_LABELS = new LinkedHashMap<String, Integer>();
         BUCKET_FILTERS_LABELS.put("Primary Weapons", R.string.primary_weapons_bucket);
         BUCKET_FILTERS_LABELS.put("Special Weapons", R.string.special_weapons_bucket);
         BUCKET_FILTERS_LABELS.put("Heavy Weapons", R.string.heavy_weapons_bucket);
@@ -84,7 +85,7 @@ public class Data implements Serializable {
     private static final LinkedHashMap<Integer, Boolean> DAMAGE_FILTERS;
 
     static {
-        DAMAGE_FILTERS = new LinkedHashMap<>();
+        DAMAGE_FILTERS = new LinkedHashMap<Integer, Boolean>();
         DAMAGE_FILTERS.put(R.string.arc_damage, Boolean.FALSE);
         DAMAGE_FILTERS.put(R.string.solar_damage, Boolean.FALSE);
         DAMAGE_FILTERS.put(R.string.void_damage, Boolean.FALSE);
@@ -93,13 +94,14 @@ public class Data implements Serializable {
     private static final LinkedHashMap<String, Integer> DAMAGE_FILTERS_LABELS;
 
     static {
-        DAMAGE_FILTERS_LABELS = new LinkedHashMap<>();
+        DAMAGE_FILTERS_LABELS = new LinkedHashMap<String, Integer>();
         DAMAGE_FILTERS_LABELS.put("Arc", R.string.arc_damage);
         DAMAGE_FILTERS_LABELS.put("Solar", R.string.solar_damage);
         DAMAGE_FILTERS_LABELS.put("Void", R.string.void_damage);
     }
 
-    private HashMap<String, Set<Long>> mLabels = new HashMap<>();
+    private HashMap<String, Set<Long>> mLabels = new HashMap<String, Set<Long>>();
+    private List<String> mAllLabels = null;
 
     private LinkedHashMap<Integer, Boolean> mCompletedFilters;
 
@@ -111,7 +113,7 @@ public class Data implements Serializable {
     private static final LinkedHashMap<Integer, Boolean> COMPLETED_FILTERS;
 
     static {
-        COMPLETED_FILTERS = new LinkedHashMap<>();
+        COMPLETED_FILTERS = new LinkedHashMap<Integer, Boolean>();
         COMPLETED_FILTERS.put(R.string.is_completed, Boolean.FALSE);
         COMPLETED_FILTERS.put(R.string.is_not_completed, Boolean.FALSE);
     }
@@ -119,7 +121,7 @@ public class Data implements Serializable {
     private static final LinkedHashMap<Integer, String> COMPLETED_FILTERS_LABELS;
 
     static {
-        COMPLETED_FILTERS_LABELS = new LinkedHashMap<>();
+        COMPLETED_FILTERS_LABELS = new LinkedHashMap<Integer, String>();
 
     }
 
@@ -129,7 +131,7 @@ public class Data implements Serializable {
 
     public LinkedHashMap<Integer, Boolean> getBucketFilters() {
         if (mBucketFilters == null) {
-            mBucketFilters = new LinkedHashMap<>();
+            mBucketFilters = new LinkedHashMap<Integer, Boolean>();
             for (Map.Entry<Integer, Boolean> entry : BUCKET_FILTERS.entrySet()) {
                 mBucketFilters.put(entry.getKey(), entry.getValue());
             }
@@ -139,7 +141,7 @@ public class Data implements Serializable {
 
     public LinkedHashMap<Integer, Boolean> getDamageFilters() {
         if (mDamageFilters == null) {
-            mDamageFilters = new LinkedHashMap<>();
+            mDamageFilters = new LinkedHashMap<Integer, Boolean>();
             for (Map.Entry<Integer, Boolean> entry : DAMAGE_FILTERS.entrySet()) {
                 mDamageFilters.put(entry.getKey(), entry.getValue());
             }
@@ -149,7 +151,7 @@ public class Data implements Serializable {
 
     public LinkedHashMap<Integer, Boolean> getCompletedFilters() {
         if (mCompletedFilters == null) {
-            mCompletedFilters = new LinkedHashMap<>();
+            mCompletedFilters = new LinkedHashMap<Integer, Boolean>();
             for (Map.Entry<Integer, Boolean> entry : COMPLETED_FILTERS.entrySet()) {
                 mCompletedFilters.put(entry.getKey(), entry.getValue());
             }
@@ -228,8 +230,8 @@ public class Data implements Serializable {
     }
 
     void cleanItems() {
-        items = new HashMap<>();
-        itemsOwners = new HashMap<>();
+        items = new HashMap<String, List<Item>>();
+        itemsOwners = new HashMap<Item, String>();
     }
 
     private boolean isVisible(Item item) {
@@ -382,10 +384,18 @@ public class Data implements Serializable {
         }
         return mDb;
     }
-    /*
     public List<String> getAllLabels(){
-        mLabels.keySet();
-    };*/
+        if(mAllLabels==null){
+            mAllLabels = new ArrayList<String>();
+            Cursor c = getDb().getAllLabels();
+            while(c.moveToNext()){
+                Log.v(LOG_TAG, "labels: "+c.toString());
+                mAllLabels.add(c.getString(0));
+            }
+        }
+        return mAllLabels;
+        //mLabels.keySet();
+    };
 
     private Set<Long> getLabelItems(String label){
         Set<Long> labels = mLabels.get(label);

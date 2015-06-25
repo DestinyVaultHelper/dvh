@@ -66,7 +66,7 @@ public class ListFilteringFragment extends Fragment {
         public FilterGroup(String title, FilterGetter filterGetter) {
             mTitle = title;
             mFilterGetter = filterGetter;
-            mEntries = new ArrayList<>();
+            mEntries = new ArrayList<Map.Entry<Integer, Boolean>>();
             reloadEntries();
         }
 
@@ -93,7 +93,7 @@ public class ListFilteringFragment extends Fragment {
         public FilterAdapter(Context context) {
             super();
             mContext = context;
-            mGroups = new ArrayList<>();
+            mGroups = new ArrayList<FilterGroup>();
             mGroups.add(new FilterGroup(getResources().getString(R.string.bucket_filter_label), bucketFilters));
             mGroups.add(new FilterGroup(getResources().getString(R.string.damage_type_filter_label), damageFilters));
             mGroups.add(new FilterGroup(getResources().getString(R.string.completed_filter_label), completedFilters));

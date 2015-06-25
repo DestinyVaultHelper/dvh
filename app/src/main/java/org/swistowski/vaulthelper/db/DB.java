@@ -76,7 +76,7 @@ public class DB {
 
     public Set<Long> labelItems(String label) {
         Cursor cursor = database.query(true, DBHelper.TABLE_LABELS_NAME, new String[]{DBHelper.TABLE_LABELS_COL_ITEM}, DBHelper.TABLE_LABELS_COL_LABEL + "=?", new String[]{label}, null, null, null, null);
-        Set<Long> items = new HashSet<>();
+        Set<Long> items = new HashSet<Long>();
         while(cursor.moveToNext()){
             items.add( cursor.getLong(0));
         }

@@ -49,17 +49,8 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
                     return ItemListFragment.newInstance(ItemListFragment.DIRECTION_TO, Data.VAULT_ID);
                 }
             }));
-            /*
-                Future functionality, move from vault to
-            mPages.add(new MyPage(MyPage.VAULT, "▲ Vault", new FragmentProvider() {
-                @Override
-                public Fragment getFragment() {
-                    return ItemListFragment.newInstance(ItemListFragment.DIRECTION_FROM, Database.VAULT_ID);
-                }
-            }));
-            */
         }
-        if(mPages.size()==0) {
+        if (mPages.size() == 0) {
             mPages.add(new Page(context.getString(R.string.settings), new FragmentProvider() {
                 @Override
                 public Fragment getFragment() {

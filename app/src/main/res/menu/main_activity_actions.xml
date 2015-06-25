@@ -14,12 +14,22 @@
     <item
         android:id="@+id/show_all"
         android:checkable="true"
-        android:icon="@drawable/abc_ic_menu_selectall_mtrl_alpha"
         dvh:showAsAction="ifRoom"
         android:title="@string/show_all" />
 
     <item android:id="@+id/action_refresh"
         android:title="@string/refresh" />
 
+    <item
+        android:title=""
+        dvh:showAsAction="never"
+        android:enabled="false" />
+
+    <item android:id="@+id/show_login_page"
+        dvh:showAsAction="never"
+        android:title="@string/show_login_page"/>
+    <item android:id="@+id/send_logs"
+        dvh:showAsAction="never"
+        android:title="@string/send_logs"/>
 
 </menu>

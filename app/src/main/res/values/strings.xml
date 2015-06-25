@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Vault Helper for Destiny</string>
     <string name="title_activity_login">Login</string>
     <string name="refresh">Refresh</string>
@@ -70,4 +70,27 @@
     <string name="do_equip_in_progress">Equipping item</string>
     <string name="do_equip_finished">Item %s is equipped</string>
     <string name="move_to">Move to %s</string>
+    <string name="layouts_label">Layouts</string>
+    <string name="new_layout_button">New layout</string>
+    <string name="logout">Logout</string>
+    <string name="send_logs">Send logs</string>
+
+    <string name="message_subject">Vault helper log</string>
+    <string name="acquiring_log_progress_dialog_message">Acquiring log from the system &#8230;</string>
+    <string name="chooser_title">"Select an application to send the log"</string>
+    <string name="failed_to_get_log_message">"Failed to get the log from the system."</string>
+    <string name="main_dialog_text">"This application will attempt to collect the device log.
+The collected log will be sent using an application of your choice.
+You also will have an opportunity to see and modify the data being sent."
+    </string>
+    <string name="device_info_fmt">
+Log Collector version: <xliff:g id="application_version">%s</xliff:g>\n
+Device model: <xliff:g id="device_model">%s</xliff:g>\n
+Firmware version: <xliff:g id="firmware_revision">%s</xliff:g>\n
+Kernel version: <xliff:g id="kernel_version">%s</xliff:g>\n
+Build number: <xliff:g id="build_number">%s</xliff:g>\n
+    </string>
+    <string name="developer_email">damian@swistowski.org</string>
+    <string name="show_login_page">Show login page</string>
+
 </resources>
