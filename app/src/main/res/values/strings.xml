@@ -92,5 +92,7 @@ Build number: <xliff:g id="build_number">%s</xliff:g>\n
     </string>
     <string name="developer_email">damian@swistowski.org</string>
     <string name="show_login_page">Show login page</string>
+    <string name="add_new_layout_label">Add new layout</string>
+    <string name="add_new_layout_hint">New layout name</string>
 
 </resources>
