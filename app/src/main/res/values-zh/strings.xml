@@ -89,4 +89,6 @@ You also will have an opportunity to see and modify the data being sent."
 </string>
     <string name="developer_email">damian@swistowski.org</string>
     <string name="show_login_page">Show login page</string>
+    <string name="add_new_layout_hint">New layout name</string>
+    <string name="add_new_layout_label">Add new layout</string>
 </resources>

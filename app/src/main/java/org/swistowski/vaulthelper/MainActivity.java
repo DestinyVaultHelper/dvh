@@ -203,7 +203,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     private void goLogin() {
         Log.v(LOG_TAG, "go login");
-        getWebView().callAny("document.getElementsByClassName(\"btn_login psn\")[0].href+\"#\"+document.getElementsByClassName(\"btn_login live\")[0].href").then(new ClientWebView.Callback() {
+        getWebView().callAny("document.getElementsByClassName(\"exempt psn\")[0].href+\"#\"+document.getElementsByClassName(\"exempt live\")[0].href").then(new ClientWebView.Callback() {
             @Override
             public void onAccept(String result) {
                 String[] urls = result.split("#");
