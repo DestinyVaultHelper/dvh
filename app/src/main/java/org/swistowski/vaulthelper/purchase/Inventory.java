@@ -15,6 +15,8 @@
 
 package org.swistowski.vaulthelper.purchase;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +44,7 @@ public class Inventory {
 
     /** Returns whether or not there exists a purchase of the given product. */
     public boolean hasPurchase(String sku) {
+        Log.v("mPurchaseMap", mPurchaseMap.keySet().toString());
         return mPurchaseMap.containsKey(sku);
     }
 

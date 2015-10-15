@@ -92,5 +92,18 @@ Build number: <xliff:g id="build_number">%s</xliff:g>\n
     <string name="show_login_page">Zaloguj</string>
     <string name="add_new_layout_hint">New layout name</string>
     <string name="add_new_layout_label">Add new layout</string>
+    <string name="artifacts_bucket">Artefakty</string>
+    <string name="emotes_bucket" >Emoty</string>
+    <string name="tier_name_common">Zwykłe</string>
+    <string name="tier_name_exotic">Egzotyczne</string>
+    <string name="tier_name_legendary">Legendarny</string>
+    <string name="tier_name_rare">Rzadkie</string>
+    <string name="tier_filter_label">Rzadkość</string>
+    <string name="light_level_filter_label">Light Level</string>
+    <string name="ligth_level_0">-200</string>
+    <string name="ligth_level_1">200-250</string>
+    <string name="ligth_level_2">250-280</string>
+    <string name="ligth_level_3">280-300</string>
+    <string name="ligth_level_4">300+</string>
 
 </resources>

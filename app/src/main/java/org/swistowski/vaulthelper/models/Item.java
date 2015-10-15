@@ -28,6 +28,7 @@ public class Item implements Serializable, Comparable<Item> {
     private final int mBindStatus;
     private final int mDamageType;
     private final int mPrimaryStatValue;
+    private final int mTierType;
     private boolean mIsEquipped;
     private final int mItemLevel;
     private int mStackSize;
@@ -56,7 +57,7 @@ public class Item implements Serializable, Comparable<Item> {
 
     private Item(long itemHash, int bindStatus, boolean isEquipped, int itemLevel, int stackSize, int qualityLevel, boolean canEquip, boolean isEquipment, boolean isGridComplete, String itemInstanceId,
 
-                 String itemName, String itemDescription, String icon, String secondaryIcon, String tierTypeName, String itemTypeName, long bucketTypeHash, int itemType, int itemSubType, int classType,
+                 String itemName, String itemDescription, String icon, String secondaryIcon, String tierTypeName, int tierType, String itemTypeName, long bucketTypeHash, int itemType, int itemSubType, int classType,
                  int primaryStatValue,
                  int damageType,
                  String bucketName,
@@ -79,6 +80,7 @@ public class Item implements Serializable, Comparable<Item> {
         mIcon = icon;
         mItemDescription = itemDescription;
         mTierTypeName = tierTypeName;
+        mTierType = tierType;
         mItemTypeName = itemTypeName;
         mBucketTypeHash = bucketTypeHash;
         mItemType = itemType;
@@ -93,7 +95,6 @@ public class Item implements Serializable, Comparable<Item> {
 
         //mJson = json;
         //mDefinition = definition;
-
     }
 
     private static List<Item> fillFromBucket(JSONArray bucket_content, JSONObject items_definitions, JSONObject bucket_definitions, String key, List<Item> items) {
@@ -163,6 +164,7 @@ public class Item implements Serializable, Comparable<Item> {
                 definition.optString("icon"),
                 definition.optString("secondaryIcon"),
                 definition.optString("tierTypeName"),
+                definition.optInt("tierType"),
                 definition.optString("itemTypeName"),
                 definition.optLong("bucketTypeHash"),
                 definition.optInt("itemType"),
@@ -216,10 +218,16 @@ public class Item implements Serializable, Comparable<Item> {
         if (t != 0) {
             return t;
         }
+        int tt = another.mTierType - mTierType;
+        if(tt!=0){
+            return tt;
+        }
+        /*
         int ql = another.mQualityLevel - mQualityLevel;
         if (ql != 0) {
             return ql;
         }
+        */
         int compare = mBucketName.compareTo(another.mBucketName);
         if (compare != 0) {
             return compare;
@@ -230,6 +238,8 @@ public class Item implements Serializable, Comparable<Item> {
 
     public String[] debugAttrs() {
         String[] ret = new String[]{
+                //"item json " +mJson,
+                //"item definition " + mDefinition,
                 "Bucket name " + mBucketName,
                 "Item Hash " + mItemHash,
                 "Bind Status" + mBindStatus,
@@ -251,8 +261,7 @@ public class Item implements Serializable, Comparable<Item> {
                 "type " + mItemType,
                 "sub type " + mItemSubType,
                 "class type " + mClassType,
-                //"item json " +mJson,
-                //"item definition " + mDefinition,
+
                 //"bucket name " + mBucketName,
                 //"bucket description " + mBucketDescription
 
@@ -497,6 +506,10 @@ public class Item implements Serializable, Comparable<Item> {
 
     public Object getIsEquipped() {
         return mIsEquipped;
+    }
+
+    public String getTierTypeName() {
+        return mTierTypeName;
     }
 
     public static class Action {

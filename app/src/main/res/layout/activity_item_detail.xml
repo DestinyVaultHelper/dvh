@@ -46,6 +46,13 @@
             android:layout_below="@+id/detail_icon"
             android:layout_centerHorizontal="true" />
 
+        <ListView
+            android:id="@+id/detail_list_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_actions_list"
+            android:layout_centerHorizontal="true" />
+        <!--
         <TextView
             android:id="@+id/layouts_label"
             android:layout_width="wrap_content"
@@ -68,6 +75,6 @@
             android:layout_below="@+id/layouts_list"
             android:src="@android:drawable/ic_input_add"
             android:text="@string/new_layout_button" />
-
+        -->
     </RelativeLayout>
 </ScrollView>

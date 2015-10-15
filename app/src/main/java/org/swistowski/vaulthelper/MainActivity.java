@@ -41,12 +41,16 @@ import org.swistowski.vaulthelper.models.Item;
 import org.swistowski.vaulthelper.models.ItemMover;
 import org.swistowski.vaulthelper.purchase.IabHelper;
 import org.swistowski.vaulthelper.purchase.IabResult;
+import org.swistowski.vaulthelper.purchase.Inventory;
 import org.swistowski.vaulthelper.purchase.Purchase;
 import org.swistowski.vaulthelper.util.BackgroundDrawable;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.util.DataLoader;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.views.DisableableViewPager;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener, AdFragment.OnAdIterationListener, ClientWebView.ErrorHandler {
@@ -60,6 +64,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     private boolean filtersVisible = false;
 
     IabHelper mHelper;
+    private boolean mIsPremium;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +154,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     void initUIInner() {
         setFiltersVisible(filtersVisible);
+
         if (!Data.getInstance().getIsLoading()) {
             findViewById(R.id.waiting_screen).setVisibility(View.GONE);
             mViewPager = (DisableableViewPager) findViewById(R.id.pager);
@@ -159,6 +165,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
             mViewPager.setAdapter(mPagerAdapter);
 
+            /*
             if (isFirstTime()) {
                 final View overflow = findViewById(R.id.tutorial_overflow);
                 overflow.setVisibility(View.VISIBLE);
@@ -171,6 +178,31 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 });
                 Log.v(LOG_TAG, "First time run");
             }
+            */
+            final ItemsFragmentPagerAdapter pg = (ItemsFragmentPagerAdapter) mPagerAdapter;
+            new IabHelper.QueryInventoryFinishedListener() {
+                public void onQueryInventoryFinished(IabResult result,
+                                                     Inventory inventory) {
+
+                    if (result.isFailure()) {
+                        // handle error here
+                    } else {
+                        // does the user have the premium upgrade?
+                        mIsPremium = inventory.hasPurchase(SKU_PREMIUM);
+
+                        if (mIsPremium) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    pg.setIsPremium(MainActivity.this);
+                                }
+                            });
+
+                        }
+                        // update UI accordingly
+                    }
+                }
+            };
             onPageSelected(0);
         } else {
             findViewById(R.id.waiting_screen).setVisibility(View.VISIBLE);

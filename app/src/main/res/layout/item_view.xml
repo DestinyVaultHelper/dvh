@@ -63,7 +63,7 @@
         android:layout_alignParentBottom="false"
         android:paddingLeft="8dp"
         android:singleLine="true"
-        android:text="lorem ipsum"
+        android:text="details"
         android:layout_alignParentTop="true"
          />
 

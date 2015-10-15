@@ -58,6 +58,8 @@ public class Data implements Serializable {
         BUCKET_FILTERS.put(R.string.shaders_bucket, Boolean.FALSE);
         BUCKET_FILTERS.put(R.string.ships_bucket, Boolean.FALSE);
         BUCKET_FILTERS.put(R.string.vehicle_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.artifacts_bucket, Boolean.FALSE);
+        BUCKET_FILTERS.put(R.string.emotes_bucket, Boolean.FALSE);
     }
 
     private static final LinkedHashMap<String, Integer> BUCKET_FILTERS_LABELS;
@@ -79,6 +81,7 @@ public class Data implements Serializable {
         BUCKET_FILTERS_LABELS.put("Shaders", R.string.shaders_bucket);
         BUCKET_FILTERS_LABELS.put("Ships", R.string.ships_bucket);
         BUCKET_FILTERS_LABELS.put("Vehicle", R.string.vehicle_bucket);
+        BUCKET_FILTERS_LABELS.put("Artifacts", R.string.artifacts_bucket);
     }
 
     private LinkedHashMap<Integer, Boolean> mDamageFilters;
@@ -102,6 +105,41 @@ public class Data implements Serializable {
 
     private HashMap<String, Set<Long>> mLabels = new HashMap<String, Set<Long>>();
     private List<String> mAllLabels = null;
+
+    private LinkedHashMap<Integer, Boolean> mTierNameFilter;
+    private static final LinkedHashMap<Integer, Boolean> TIER_NAME_FILTERS;
+
+    static {
+        TIER_NAME_FILTERS = new LinkedHashMap<>();
+        TIER_NAME_FILTERS.put(R.string.tier_name_rare, Boolean.FALSE);
+        TIER_NAME_FILTERS.put(R.string.tier_name_common, Boolean.FALSE);
+        TIER_NAME_FILTERS.put(R.string.tier_name_exotic, Boolean.FALSE);
+        TIER_NAME_FILTERS.put(R.string.tier_name_legendary, Boolean.FALSE);
+    }
+
+    private static final LinkedHashMap<String, Integer> TIER_NAME_FILTERS_LABELS;
+
+    static {
+        TIER_NAME_FILTERS_LABELS = new LinkedHashMap<>();
+        TIER_NAME_FILTERS_LABELS.put("Common", R.string.tier_name_common);
+        TIER_NAME_FILTERS_LABELS.put("Rare", R.string.tier_name_rare);
+        TIER_NAME_FILTERS_LABELS.put("Legendary", R.string.tier_name_legendary);
+        TIER_NAME_FILTERS_LABELS.put("Exotic", R.string.tier_name_exotic);
+
+    }
+
+
+    private LinkedHashMap<Integer, Boolean> mLightLevelFilter;
+    private static final LinkedHashMap<Integer, Boolean> LIGHT_LEVEL_FILTERS;
+
+    static {
+        LIGHT_LEVEL_FILTERS = new LinkedHashMap<>();
+        LIGHT_LEVEL_FILTERS.put(R.string.ligth_level_0, Boolean.FALSE);
+        LIGHT_LEVEL_FILTERS.put(R.string.ligth_level_1, Boolean.FALSE);
+        LIGHT_LEVEL_FILTERS.put(R.string.ligth_level_2, Boolean.FALSE);
+        LIGHT_LEVEL_FILTERS.put(R.string.ligth_level_3, Boolean.FALSE);
+        LIGHT_LEVEL_FILTERS.put(R.string.ligth_level_4, Boolean.FALSE);
+    }
 
     private LinkedHashMap<Integer, Boolean> mCompletedFilters;
 
@@ -138,6 +176,28 @@ public class Data implements Serializable {
         }
         return mBucketFilters;
     }
+
+
+    public LinkedHashMap<Integer, Boolean> getTierNameFilters() {
+        if (mTierNameFilter == null) {
+            mTierNameFilter = new LinkedHashMap<Integer, Boolean>();
+            for (Map.Entry<Integer, Boolean> entry : TIER_NAME_FILTERS.entrySet()) {
+                mTierNameFilter.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return mTierNameFilter;
+    }
+
+    public LinkedHashMap<Integer, Boolean> getLightLevelFilters() {
+        if (mLightLevelFilter == null) {
+            mLightLevelFilter = new LinkedHashMap<Integer, Boolean>();
+            for (Map.Entry<Integer, Boolean> entry : LIGHT_LEVEL_FILTERS.entrySet()) {
+                mLightLevelFilter.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return mLightLevelFilter;
+    }
+
 
     public LinkedHashMap<Integer, Boolean> getDamageFilters() {
         if (mDamageFilters == null) {
@@ -235,7 +295,7 @@ public class Data implements Serializable {
     }
 
     private boolean isVisible(Item item) {
-        return filterByBucket(item) && filterByDamage(item) && filterByCompleted(item) && filterByText(item);
+        return filterByBucket(item) && filterByDamage(item) && filterByCompleted(item) && filterByText(item) && filterByTierName(item) && filterByLightLevel(item);
         //return true;
     }
 
@@ -255,8 +315,46 @@ public class Data implements Serializable {
         }
     }
 
+    private boolean filterByTierName(Item item) {
+        if (getTierNameFilters().containsValue(Boolean.TRUE)) {
+            return getTierNameFilters().containsKey(TIER_NAME_FILTERS_LABELS.get(item.getTierTypeName())) && getTierNameFilters().get(TIER_NAME_FILTERS_LABELS.get(item.getTierTypeName()));
+        } else {
+            return true;
+        }
+    }
+
+    private boolean filterByLightLevel(Item item) {
+        if (getLightLevelFilters().containsValue(Boolean.TRUE)) {
+            if(item.getPrimaryStatValue()==0){
+                return false;
+            }
+            if (getLightLevelFilters().get(R.string.ligth_level_0) && item.getPrimaryStatValue() < 200) {
+                return true;
+            }
+            if (getLightLevelFilters().get(R.string.ligth_level_1) && item.getPrimaryStatValue() >= 200 && item.getPrimaryStatValue() < 250) {
+                return true;
+            }
+            if (getLightLevelFilters().get(R.string.ligth_level_2) && item.getPrimaryStatValue() >= 250 && item.getPrimaryStatValue() < 280) {
+                return true;
+            }
+            if (getLightLevelFilters().get(R.string.ligth_level_3) && item.getPrimaryStatValue() >= 280 && item.getPrimaryStatValue() < 300) {
+                return true;
+            }
+            if (getLightLevelFilters().get(R.string.ligth_level_4) && item.getPrimaryStatValue() >= 300) {
+                return true;
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private boolean filterByBucket(Item item) {
         if (getBucketFilters().values().contains(Boolean.TRUE)) {
+            if (!BUCKET_FILTERS_LABELS.containsKey(item.getBucketName()) || !getBucketFilters().containsKey(BUCKET_FILTERS_LABELS.get(item.getBucketName()))) {
+                Log.v(LOG_TAG, "Unknown bucket name: " + item.getBucketName());
+                return false;
+            }
             return getBucketFilters().get(BUCKET_FILTERS_LABELS.get(item.getBucketName()));
         } else {
             return true;
@@ -291,7 +389,7 @@ public class Data implements Serializable {
         return mShowAll;
     }
 
-    public void setShowAll(boolean showall){
+    public void setShowAll(boolean showall) {
         mShowAll = showall;
         notifyItemsChanged();
     }
@@ -314,9 +412,9 @@ public class Data implements Serializable {
 
     public String getItemOwner(Item item) {
         String owner = itemsOwners.get(item);
-        if(owner == null){
+        if (owner == null) {
             for (Map.Entry<Item, String> entry : itemsOwners.entrySet()) {
-                if(entry.getKey().getItemHash()==item.getItemHash()){
+                if (entry.getKey().getItemHash() == item.getItemHash()) {
                     return entry.getValue();
                 }
             }
@@ -384,22 +482,25 @@ public class Data implements Serializable {
         }
         return mDb;
     }
-    public List<String> getAllLabels(){
-        if(mAllLabels==null){
+
+    public List<String> getAllLabels() {
+        if (mAllLabels == null) {
             mAllLabels = new ArrayList<String>();
             Cursor c = getDb().getAllLabels();
-            while(c.moveToNext()){
-                Log.v(LOG_TAG, "labels: "+c.toString());
+            while (c.moveToNext()) {
+                Log.v(LOG_TAG, "labels: " + c.toString());
                 mAllLabels.add(c.getString(0));
             }
         }
         return mAllLabels;
         //mLabels.keySet();
-    };
+    }
 
-    private Set<Long> getLabelItems(String label){
+    ;
+
+    private Set<Long> getLabelItems(String label) {
         Set<Long> labels = mLabels.get(label);
-        if(labels == null){
+        if (labels == null) {
             labels = getDb().labelItems(label);
             mLabels.put(label, labels);
         }
@@ -425,7 +526,6 @@ public class Data implements Serializable {
     }
 
 
-
     public void setContext(Context context) {
         this.context = context;
 
@@ -434,10 +534,12 @@ public class Data implements Serializable {
 
     public Character getCharacter(String owner) {
         for (Character character : getCharacters()) {
-            if(character.getId().equals(owner)){
+            if (character.getId().equals(owner)) {
                 return character;
             }
         }
         return null;
     }
+
+
 }

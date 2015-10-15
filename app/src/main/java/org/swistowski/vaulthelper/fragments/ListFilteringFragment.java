@@ -57,6 +57,20 @@ public class ListFilteringFragment extends Fragment {
         }
     };
 
+    static final FilterGetter tierNameFilters = new FilterGetter() {
+        @Override
+        public LinkedHashMap<Integer, Boolean> getFilters() {
+            return Data.getInstance().getTierNameFilters();
+        }
+    };
+
+    static final FilterGetter lightLevelFilters = new FilterGetter(){
+        @Override
+        public LinkedHashMap<Integer, Boolean> getFilters() {
+            return Data.getInstance().getLightLevelFilters();
+        }
+    };
+
     private class FilterGroup {
         final private String mTitle;
         final private FilterGetter mFilterGetter;
@@ -97,6 +111,8 @@ public class ListFilteringFragment extends Fragment {
             mGroups.add(new FilterGroup(getResources().getString(R.string.bucket_filter_label), bucketFilters));
             mGroups.add(new FilterGroup(getResources().getString(R.string.damage_type_filter_label), damageFilters));
             mGroups.add(new FilterGroup(getResources().getString(R.string.completed_filter_label), completedFilters));
+            mGroups.add(new FilterGroup(getResources().getString(R.string.tier_filter_label), tierNameFilters));
+            mGroups.add(new FilterGroup(getResources().getString(R.string.light_level_filter_label), lightLevelFilters));
         }
 
         Context getContext() {

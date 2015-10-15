@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -62,10 +63,16 @@ public class ItemDetailActivity extends ActionBarActivity {
         ListView lv = (ListView) findViewById(R.id.item_actions_list);
         lv.setAdapter((new ItemActionAdapter(this, item)));
 
-        Log.v(LOG_TAG, Data.getInstance().getAllLabels().toString());
-        //ListView lv = (ListView) findViewById(R.id.detail_list_view);
-        //lv.setAdapter(new ArrayAdapter<String>(this, R.layout.simple_list_item, item.debugAttrs()));
+        for (String debugAttr : item.debugAttrs()) {
+            Log.v(LOG_TAG, debugAttr);
+        }
+        //ListView debug = (ListView) findViewById(R.id.detail_list_view);
+        //debug.setAdapter(new ArrayAdapter<String>(this, R.layout.simple_list_item, item.debugAttrs()));
+        //Log.v(LOG_TAG, item.debugAttrs().toString());
+
         setListViewHeightBasedOnChildren((ListView) findViewById(R.id.item_actions_list));
+        //setListViewHeightBasedOnChildren((ListView) findViewById(R.id.detail_list_view));
+        /*
         setListViewHeightBasedOnChildren((ListView) findViewById(R.id.layouts_list));
 
         ((ImageButton) findViewById(R.id.new_layout_button)).setOnClickListener(new View.OnClickListener() {
@@ -75,6 +82,7 @@ public class ItemDetailActivity extends ActionBarActivity {
                 handleCreateNewLayout();
             }
         });
+        */
 
 
     }
