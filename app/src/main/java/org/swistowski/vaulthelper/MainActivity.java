@@ -49,6 +49,8 @@ import org.swistowski.vaulthelper.util.DataLoader;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.views.DisableableViewPager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -64,7 +66,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     private boolean filtersVisible = false;
 
     IabHelper mHelper;
-    private boolean mIsPremium;
+    private boolean mIsPremium = false;
+    private Timer mSuccessLoginTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +79,16 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
         if (!getWebView().isPrepared()) {
             Data.getInstance().setIsLoading(true);
-
+            // force go login on long inactivity
+            mSuccessLoginTimer = new Timer();
+            mSuccessLoginTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    goLogin();
+                    Log.v(LOG_TAG, "Fallback go login");
+                    mSuccessLoginTimer = null;
+                }
+            }, 60000);
 
             getWebView().prepare(new Runnable() {
                 @Override
@@ -106,10 +118,39 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                         // Oh noes, there was a problem.
                         Log.d(LOG_TAG, "Problem setting up In-app Billing: " + result);
                     }
+
+                    final ItemsFragmentPagerAdapter pg = (ItemsFragmentPagerAdapter) mPagerAdapter;
+
+                    IabHelper.QueryInventoryFinishedListener
+                            mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
+                        public void onQueryInventoryFinished(IabResult result,
+                                                             Inventory inventory) {
+                            Log.v(LOG_TAG, "IabHelper " + result.toString());
+
+                            if (result.isFailure()) {
+                                Log.v(LOG_TAG, "failure " + result.toString());
+                                // handle error here
+                            } else {
+                                // does the user have the premium upgrade?
+                                mIsPremium = inventory.hasPurchase(SKU_PREMIUM);
+
+                                if (mIsPremium) {
+                                    mIsPremium = true;
+                                }
+                                // update UI accordingly
+                            }
+                        }
+                    };
+                    List additionalSkuList = new ArrayList();
+                    additionalSkuList.add(SKU_PREMIUM);
+                    mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
+
                     // Hooray, IAB is fully set up!
                 }
             });
         } catch (NullPointerException e) {
+
+        } catch (Exception e){
 
         }
         getWebView().setCurrentActivity(this);
@@ -159,50 +200,13 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             findViewById(R.id.waiting_screen).setVisibility(View.GONE);
             mViewPager = (DisableableViewPager) findViewById(R.id.pager);
 
-            mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager(), this);
+            mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager(), this, mIsPremium);
             mPageTabs = (PagerTabStrip) findViewById(R.id.pager_title_strip);
             mViewPager.setOnPageChangeListener(this);
 
             mViewPager.setAdapter(mPagerAdapter);
 
-            /*
-            if (isFirstTime()) {
-                final View overflow = findViewById(R.id.tutorial_overflow);
-                overflow.setVisibility(View.VISIBLE);
-                overflow.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        overflow.setVisibility(View.GONE);
-                        commitFirstTime();
-                    }
-                });
-                Log.v(LOG_TAG, "First time run");
-            }
-            */
-            final ItemsFragmentPagerAdapter pg = (ItemsFragmentPagerAdapter) mPagerAdapter;
-            new IabHelper.QueryInventoryFinishedListener() {
-                public void onQueryInventoryFinished(IabResult result,
-                                                     Inventory inventory) {
 
-                    if (result.isFailure()) {
-                        // handle error here
-                    } else {
-                        // does the user have the premium upgrade?
-                        mIsPremium = inventory.hasPurchase(SKU_PREMIUM);
-
-                        if (mIsPremium) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    pg.setIsPremium(MainActivity.this);
-                                }
-                            });
-
-                        }
-                        // update UI accordingly
-                    }
-                }
-            };
             onPageSelected(0);
         } else {
             findViewById(R.id.waiting_screen).setVisibility(View.VISIBLE);
@@ -264,6 +268,9 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                         .build());
                 Log.v(LOG_TAG, "web view data loaded");
                 Data.getInstance().setIsLoading(false);
+                // cancel fallback login timer
+                if (mSuccessLoginTimer != null)
+                    mSuccessLoginTimer.cancel();
                 initUI();
             }
         }, new DataLoader.Callback() {
@@ -539,11 +546,26 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                     Log.d(LOG_TAG, "Error purchasing: " + result);
                     return;
                 } else if (info.getSku().equals(SKU_PREMIUM)) {
-                    new AlertDialog.Builder(getApplicationContext()).setTitle("Thank you").setMessage("I will have cold beer tonight").create().show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new AlertDialog.Builder(getApplicationContext()).setTitle("Thank you").setMessage("I will have cold beer tonight").create().show();
+                        }
+                    });
                 }
             }
         };
-        mHelper.launchPurchaseFlow(this, SKU_PREMIUM, 10001, mPurchaseFinishedListener);
+        try {
+            mHelper.launchPurchaseFlow(this, SKU_PREMIUM, 10001, mPurchaseFinishedListener);
+        } catch (IllegalStateException e) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new AlertDialog.Builder(getApplicationContext()).setTitle("Warning").setMessage("You cannot create two purchases processes, please close application and try again, or just try again leter").create().show();
+                }
+            });
+
+        }
     }
 
     void collectAndSendLog() {

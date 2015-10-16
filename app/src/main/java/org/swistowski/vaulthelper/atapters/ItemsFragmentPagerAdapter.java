@@ -21,17 +21,20 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
     private static final String LOG_TAG = "ItemsFragmentPagerAdapter";
     private final List<Page> mPages = new ArrayList<Page>();
 
-    public ItemsFragmentPagerAdapter(FragmentManager fm, Context context) {
+    public ItemsFragmentPagerAdapter(FragmentManager fm, Context context, boolean isPremium) {
         super(fm);
-        mPages.add(new Page(context.getString(R.string.ad), new FragmentProvider() {
-            @Override
-            public Fragment getFragment() {
-                return AdFragment.newInstance();
-            }
-        }));
+        if(!isPremium) {
+            mPages.add(new Page(context.getString(R.string.ad), new FragmentProvider() {
+                @Override
+                public Fragment getFragment() {
+                    return AdFragment.newInstance();
+                }
+            }));
+        }
 
         if (Data.getInstance().getCharacters() != null) {
             for (final Character character : Data.getInstance().getCharacters()) {
+
                 mPages.add(new Page(character.toString(), new FragmentProvider() {
                     @Override
                     public Fragment getFragment() {
@@ -70,6 +73,14 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
             }));
         }
         */
+        if(isPremium) {
+            mPages.add(new Page(context.getString(R.string.ad), new FragmentProvider() {
+                @Override
+                public Fragment getFragment() {
+                    return AdFragment.newInstance();
+                }
+            }));
+        }
     }
 
     @Override

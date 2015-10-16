@@ -423,6 +423,12 @@ public class Data implements Serializable {
     }
 
     public String getItemOwnerName(Item item) {
+        if(item.getLocation()==item.LOCATION_VENDOR){
+            return "Vendor";
+        }
+        if(item.getLocation()==item.LOCATION_POSTMASTER){
+            return "Postmaster";
+        }
         String owner = getItemOwner(item);
         if (owner == null) {
             return "None";

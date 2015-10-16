@@ -22,13 +22,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Item implements Serializable, Comparable<Item> {
+    public static final int LOCATION_UNKNOWN = 0;
+    public static final int LOCATION_INVENTORY = 1;
+    public static final int LOCATION_VAULT = 2;
+    public static final int LOCATION_VENDOR = 3;
+    public static final int LOCATION_POSTMASTER = 4;
     private static final String LOG_TAG = "Item Class";
+
     private final long mItemHash;
     private final String mItemInstanceId;
     private final int mBindStatus;
     private final int mDamageType;
     private final int mPrimaryStatValue;
     private final int mTierType;
+    private final int mCannotEquipReason;
+    private final int mLocation;
     private boolean mIsEquipped;
     private final int mItemLevel;
     private int mStackSize;
@@ -51,7 +59,7 @@ public class Item implements Serializable, Comparable<Item> {
     private Runnable requireReloadDataListener;
 
 
-    //private final String mJson;
+    private final String mJson;
     //private final String mDefinition;
     //private final String mBucketDescription;
 
@@ -61,6 +69,8 @@ public class Item implements Serializable, Comparable<Item> {
                  int primaryStatValue,
                  int damageType,
                  String bucketName,
+                 int cannotEquipReason,
+                 int location,
                  String bucketDescription,
                  String json, String definition
 
@@ -91,9 +101,11 @@ public class Item implements Serializable, Comparable<Item> {
         mPrimaryStatValue = primaryStatValue;
         mDamageType = damageType;
         mBucketName = bucketName;
+        mCannotEquipReason = cannotEquipReason;
+        mLocation = location;
         //mBucketDescription = bucketDescription;
 
-        //mJson = json;
+        mJson = json;
         //mDefinition = definition;
     }
 
@@ -174,6 +186,8 @@ public class Item implements Serializable, Comparable<Item> {
                 primaryStatValue,
                 item.optInt("damageType", 0),
                 bucket != null ? bucket.optString("bucketName") : "",
+                item.optInt("cannotEquipReason", 0),
+                item.optInt("location", 0),
                 bucket != null ? bucket.optString("bucketDescription") : "",
                 item.toString(),
                 definition.toString()
@@ -219,8 +233,12 @@ public class Item implements Serializable, Comparable<Item> {
             return t;
         }
         int tt = another.mTierType - mTierType;
-        if(tt!=0){
+        if (tt != 0) {
             return tt;
+        }
+        int psv = another.getPrimaryStatValue()/10 - getPrimaryStatValue()/10;
+        if(psv!=0){
+            return psv;
         }
         /*
         int ql = another.mQualityLevel - mQualityLevel;
@@ -238,7 +256,7 @@ public class Item implements Serializable, Comparable<Item> {
 
     public String[] debugAttrs() {
         String[] ret = new String[]{
-                //"item json " +mJson,
+                //"item json " + mJson,
                 //"item definition " + mDefinition,
                 "Bucket name " + mBucketName,
                 "Item Hash " + mItemHash,
@@ -266,6 +284,8 @@ public class Item implements Serializable, Comparable<Item> {
                 //"bucket description " + mBucketDescription
 
         };
+        Log.v(LOG_TAG, "DUMP " + mJson.toString());
+        //Log.v(LOG_TAG, "DUMP " + mDefinition.toString());
         return ret;
     }
 
@@ -275,6 +295,10 @@ public class Item implements Serializable, Comparable<Item> {
 
     public long getItemHash() {
         return mItemHash;
+    }
+
+    public int getLocation() {
+        return mLocation;
     }
 
     public String getName() {
@@ -365,6 +389,10 @@ public class Item implements Serializable, Comparable<Item> {
         mCanEquip = canEquip;
     }
 
+    public boolean isMoveable() {
+        return mLocation == LOCATION_INVENTORY || mLocation == LOCATION_VAULT;
+    }
+
     public List<Action> posibleActions() {
 
         List<Action> actions = new LinkedList<Action>();
@@ -376,40 +404,42 @@ public class Item implements Serializable, Comparable<Item> {
                 }
             }));
         }
-        Data data = Data.getInstance();
-        for (final String owner : data.getItems().keySet()) {
-            if (!owner.equals(data.getItemOwner(this))) {
-                String ownerLabel = owner;
-                if (data.getCharacter(owner) != null) {
-                    ownerLabel = data.getCharacter(owner).toString();
-                }
-                Item item = null;
-                for (Item tmp_item : data.getAllItems()) {
-                    if (Item.this.getItemHash() == tmp_item.getItemHash()) {
-                        item = tmp_item;
-                        break;
+        if (isMoveable()) {
+            Data data = Data.getInstance();
+            for (final String owner : data.getItems().keySet()) {
+                if (!owner.equals(data.getItemOwner(this))) {
+                    String ownerLabel = owner;
+                    if (data.getCharacter(owner) != null) {
+                        ownerLabel = data.getCharacter(owner).toString();
                     }
-                }
-                final Item finalItem = item;
-                actions.add(new Action(R.string.move_to, new Action.ActionRunnable() {
-                    @Override
-                    public void run(final Activity activity) {
-                        ItemMover.move(((Application) activity.getApplication()).getWebView(), finalItem, owner, finalItem.getStackSize()).then(
-                                new ItemMover.Result() {
-                                    @Override
-                                    public void onSuccess() {
-                                        Log.v(LOG_TAG, "Move success " + Item.this);
-                                        activity.finish();
-                                    }
+                    Item item = null;
+                    for (Item tmp_item : data.getAllItems()) {
+                        if (Item.this.getItemHash() == tmp_item.getItemHash()) {
+                            item = tmp_item;
+                            break;
+                        }
+                    }
+                    final Item finalItem = item;
+                    actions.add(new Action(R.string.move_to, new Action.ActionRunnable() {
+                        @Override
+                        public void run(final Activity activity) {
+                            ItemMover.move(((Application) activity.getApplication()).getWebView(), finalItem, owner, finalItem.getStackSize()).then(
+                                    new ItemMover.Result() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Log.v(LOG_TAG, "Move success " + Item.this);
+                                            activity.finish();
+                                        }
 
-                                    @Override
-                                    public void onError(String e) {
-                                        // onMoveError(e);
+                                        @Override
+                                        public void onError(String e) {
+                                            // onMoveError(e);
+                                        }
                                     }
-                                }
-                        );
-                    }
-                }, ownerLabel));
+                            );
+                        }
+                    }, ownerLabel));
+                }
             }
         }
 

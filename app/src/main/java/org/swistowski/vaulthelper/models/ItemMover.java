@@ -1,5 +1,6 @@
 package org.swistowski.vaulthelper.models;
 
+import android.app.AlertDialog;
 import android.util.Log;
 
 
@@ -29,7 +30,7 @@ public class ItemMover {
             Log.e(LOG_TAG, "exception", e);
             e.printStackTrace();
         }
-        Log.v(LOG_TAG, "equip "+obj.toString());
+        Log.v(LOG_TAG, "equip " + obj.toString());
 
         webView.call("destinyService.EquipItem", obj).then(new ClientWebView.Callback() {
             @Override
@@ -68,8 +69,8 @@ public class ItemMover {
             Collections.sort(proposed);
 
 
-            if(proposed.size()>0){
-                final Item to_equip = proposed.get(proposed.size()-1);
+            if (proposed.size() > 0) {
+                final Item to_equip = proposed.get(proposed.size() - 1);
                 equip(webView, owner, to_equip, p).then(new Result() {
                     @Override
                     public void onSuccess() {
@@ -100,7 +101,12 @@ public class ItemMover {
                 webView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        p.onError("Cannot move equipped item, Do not know how to unequip " + item);
+                        String message = "Cannot move equipped item, Do not know how to unequip " + item;
+                        if (p != null) {
+                            p.onError(message);
+                        } else {
+                            Log.v(LOG_TAG, message);
+                        }
                     }
                 }, 1);
             }
@@ -114,7 +120,7 @@ public class ItemMover {
                     @Override
                     public void run() {
                         item.moveTo(Data.VAULT_ID);
-                        if(p!=null)
+                        if (p != null)
                             p.onSuccess();
                         p_inner.onSuccess();
                     }
@@ -124,13 +130,13 @@ public class ItemMover {
             @Override
             public void onError(String result) {
                 try {
-                    if(new JSONObject(result).optInt("errorCode")==1656){
+                    if (new JSONObject(result).optInt("errorCode") == 1656) {
                         // do reload database
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if(p!=null)
+                if (p != null)
                     p.onError(result);
                 p_inner.onError(result);
             }
@@ -174,7 +180,7 @@ public class ItemMover {
             } else {
                 moveFromVault(webView, subject, item, stackSize, p);
             }
-        } else  {
+        } else {
             moveToVault(webView, owner, item, stackSize, null).then(new Result() {
                 @Override
                 public void onSuccess() {

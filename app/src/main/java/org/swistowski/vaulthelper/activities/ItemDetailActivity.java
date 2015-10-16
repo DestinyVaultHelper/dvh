@@ -61,11 +61,14 @@ public class ItemDetailActivity extends ActionBarActivity {
         setTitle(item.getName());
         ((TextView) findViewById(R.id.detail_name)).setText(item.getDetails());
         ListView lv = (ListView) findViewById(R.id.item_actions_list);
-        lv.setAdapter((new ItemActionAdapter(this, item)));
+        lv.setAdapter(new ItemActionAdapter(this, item));
 
+        /*
         for (String debugAttr : item.debugAttrs()) {
             Log.v(LOG_TAG, debugAttr);
         }
+        */
+        item.debugAttrs();
         //ListView debug = (ListView) findViewById(R.id.detail_list_view);
         //debug.setAdapter(new ArrayAdapter<String>(this, R.layout.simple_list_item, item.debugAttrs()));
         //Log.v(LOG_TAG, item.debugAttrs().toString());

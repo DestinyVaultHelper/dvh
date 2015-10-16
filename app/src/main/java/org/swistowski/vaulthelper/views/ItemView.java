@@ -44,23 +44,23 @@ public class ItemView extends FrameLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.item_view, this, true);
     }
 
-    public void setItem(Item item){
+    public void setItem(Item item) {
         String details = "";
         mItem = item;
         /*
         if(item.getBucketName()!=null){
             details += item.getBucketName()+ " ";
         }*/
-        if(item.getStackSize()!=1){
-            details += "Stack size: " + item.getStackSize()+" ";
+        if (item.getStackSize() != 1) {
+            details += "Stack size: " + item.getStackSize() + " ";
         }
-        if(item.getPrimaryStatValue()!=0){
+        if (item.getPrimaryStatValue() != 0) {
             details += item.getPrimaryStatValue() + " ";
         }
-        if(item.getDamageType()!=0){
-            details += item.getDamageTypeName()+" ";
+        if (item.getDamageType() != 0) {
+            details += item.getDamageTypeName() + " ";
         }
-        if(item.isEquipped()){
+        if (item.isEquipped()) {
             details += "Equipped ";
         }
         setDetails(details);
@@ -74,13 +74,19 @@ public class ItemView extends FrameLayout {
         cb.setOnCheckedChangeListener(null);
         cb.setChecked(hasLabel);
         /*
+        if (!item.isOnCharacter()) {
+            findViewById(R.id.item_view_root).setBackgroundColor(getResources().getColor(android.R.color.background_dark));
+        }
+        */
+
+        /*
         final DB db = new DB(getContext());
         cb.setChecked(db.itemHasLabel(item.getItemHash(), FAVORITES_LABEL));
         */
         cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     Data.getInstance().addLabel(item_id, FAVORITES_LABEL);
                 } else {
                     Data.getInstance().deleteLabel(item_id, FAVORITES_LABEL);
@@ -91,6 +97,7 @@ public class ItemView extends FrameLayout {
 
 
     }
+
     private void setLabel(String text) {
         TextView tv = (TextView) findViewById(R.id.label_name);
         tv.setText(text);
@@ -105,16 +112,17 @@ public class ItemView extends FrameLayout {
         TextView tv = (TextView) findViewById(R.id.label_details);
         tv.setText(text);
     }
+
     private void setUrl(Item item) {
         if (mDownloadImageTask != null) {
             mDownloadImageTask.cancel(true);
         }
         final ImageView iv = (ImageView) findViewById(R.id.icon_preview);
-        if (ImageStorage.getInstance().getImage(item.getItemHash())!=null) {
+        if (ImageStorage.getInstance().getImage(item.getItemHash()) != null) {
             iv.setImageBitmap(ImageStorage.getInstance().getImage(item.getItemHash()));
         } else {
             iv.setImageBitmap(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888));
-            mDownloadImageTask = ImageStorage.getInstance().fetchImage(item.getItemHash()+"", item.getIcon(), new ImageStorage.UrlFetchWaiter() {
+            mDownloadImageTask = ImageStorage.getInstance().fetchImage(item.getItemHash() + "", item.getIcon(), new ImageStorage.UrlFetchWaiter() {
                 @Override
                 public void onImageFetched(Bitmap bitmap) {
                     iv.setImageBitmap(bitmap);
@@ -130,16 +138,18 @@ public class ItemView extends FrameLayout {
 
     public void setIsGrayed(boolean isGrayed) {
         this.isGrayed = isGrayed;
-        Log.v(LOG_TAG, mItem.toString()+" "+(isGrayed?"yes":"no"));
+        Log.v(LOG_TAG, mItem.toString() + " " + (isGrayed ? "yes" : "no"));
 
-        if(isGrayed) {
+        if (!mItem.isMoveable()) {
+            findViewById(R.id.item_view_root).setBackgroundColor(getResources().getColor(android.R.color.holo_orange_light));
+        } else if (isGrayed) {
             findViewById(R.id.item_view_root).setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
         } else {
             findViewById(R.id.item_view_root).setBackgroundColor(getResources().getColor(android.R.color.background_light));
         }
     }
 
-    public boolean getIsGrayed(){
+    public boolean getIsGrayed() {
         return this.isGrayed;
     }
 }

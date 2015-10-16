@@ -24,7 +24,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
     private OnItemIterationListener mListener;
 
     private String mSubject;
-    private boolean mEnabled=true;
+    private boolean mEnabled = true;
 
 
     public static Fragment newInstance(int direction, String subject) {
@@ -88,7 +88,7 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        if(!mEnabled){
+        if (!mEnabled) {
             return false;
         }
         if (null != mListener) {
@@ -99,14 +99,15 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if(!mEnabled){
+        if (!mEnabled) {
             return;
         }
         if (null != mListener) {
-            if(!((ItemView)view).getIsGrayed()) {
-                mListener.onItemClicked(this, mAdapter.getItem(position), mSubject);
+            Item item = mAdapter.getItem(position);
+            if (!((ItemView) view).getIsGrayed() && item.isMoveable()) {
+                mListener.onItemClicked(this, item, mSubject);
             } else {
-                mListener.onItemLongClicked(this, mAdapter.getItem(position), mSubject);
+                mListener.onItemLongClicked(this, item, mSubject);
             }
         }
     }
@@ -123,8 +124,10 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
     }
 
     public interface OnItemIterationListener {
-        public void onItemClicked(ItemListFragment fragment, Item item, String subject);
-        public boolean onItemLongClicked(ItemListFragment fragment, Item item, String subject);
+        void onItemClicked(ItemListFragment fragment, Item item, String subject);
+
+        boolean onItemLongClicked(ItemListFragment fragment, Item item, String subject);
+
         void refreshRequest(Runnable finished);
     }
 }
