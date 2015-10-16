@@ -150,7 +150,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             });
         } catch (NullPointerException e) {
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
         getWebView().setCurrentActivity(this);
@@ -522,7 +522,10 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     @Override
     public void onPageSelected(int position) {
-        if (Data.getInstance().getCharacters() != null && position < Data.getInstance().getCharacters().size()) {
+        if (!mIsPremium) {
+            position -= 1;
+        }
+        if (position >= 0 && Data.getInstance().getCharacters() != null && position < Data.getInstance().getCharacters().size()) {
             Character c = Data.getInstance().getCharacters().get(position);
             mPageTabs.setBackgroundDrawable(new BackgroundDrawable(c.getEmblemPath(), c.getBackgroundPath()));
 
