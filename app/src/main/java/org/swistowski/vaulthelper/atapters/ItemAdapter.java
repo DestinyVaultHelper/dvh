@@ -75,8 +75,9 @@ public class ItemAdapter extends BaseAdapter {
                 notifyDataSetChanged();
             }
         });
-        Log.v(LOG_TAG, Data.getInstance().getItemOwner(item) + " " + mSubject);
-        itemView.setIsGrayed(Data.getInstance().getItemOwner(item).equals(mSubject));
+        if(Data.getInstance().getItemOwner(item)!=null) {
+            itemView.setIsGrayed(Data.getInstance().getItemOwner(item).equals(mSubject));
+        }
 
         return itemView;
     }

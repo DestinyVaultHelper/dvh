@@ -115,36 +115,37 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
                 public void onIabSetupFinished(IabResult result) {
                     if (!result.isSuccess()) {
-                        // Oh noes, there was a problem.
                         Log.d(LOG_TAG, "Problem setting up In-app Billing: " + result);
-                    }
+                    } else {
+                        final ItemsFragmentPagerAdapter pg = (ItemsFragmentPagerAdapter) mPagerAdapter;
 
-                    final ItemsFragmentPagerAdapter pg = (ItemsFragmentPagerAdapter) mPagerAdapter;
+                        IabHelper.QueryInventoryFinishedListener
+                                mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
+                            public void onQueryInventoryFinished(IabResult result,
+                                                                 Inventory inventory) {
+                                Log.v(LOG_TAG, "IabHelper " + result.toString());
 
-                    IabHelper.QueryInventoryFinishedListener
-                            mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
-                        public void onQueryInventoryFinished(IabResult result,
-                                                             Inventory inventory) {
-                            Log.v(LOG_TAG, "IabHelper " + result.toString());
+                                if (result.isFailure()) {
+                                    Log.v(LOG_TAG, "failure " + result.toString());
+                                    // handle error here
+                                } else {
+                                    // does the user have the premium upgrade?
+                                    mIsPremium = inventory.hasPurchase(SKU_PREMIUM);
 
-                            if (result.isFailure()) {
-                                Log.v(LOG_TAG, "failure " + result.toString());
-                                // handle error here
-                            } else {
-                                // does the user have the premium upgrade?
-                                mIsPremium = inventory.hasPurchase(SKU_PREMIUM);
-
-                                if (mIsPremium) {
-                                    mIsPremium = true;
+                                    if (mIsPremium) {
+                                        mIsPremium = true;
+                                    }
+                                    // update UI accordingly
+                                    if(pg!=null) {
+                                        pg.setIsPremium(MainActivity.this);
+                                    }
                                 }
-                                // update UI accordingly
                             }
-                        }
-                    };
-                    List additionalSkuList = new ArrayList();
-                    additionalSkuList.add(SKU_PREMIUM);
-                    mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
-
+                        };
+                        List additionalSkuList = new ArrayList();
+                        additionalSkuList.add(SKU_PREMIUM);
+                        mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
+                    }
                     // Hooray, IAB is fully set up!
                 }
             });
