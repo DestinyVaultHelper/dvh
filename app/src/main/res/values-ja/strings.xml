@@ -10,18 +10,14 @@
     <string name="tracker_category_database">データベース</string>
     <string name="tracker_action_loaded">ロードが終了します</string>
     <string name="login_message">ログインするネットワークを選択してください</string>
-    <string name="ok">@android:string/ok</string>
     <string name="cancel">取消</string>
     <string name="bucket_filter_title">可視カテゴリ</string>
     <string name="app_name_short">倉庫管理者</string>
     <string name="search">検索</string>
     <string name="search_hint">項目を検索</string>
     <!--TODO: Remove or change this placeholder text-->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="bucket_filter_label">カテゴリ</string>
     <string name="damage_type_filter_label">ダメージ種類</string>
-    <string name="ad_fullscreen">ca-app-pub-4225324557097072/4297656148</string>
-    <string name="ad_small">ca-app-pub-4225324557097072/5774389341</string>
     <string name="ad_text">開発者をサポートするために、広告をクリックしてください。または寄付するには、以下のボタンを使用します。</string>
     <string name="buy_pro">サポート開発者</string>
     <string name="completed_filter_label">強化ステータス</string>
@@ -78,14 +74,6 @@
 The collected log will be sent using an application of your choice.
 You also will have an opportunity to see and modify the data being sent."
     </string>
-    <string name="device_info_fmt">
-Vault helper version: <xliff:g id="application_version">%s</xliff:g>\n
-Device model: <xliff:g id="device_model">%s</xliff:g>\n
-Firmware version: <xliff:g id="firmware_revision">%s</xliff:g>\n
-Kernel version: <xliff:g id="kernel_version">%s</xliff:g>\n
-Build number: <xliff:g id="build_number">%s</xliff:g>\n
-    </string>
-    <string name="developer_email">damian@swistowski.org</string>
     <string name="show_login_page">Show login page</string>
     <string name="add_new_layout_hint">New layout name</string>
     <string name="add_new_layout_label">Add new layout</string>
@@ -97,9 +85,4 @@ Build number: <xliff:g id="build_number">%s</xliff:g>\n
     <string name="tier_name_rare">Rare</string>
     <string name="tier_filter_label">Tier</string>
     <string name="light_level_filter_label">Light Level</string>
-    <string name="ligth_level_0">-200</string>
-    <string name="ligth_level_1">200-250</string>
-    <string name="ligth_level_2">250-280</string>
-    <string name="ligth_level_3">280-300</string>
-    <string name="ligth_level_4">300+</string>
 </resources>

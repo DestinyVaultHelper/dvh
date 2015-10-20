@@ -13,7 +13,7 @@
     <string name="tracker_category_database">Database</string>
     <string name="tracker_action_loaded">Loaded</string>
     <string name="login_message">Please select your console</string>
-    <string name="ok">@android:string/ok</string>
+    <string name="ok" translatable="false">@android:string/ok</string>
     <string name="cancel">Cancel</string>
     <string name="bucket_filter_title">Visible buckets</string>
     <string name="app_name_short">Vault Helper</string>
@@ -21,13 +21,13 @@
     <string name="search_hint">Search items</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="toggle_filters">Filters</string>
     <string name="bucket_filter_label">Bucket</string>
     <string name="damage_type_filter_label">Damage</string>
 
-    <string name="ad_fullscreen">ca-app-pub-4225324557097072/4297656148</string>
-    <string name="ad_small">ca-app-pub-4225324557097072/5774389341</string>
+    <string name="ad_fullscreen" translatable="false">ca-app-pub-4225324557097072/4297656148</string>
+    <string name="ad_small" translatable="false">ca-app-pub-4225324557097072/5774389341</string>
     <string name="ad_text">Do you know that programmers have to buy groceries, pay rent, go for vacations? If you aware of it you can just click the ad below to support one developer, or you can buy some in app products to support me even more.</string>
     <string name="buy_pro">Support the developer</string>
     <string name="completed_filter_label">Completed</string>
@@ -83,29 +83,29 @@
 The collected log will be sent using an application of your choice.
 You also will have an opportunity to see and modify the data being sent."
     </string>
-    <string name="device_info_fmt">
+    <string name="device_info_fmt" translatable="false">
 Log Collector version: <xliff:g id="application_version">%s</xliff:g>\n
 Device model: <xliff:g id="device_model">%s</xliff:g>\n
 Firmware version: <xliff:g id="firmware_revision">%s</xliff:g>\n
 Kernel version: <xliff:g id="kernel_version">%s</xliff:g>\n
 Build number: <xliff:g id="build_number">%s</xliff:g>\n
     </string>
-    <string name="developer_email">damian@swistowski.org</string>
+    <string name="developer_email" translatable="false">damian@swistowski.org</string>
     <string name="show_login_page">Show login page</string>
     <string name="add_new_layout_label">Add new layout</string>
     <string name="add_new_layout_hint">New layout name</string>
     <string name="artifacts_bucket">Artifacts</string>
-    <string name="emotes_bucket" >Emotes</string>
+    <string name="emotes_bucket">Emotes</string>
     <string name="tier_name_rare">Rare</string>
     <string name="tier_name_common">Common</string>
     <string name="tier_name_exotic">Exotic</string>
     <string name="tier_name_legendary">Legendary</string>
     <string name="tier_filter_label">Tier</string>
     <string name="light_level_filter_label">Light level</string>
-    <string name="ligth_level_0">-200</string>
-    <string name="ligth_level_1">200-250</string>
-    <string name="ligth_level_2">250-280</string>
-    <string name="ligth_level_3">280-300</string>
-    <string name="ligth_level_4">300+</string>
+    <string name="ligth_level_0" translatable="false">-200</string>
+    <string name="ligth_level_1" translatable="false">200-250</string>
+    <string name="ligth_level_2" translatable="false">250-280</string>
+    <string name="ligth_level_3" translatable="false">280-300</string>
+    <string name="ligth_level_4" translatable="false">300+</string>
 
 </resources>
