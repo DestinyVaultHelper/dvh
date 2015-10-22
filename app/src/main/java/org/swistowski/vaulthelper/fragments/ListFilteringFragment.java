@@ -14,11 +14,13 @@ import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
 
 import org.swistowski.vaulthelper.R;
+import org.swistowski.vaulthelper.filters.BaseFilter;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.views.GroupDetailView;
 import org.swistowski.vaulthelper.views.GroupTitleView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,68 +32,22 @@ import java.util.Map;
 public class ListFilteringFragment extends Fragment {
     private static final String LOG_TAG = "ListFilteringFragment";
 
-    public interface FilterGetter {
-        LinkedHashMap<Integer, Boolean> getFilters();
-    }
-
-    static final FilterGetter bucketFilters = new FilterGetter() {
-        @Override
-        public LinkedHashMap<Integer, Boolean> getFilters() {
-            return Data.getInstance().getBucketFilters();
-        }
-    };
-
-    static final FilterGetter damageFilters = new FilterGetter() {
-        @Override
-        public LinkedHashMap<Integer, Boolean> getFilters() {
-            return Data.getInstance().getDamageFilters();
-        }
-    };
-
-    static final FilterGetter completedFilters = new FilterGetter() {
-        @Override
-        public LinkedHashMap<Integer, Boolean> getFilters() {
-            return Data.getInstance().getCompletedFilters();
-        }
-    };
-
-    static final FilterGetter tierNameFilters = new FilterGetter() {
-        @Override
-        public LinkedHashMap<Integer, Boolean> getFilters() {
-            return Data.getInstance().getTierNameFilters();
-        }
-    };
-
-    static final FilterGetter lightLevelFilters = new FilterGetter(){
-        @Override
-        public LinkedHashMap<Integer, Boolean> getFilters() {
-            return Data.getInstance().getLightLevelFilters();
-        }
-    };
-
-    static final FilterGetter itemForFilters = new FilterGetter() {
-        @Override
-        public LinkedHashMap<Integer, Boolean> getFilters() {
-            return Data.getInstance().getArmorForFilters();
-        }
-    };
-
     private class FilterGroup {
         final private String mTitle;
-        final private FilterGetter mFilterGetter;
+        final private BaseFilter mFilter;
         private final ArrayList<Map.Entry<Integer, Boolean>> mEntries;
 
 
-        public FilterGroup(String title, FilterGetter filterGetter) {
+        public FilterGroup(String title, BaseFilter filter) {
             mTitle = title;
-            mFilterGetter = filterGetter;
+            mFilter = filter;
             mEntries = new ArrayList<Map.Entry<Integer, Boolean>>();
             reloadEntries();
         }
 
         private void reloadEntries() {
             mEntries.clear();
-            mEntries.addAll(mFilterGetter.getFilters().entrySet());
+            mEntries.addAll(mFilter.getFilters().entrySet());
         }
 
         public String getTitle() {
@@ -113,12 +69,9 @@ public class ListFilteringFragment extends Fragment {
             super();
             mContext = context;
             mGroups = new ArrayList<FilterGroup>();
-            mGroups.add(new FilterGroup(getResources().getString(R.string.bucket_filter_label), bucketFilters));
-            mGroups.add(new FilterGroup(getResources().getString(R.string.damage_type_filter_label), damageFilters));
-            mGroups.add(new FilterGroup(getResources().getString(R.string.completed_filter_label), completedFilters));
-            mGroups.add(new FilterGroup(getResources().getString(R.string.tier_filter_label), tierNameFilters));
-            mGroups.add(new FilterGroup(getResources().getString(R.string.light_level_filter_label), lightLevelFilters));
-            mGroups.add(new FilterGroup(getResources().getString(R.string.item_for_label), itemForFilters));
+            for (BaseFilter filter : Data.getInstance().getFilters()) {
+                mGroups.add(new FilterGroup(getResources().getString(filter.getMenuLabel()), filter));
+            }
         }
 
         Context getContext() {

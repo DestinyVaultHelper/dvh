@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -65,6 +66,11 @@ public class ItemView extends FrameLayout {
         }
         setDetails(details);
         setLabel(item.getName());
+        if (item.getIsCompleted()) {
+            makeBorder();
+        } else {
+            removeBorder();
+        }
         setUrl(item);
         setOwner(Data.getInstance().getItemOwnerName(item));
         CheckBox cb = ((CheckBox) findViewById(R.id.favorite_button));
@@ -96,6 +102,18 @@ public class ItemView extends FrameLayout {
         });
 
 
+    }
+
+    private void removeBorder() {
+        ImageView iv = (ImageView) findViewById(R.id.icon_preview);
+        iv.setPadding(0, 0, 0, 0);
+    }
+
+    private void makeBorder() {
+        ImageView iv = (ImageView) findViewById(R.id.icon_preview);
+        int border = 5;
+        iv.setPadding(border, border, border, border);
+        iv.setBackgroundColor(getResources().getColor(R.color.completed_border));
     }
 
     private void setLabel(String text) {

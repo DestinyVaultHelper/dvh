@@ -4,4 +4,5 @@
     <color name="black_overlay">#66000000</color>
     <color name="transparent">#00000000</color>
     <color name="overflow_background">#64ffffff</color>
+    <color name="completed_border">#f5dc56</color>
 </resources>
