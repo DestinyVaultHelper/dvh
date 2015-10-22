@@ -1,6 +1,7 @@
 package org.swistowski.vaulthelper;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -16,6 +17,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -48,6 +50,7 @@ import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.util.DataLoader;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.views.DisableableViewPager;
+import org.swistowski.vaulthelper.views.QuantitySelectView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +139,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                                         mIsPremium = true;
                                     }
                                     // update UI accordingly
-                                    if(pg!=null) {
+                                    if (pg != null) {
                                         pg.setIsPremium(MainActivity.this);
                                     }
                                 }
@@ -344,15 +347,33 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         initUI();
     }
 
+
     @Override
     public void onItemClicked(ItemListFragment fragment, final Item item, final String subject) {
         int stackSize = item.getStackSize();
+
+        if (item.getStackSize() > 1) {
+            QuantitySelectView.getStackValue(this, item.getStackSize(), new QuantitySelectView.OnStackSelectInterface() {
+                @Override
+                public void onStackSizeSelect(int i) {
+                    doMove(item, subject, i);
+                }
+
+            });
+        } else {
+            doMove(item, subject, stackSize);
+        }
+
+
+        Log.v(LOG_TAG, item.toString() + " clicked");
+    }
+
+    private void doMove(final Item item, String subject, int stackSize) {
         ItemMover.move(getWebView(), item, subject, stackSize).then(
                 new ItemMover.Result() {
                     @Override
                     public void onSuccess() {
                         Log.v(LOG_TAG, "Move success " + item);
-
                     }
 
                     @Override
@@ -361,8 +382,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                     }
                 }
         );
-
-        Log.v(LOG_TAG, item.toString() + " clicked");
     }
 
     private void onMoveError(String e) {
@@ -579,6 +598,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     @Override
     public boolean processError(ConsoleMessage cm) {
+        Log.d(LOG_TAG, "got errror: " + cm.message());
+        //goLogin();
         /*
         if (cm.message().contains("has no method 'showSignInAlert'")) {
             goLogin();

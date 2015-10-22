@@ -86,4 +86,9 @@ You also will have an opportunity to see and modify the data being sent."
     <string name="tier_name_rare">Rare</string>
     <string name="tier_filter_label">Tier</string>
     <string name="light_level_filter_label">Light Level</string>
+    <string name="please_select_a_quantity">Please select a quantity</string>
+    <string name="armor_for_hunter">Hunter</string>
+    <string name="armor_for_titan">Titan</string>
+    <string name="armor_for_warlock">Warlock</string>
+    <string name="item_for_label">Is for</string>
 </resources>

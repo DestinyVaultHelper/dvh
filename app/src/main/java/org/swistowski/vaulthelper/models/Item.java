@@ -13,6 +13,7 @@ import org.swistowski.vaulthelper.Application;
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.views.ClientWebView;
+import org.swistowski.vaulthelper.views.QuantitySelectView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -57,11 +58,12 @@ public class Item implements Serializable, Comparable<Item> {
     private final int mClassType;
     private final String mBucketName;
     private Runnable requireReloadDataListener;
+    private final long mUnlockFlagHashRequiredToEquip;
 
 
     private final String mJson;
     //private final String mDefinition;
-    //private final String mBucketDescription;
+    private final String mBucketDescription;
 
     private Item(long itemHash, int bindStatus, boolean isEquipped, int itemLevel, int stackSize, int qualityLevel, boolean canEquip, boolean isEquipment, boolean isGridComplete, String itemInstanceId,
 
@@ -72,7 +74,8 @@ public class Item implements Serializable, Comparable<Item> {
                  int cannotEquipReason,
                  int location,
                  String bucketDescription,
-                 String json, String definition
+                 String json, String definition,
+                 long unlockFlagHashRequiredToEquip
 
     ) {
         mItemHash = itemHash;
@@ -103,9 +106,11 @@ public class Item implements Serializable, Comparable<Item> {
         mBucketName = bucketName;
         mCannotEquipReason = cannotEquipReason;
         mLocation = location;
-        //mBucketDescription = bucketDescription;
+        mBucketDescription = bucketDescription;
 
         mJson = json;
+        mUnlockFlagHashRequiredToEquip = unlockFlagHashRequiredToEquip;
+        Log.v(LOG_TAG, "unlock flaggg " + unlockFlagHashRequiredToEquip);
         //mDefinition = definition;
     }
 
@@ -190,7 +195,8 @@ public class Item implements Serializable, Comparable<Item> {
                 item.optInt("location", 0),
                 bucket != null ? bucket.optString("bucketDescription") : "",
                 item.toString(),
-                definition.toString()
+                definition.toString(),
+                item.optLong("unlockFlagHashRequiredToEquip", 0)
         );
     }
 
@@ -236,8 +242,8 @@ public class Item implements Serializable, Comparable<Item> {
         if (tt != 0) {
             return tt;
         }
-        int psv = another.getPrimaryStatValue()/10 - getPrimaryStatValue()/10;
-        if(psv!=0){
+        int psv = another.getPrimaryStatValue() / 10 - getPrimaryStatValue() / 10;
+        if (psv != 0) {
             return psv;
         }
         /*
@@ -255,37 +261,7 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     public String[] debugAttrs() {
-        String[] ret = new String[]{
-                //"item json " + mJson,
-                //"item definition " + mDefinition,
-                "Bucket name " + mBucketName,
-                "Item Hash " + mItemHash,
-                "Bind Status" + mBindStatus,
-                "is equipped " + mIsEquipped,
-                "level " + mItemLevel,
-                "stack size " + mStackSize,
-                "quality level " + mQualityLevel,
-                "can equip " + mCanEquip,
-                "is equipment " + mIsEquipment,
-                "is grid complete " + mIsGridComplete,
-                "instance id " + mItemInstanceId,
-
-                "name " + mName,
-                "description " + mItemDescription,
-                "secondary icon " + mSecondaryIcon,
-                "tier type name " + mTierTypeName,
-                "item type name " + mItemTypeName,
-                "bucket type hash " + mBucketTypeHash,
-                "type " + mItemType,
-                "sub type " + mItemSubType,
-                "class type " + mClassType,
-
-                //"bucket name " + mBucketName,
-                //"bucket description " + mBucketDescription
-
-        };
-        Log.v(LOG_TAG, "DUMP " + mJson.toString());
-        //Log.v(LOG_TAG, "DUMP " + mDefinition.toString());
+        String[] ret = new String[]{};
         return ret;
     }
 
@@ -314,6 +290,9 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     public boolean isVisible() {
+        if (getStackSize() == 0) {
+            return false;
+        }
         return true;
     }
 
@@ -325,8 +304,8 @@ public class Item implements Serializable, Comparable<Item> {
         return mItemDescription;
     }
 
-    public void moveTo(String target) {
-        Data.getInstance().changeOwner(this, target);
+    public void moveTo(String target, int stackSize) {
+        Data.getInstance().changeOwner(this, target, stackSize);
     }
 
     public boolean isEquipped() {
@@ -393,6 +372,23 @@ public class Item implements Serializable, Comparable<Item> {
         return mLocation == LOCATION_INVENTORY || mLocation == LOCATION_VAULT;
     }
 
+    private void doMove(final Activity activity, final Item finalItem, final String owner, int stackSize) {
+        ItemMover.move(((Application) activity.getApplication()).getWebView(), finalItem, owner, stackSize).then(
+                new ItemMover.Result() {
+                    @Override
+                    public void onSuccess() {
+                        Log.v(LOG_TAG, "Move success " + Item.this);
+                        activity.finish();
+                    }
+
+                    @Override
+                    public void onError(String e) {
+                        // onMoveError(e);
+                    }
+                }
+        );
+    }
+
     public List<Action> posibleActions() {
 
         List<Action> actions = new LinkedList<Action>();
@@ -423,20 +419,17 @@ public class Item implements Serializable, Comparable<Item> {
                     actions.add(new Action(R.string.move_to, new Action.ActionRunnable() {
                         @Override
                         public void run(final Activity activity) {
-                            ItemMover.move(((Application) activity.getApplication()).getWebView(), finalItem, owner, finalItem.getStackSize()).then(
-                                    new ItemMover.Result() {
-                                        @Override
-                                        public void onSuccess() {
-                                            Log.v(LOG_TAG, "Move success " + Item.this);
-                                            activity.finish();
-                                        }
-
-                                        @Override
-                                        public void onError(String e) {
-                                            // onMoveError(e);
-                                        }
+                            if (finalItem.getStackSize() > 1) {
+                                QuantitySelectView.getStackValue(activity, finalItem.getStackSize(), new QuantitySelectView.OnStackSelectInterface() {
+                                    @Override
+                                    public void onStackSizeSelect(int i) {
+                                        doMove(activity, finalItem, owner, i);
                                     }
-                            );
+                                });
+                            } else {
+                                doMove(activity, finalItem, owner, finalItem.getStackSize());
+                            }
+
                         }
                     }, ownerLabel));
                 }
@@ -540,6 +533,20 @@ public class Item implements Serializable, Comparable<Item> {
 
     public String getTierTypeName() {
         return mTierTypeName;
+    }
+
+    public void setStackSize(int stackSize) {
+        this.mStackSize = stackSize;
+    }
+
+    public Item make_clone() {
+        return new Item(mItemHash, mBindStatus, mIsEquipped, mItemLevel,
+                mStackSize, mQualityLevel, mCanEquip, mIsEquipment, mIsGridComplete, mItemInstanceId,
+                mName, mItemDescription, mIcon, mSecondaryIcon, mTierTypeName, mTierType, mItemTypeName,
+                mBucketTypeHash, mItemType, mItemSubType, mClassType,
+                mPrimaryStatValue, mDamageType, mBucketName, mCannotEquipReason,
+                mLocation, "", "", "", mUnlockFlagHashRequiredToEquip
+        );
     }
 
     public static class Action {

@@ -83,5 +83,10 @@
   <string name="tier_name_legendary">Legendarny</string>
   <string name="tier_filter_label">Zestaw</string>
   <string name="light_level_filter_label">Poziom Światła</string>
+  <string name="please_select_a_quantity">Please select a quantity</string>
+  <string name="armor_for_hunter">Hunter</string>
+  <string name="armor_for_titan">Titan</string>
+  <string name="armor_for_warlock">Warlock</string>
+  <string name="item_for_label">Is for</string>
 
 </resources>

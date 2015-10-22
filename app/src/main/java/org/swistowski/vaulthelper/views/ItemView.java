@@ -138,7 +138,6 @@ public class ItemView extends FrameLayout {
 
     public void setIsGrayed(boolean isGrayed) {
         this.isGrayed = isGrayed;
-        Log.v(LOG_TAG, mItem.toString() + " " + (isGrayed ? "yes" : "no"));
 
         if (!mItem.isMoveable()) {
             findViewById(R.id.item_view_root).setBackgroundColor(getResources().getColor(android.R.color.holo_orange_light));

@@ -32,6 +32,7 @@ public class ClientWebView extends WebView {
     public interface ErrorHandler {
         boolean processError(ConsoleMessage cm);
     }
+
     private ErrorHandler errorHandler;
     private final String LOG_TAG = "ClientWebView";
     private boolean mPrepared = false;
@@ -68,9 +69,13 @@ public class ClientWebView extends WebView {
             mPrepared = true;
             setWebChromeClient(new WebChromeClient() {
                 public boolean onConsoleMessage(ConsoleMessage cm) {
-                    if(errorHandler!=null){
+                    if (errorHandler != null) {
                         errorHandler.processError(cm);
                     }
+                    if (errorHandler == null)
+                        Log.d(LOG_TAG, "Does not have error handler");
+                    else
+                        Log.d(LOG_TAG, "Have error handler");
                     Log.d(LOG_TAG + " js", cm.message() + " -- From line "
                             + cm.lineNumber() + " of "
                             + cm.sourceId());
@@ -92,19 +97,19 @@ public class ClientWebView extends WebView {
                 @Override
                 public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                     Log.v(LOG_TAG, "onReceivedError " + errorCode + " " + description + "failingUrl: " + failingUrl);
-                        if(currentActivity!=null) {
-                            new AlertDialog.Builder(currentActivity).setTitle(getContext().getString(R.string.critical_error)).setMessage(
-                                    String.format(getContext().getString(R.string.no_url_error), failingUrl)
-                            ).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    System.exit(0);
-                                }
-                            }).setIcon(android.R.drawable.ic_dialog_alert)
-                                    .show();
-                        } else {
-                            System.exit(0);
-                        }
+                    if (currentActivity != null) {
+                        new AlertDialog.Builder(currentActivity).setTitle(getContext().getString(R.string.critical_error)).setMessage(
+                                String.format(getContext().getString(R.string.no_url_error), failingUrl)
+                        ).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                System.exit(0);
+                            }
+                        }).setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+                    } else {
+                        System.exit(0);
+                    }
 
                     super.onReceivedError(view, errorCode, description, failingUrl);
                 }

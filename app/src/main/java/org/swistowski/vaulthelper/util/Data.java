@@ -14,9 +14,11 @@ import org.swistowski.vaulthelper.models.Character;
 import org.swistowski.vaulthelper.models.Item;
 import org.swistowski.vaulthelper.models.Membership;
 import org.swistowski.vaulthelper.models.User;
+import org.swistowski.vaulthelper.purchase.Inventory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +38,7 @@ public class Data implements Serializable {
     private Map<Item, String> itemsOwners = new HashMap<Item, String>();
     private Set<String> bucketNames = new HashSet<String>();
     private final Set<BaseAdapter> registeredAdapters = new HashSet<BaseAdapter>();
+
 
     private LinkedHashMap<Integer, Boolean> mBucketFilters;
     private static final LinkedHashMap<Integer, Boolean> BUCKET_FILTERS;
@@ -82,6 +85,7 @@ public class Data implements Serializable {
         BUCKET_FILTERS_LABELS.put("Ships", R.string.ships_bucket);
         BUCKET_FILTERS_LABELS.put("Vehicle", R.string.vehicle_bucket);
         BUCKET_FILTERS_LABELS.put("Artifacts", R.string.artifacts_bucket);
+        BUCKET_FILTERS_LABELS.put("Emotes", R.string.emotes_bucket);
     }
 
     private LinkedHashMap<Integer, Boolean> mDamageFilters;
@@ -163,9 +167,32 @@ public class Data implements Serializable {
 
     }
 
+
+    private LinkedHashMap<Integer, Boolean> mArmorForFilters;
+    private static final LinkedHashMap<Integer, Boolean> ARMOR_FOR_FILTERS;
+
+    static {
+        ARMOR_FOR_FILTERS = new LinkedHashMap<Integer, Boolean>();
+        ARMOR_FOR_FILTERS.put(R.string.armor_for_hunter, Boolean.FALSE);
+        ARMOR_FOR_FILTERS.put(R.string.armor_for_titan, Boolean.FALSE);
+        ARMOR_FOR_FILTERS.put(R.string.armor_for_warlock, Boolean.FALSE);
+
+    }
+
+
     private DB mDb;
     private Context context;
     private boolean mShowAll = true;
+
+    public LinkedHashMap<Integer, Boolean> getArmorForFilters() {
+        if (mArmorForFilters == null) {
+            mArmorForFilters = new LinkedHashMap<Integer, Boolean>();
+            for (Map.Entry<Integer, Boolean> entry : ARMOR_FOR_FILTERS.entrySet()) {
+                mArmorForFilters.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return mArmorForFilters;
+    }
 
     public LinkedHashMap<Integer, Boolean> getBucketFilters() {
         if (mBucketFilters == null) {
@@ -325,7 +352,7 @@ public class Data implements Serializable {
 
     private boolean filterByLightLevel(Item item) {
         if (getLightLevelFilters().containsValue(Boolean.TRUE)) {
-            if(item.getPrimaryStatValue()==0){
+            if (item.getPrimaryStatValue() == 0) {
                 return false;
             }
             if (getLightLevelFilters().get(R.string.ligth_level_0) && item.getPrimaryStatValue() < 200) {
@@ -423,10 +450,10 @@ public class Data implements Serializable {
     }
 
     public String getItemOwnerName(Item item) {
-        if(item.getLocation()==item.LOCATION_VENDOR){
+        if (item.getLocation() == item.LOCATION_VENDOR) {
             return "Vendor";
         }
-        if(item.getLocation()==item.LOCATION_POSTMASTER){
+        if (item.getLocation() == item.LOCATION_POSTMASTER) {
             return "Postmaster";
         }
         String owner = getItemOwner(item);
@@ -444,11 +471,80 @@ public class Data implements Serializable {
         return "None";
     }
 
-    public void changeOwner(Item item, String target) {
-        String owner = getItemOwner(item);
-        items.get(owner).remove(item);
-        items.get(target).add(item);
-        itemsOwners.put(item, target);
+    public void changeOwner(Item item, String target, int stackSize) {
+        if (item.getInstanceId() != 0) {
+            Log.v(LOG_TAG, "move not stackable " + stackSize + item.getItemId());
+            String owner = getItemOwner(item);
+            items.get(owner).remove(item);
+            items.get(target).add(item);
+            itemsOwners.put(item, target);
+
+        } else {
+            int leftOvers = item.getStackSize() - stackSize;
+            boolean exists = false;
+            /*
+            Item new_item = item.make_clone();
+            new_item.setStackSize(item.getStackSize()-stackSize);
+            */
+            for (Item tmp_item : items.get(target)) {
+                if (tmp_item.getItemHash() == item.getItemHash()) {
+                    // exists!
+                    item.setStackSize(tmp_item.getStackSize() + stackSize);
+                    items.get(target).remove(tmp_item);
+                    itemsOwners.remove(tmp_item);
+                    exists = true;
+                    break;
+
+                }
+            }
+            // moved to fresh place
+            if (!exists) {
+                item.setStackSize(stackSize);
+            }
+
+            String owner = getItemOwner(item);
+            items.get(owner).remove(item);
+            items.get(target).add(item);
+            itemsOwners.put(item, target);
+
+            if (leftOvers > 0) {
+                // recreate!
+                Item new_item = item.make_clone();
+                new_item.setStackSize(leftOvers);
+                items.get(owner).add(new_item);
+                itemsOwners.put(new_item, owner);
+            }
+            /*
+            // put clone back to place
+            if(new_item.getStackSize()>0) {
+                items.get(owner).add(new_item);
+                itemsOwners.put(new_item, owner);
+            }
+            */
+
+            //item.setStackSize;
+            /*
+            Log.v(LOG_TAG, "move stackable " + stackSize);
+            // stackable
+            item.setStackSize(item.getStackSize() - stackSize);
+            // now add :)
+            boolean added = false;
+            for (Item tmp_item : items.get(target)) {
+                if (tmp_item.getItemHash() == item.getItemHash()) {
+                    tmp_item.setStackSize(tmp_item.getStackSize() + stackSize);
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) {
+                // create brand new item
+                Item new_item = item.make_clone();
+                new_item.setStackSize(stackSize);
+                items.get(target).add(new_item);
+                itemsOwners.put(new_item, target);
+                item = new_item;
+            }*/
+        }
         notifyItemsChanged();
     }
 

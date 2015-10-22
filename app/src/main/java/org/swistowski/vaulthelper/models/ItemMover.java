@@ -119,7 +119,7 @@ public class ItemMover {
                 webView.queueRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        item.moveTo(Data.VAULT_ID);
+                        item.moveTo(Data.VAULT_ID, stackSize);
                         if (p != null)
                             p.onSuccess();
                         p_inner.onSuccess();
@@ -144,7 +144,7 @@ public class ItemMover {
         return p_inner;
     }
 
-    private static Promise moveFromVault(final ClientWebView webView, final String subject, final Item item, int stackSize, final Promise p) {
+    private static Promise moveFromVault(final ClientWebView webView, final String subject, final Item item, final int stackSize, final Promise p) {
         JSONObject obj = generateMoveJson(subject, item, false, stackSize);
         final Promise p_inner = new Promise();
         webView.call("destinyService.TransferItem", obj).then(new ClientWebView.Callback() {
@@ -153,7 +153,7 @@ public class ItemMover {
                 webView.queueRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        item.moveTo(subject);
+                        item.moveTo(subject, stackSize);
                         p.onSuccess();
                         p_inner.onSuccess();
                     }
@@ -184,10 +184,18 @@ public class ItemMover {
             moveToVault(webView, owner, item, stackSize, null).then(new Result() {
                 @Override
                 public void onSuccess() {
+                    Item vault_item = null;
+                    for (Item tmp_item : Data.getInstance().getItems().get(Data.VAULT_ID)) {
+                        if (tmp_item.getItemHash() == item.getItemHash() && tmp_item.getItemId() == item.getItemId()) {
+                            vault_item = tmp_item;
+                            break;
+                        }
+                    }
+                    final Item tmp_item = vault_item;
                     webView.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            moveFromVault(webView, subject, item, stackSize, p);
+                            moveFromVault(webView, subject, tmp_item, stackSize, p);
                         }
                     }, 1000);
                 }
@@ -217,6 +225,7 @@ public class ItemMover {
             Log.e(LOG_TAG, "exception", e);
             e.printStackTrace();
         }
+        Log.v(LOG_TAG + "moveJson", json.toString());
         return json;
     }
 

@@ -27,7 +27,7 @@ import org.swistowski.vaulthelper.util.ImageStorage;
 
 public class ItemDetailActivity extends ActionBarActivity {
     public static final String ITEM = "item";
-    public static final String OWNER = "owner";
+    public static final String STACK_SIZE = "stack-size";
     private static final String LOG_TAG = "ItemDetailActivity";
 
     public static void showItemItent(Context parent, Item item) {
@@ -35,12 +35,10 @@ public class ItemDetailActivity extends ActionBarActivity {
         Intent intent = new Intent(parent, ItemDetailActivity.class);
         Bundle b = new Bundle();
         b.putLong(ItemDetailActivity.ITEM, item.getItemHash());
-        b.putString(OWNER, Data.getInstance().getItemOwner(item));
+        b.putLong(ItemDetailActivity.STACK_SIZE, item.getStackSize());
         intent.putExtras(b);
         parent.startActivity(intent);
     }
-
-    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +47,14 @@ public class ItemDetailActivity extends ActionBarActivity {
         Bundle b = getIntent().getExtras();
         Item item = null;
         long itemHash = b.getLong(ITEM);
+        long itemStackSize = b.getLong(STACK_SIZE);
 
         for (Item tmp_item : Data.getInstance().getAllItems()) {
-            if (tmp_item.getItemHash() == itemHash) {
+            if (tmp_item.getItemHash() == itemHash && tmp_item.getStackSize() == itemStackSize) {
                 item = tmp_item;
                 break;
             }
         }
-        final String owner = b.getString(OWNER);
         ((ImageView) findViewById(R.id.detail_icon)).setImageBitmap(ImageStorage.getInstance().getImage(item.getItemHash()));
         setTitle(item.getName());
         ((TextView) findViewById(R.id.detail_name)).setText(item.getDetails());
