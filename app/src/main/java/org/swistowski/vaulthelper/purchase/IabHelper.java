@@ -908,6 +908,9 @@ public class IabHelper {
 
         Bundle querySkus = new Bundle();
         querySkus.putStringArrayList(GET_SKU_DETAILS_ITEM_LIST, skuList);
+        if(mService==null){
+            return IABHELPER_BAD_RESPONSE;
+        }
         Bundle skuDetails = mService.getSkuDetails(3, mContext.getPackageName(),
                 itemType, querySkus);
 

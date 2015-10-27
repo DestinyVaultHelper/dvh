@@ -77,13 +77,11 @@ public class LoginActivity extends ActionBarActivity {
                 .setAction(getString(R.string.tracker_action_click))
                 .setLabel("One button")
                 .build());
-        Log.v(LOG_TAG, "go to: "+xone_url);
         goToUrl(xone_url);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(LOG_TAG, "onActivityResult requestCode: " + requestCode + " resultCode: " + resultCode);
         if(requestCode == LOGIN_REQUEST) {
             Intent resultIntent = new Intent();
             setResult(resultCode, resultIntent);

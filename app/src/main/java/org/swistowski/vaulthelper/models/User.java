@@ -15,7 +15,6 @@ public class User implements Serializable {
     private final boolean mIsPsn;
 
     private User(String displayName, String psnId, String gameTag) {
-        Log.v(LOG_TAG, "new user: " + displayName + " " + psnId);
         mDisplayName = displayName;
         mPsnId = psnId;
         mIsPsn = !psnId.equals("");
@@ -23,7 +22,6 @@ public class User implements Serializable {
     }
 
     static public User fromJson(JSONObject data) throws JSONException {
-        Log.v(LOG_TAG, "json: "+data);
         return new User(
                 data.getJSONObject("user").getString("displayName"),
                 data.optString("psnId", ""),
@@ -39,7 +37,6 @@ public class User implements Serializable {
     }
 
     public int getAccountType() {
-        Log.v(LOG_TAG, "mIsPsn user: " + (mIsPsn ? 2 : 1));
         return mIsPsn ? 2 : 1;
     }
 

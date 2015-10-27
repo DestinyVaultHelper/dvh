@@ -164,7 +164,6 @@ public class ListFilteringFragment extends Fragment {
             view.onCheckedChanged(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.v(LOG_TAG, "Postion " + groupPosition + " child: " + childPosition + " " + isChecked);
                     Map.Entry<Integer, Boolean> entry = mGroups.get(groupPosition).mEntries.get(childPosition);
                     if (entry.getValue() != isChecked) {
                         entry.setValue(isChecked);
@@ -199,7 +198,6 @@ public class ListFilteringFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreateView");
         // Inflate the layout for this fragment
         View root_view = inflater.inflate(R.layout.fragment_list_filtering, container, false);
 
@@ -209,7 +207,6 @@ public class ListFilteringFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreateView");
         mFilterAdapter = new FilterAdapter(getActivity());
         super.onCreate(savedInstanceState);
 
@@ -217,26 +214,22 @@ public class ListFilteringFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        Log.v(LOG_TAG, "onDestroyView");
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
-        Log.v(LOG_TAG, "onDestroy");
         super.onDestroy();
 
     }
 
     @Override
     public void onAttach(Activity act) {
-        Log.v(LOG_TAG, "onAttach");
         super.onAttach(act);
     }
 
     @Override
     public void onDetach() {
-        Log.v(LOG_TAG, "onDetach");
         super.onDetach();
     }
 }

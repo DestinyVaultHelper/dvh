@@ -28,7 +28,6 @@ public class DB {
         @Override
         public void onCreate(SQLiteDatabase db) {
             final String sql = "create table " + TABLE_LABELS_NAME + "(id integer primary key autoincrement, " + TABLE_LABELS_COL_LABEL + " text, " + TABLE_LABELS_COL_ITEM + " integer,  UNIQUE(" + TABLE_LABELS_COL_LABEL + ", " + TABLE_LABELS_COL_ITEM + ") ON CONFLICT REPLACE)";
-            Log.v(LOG_TAG, sql);
             db.execSQL(sql);
         }
 

@@ -42,8 +42,6 @@ public class WebViewActivity extends Activity {
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         // call the pageLoaded method with javascript
-                        Log.v(LOG_TAG, "url loaded: " + url);
-                        // view.loadUrl("javascript:window.INTERFACE.pageFinished()");
                         super.onPageFinished(view, url);
                         if(url.equals("https://www.bungie.net/")){
                             view.loadUrl("javascript:window.INTERFACE.pageFinished()");

@@ -31,7 +31,6 @@ public class ItemAdapter extends BaseAdapter {
     }
 
     private void reloadItems() {
-        Log.v(LOG_TAG, "Loading items " + mSubject);
         if(mSubject!=null) {
             mItems = Data.getInstance().notForItems(mSubject);
         } else {

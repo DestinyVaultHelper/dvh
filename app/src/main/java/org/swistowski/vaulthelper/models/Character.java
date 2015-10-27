@@ -36,7 +36,6 @@ public class Character implements Serializable {
     }
 
     private static Character fromJson(JSONObject data) throws JSONException {
-        Log.v(LOG_TAG, data.toString());
         return new Character(
                 data.getJSONObject("characterBase").getString("characterId"),
                 data.getJSONObject("characterBase").getInt("classType"),

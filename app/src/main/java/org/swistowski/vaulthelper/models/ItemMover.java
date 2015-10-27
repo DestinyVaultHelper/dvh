@@ -30,7 +30,6 @@ public class ItemMover {
             Log.e(LOG_TAG, "exception", e);
             e.printStackTrace();
         }
-        Log.v(LOG_TAG, "equip " + obj.toString());
 
         webView.call("destinyService.EquipItem", obj).then(new ClientWebView.Callback() {
             @Override
@@ -62,7 +61,6 @@ public class ItemMover {
             String item_owner = Data.getInstance().getItemOwner(item);
             for (Item tested_item : Data.getInstance().getAllItems()) {
                 if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Data.getInstance().getItemOwner(tested_item).equals(item_owner) && tested_item.getCanEquip()) {
-                    Log.v(LOG_TAG, "other: " + tested_item + Data.getInstance().getItemOwner(tested_item));
                     proposed.add(tested_item);
                 }
             }
@@ -105,14 +103,13 @@ public class ItemMover {
                         if (p != null) {
                             p.onError(message);
                         } else {
-                            Log.v(LOG_TAG, message);
+                            Log.e(LOG_TAG, message);
                         }
                     }
                 }, 1);
             }
             return p_inner;
         }
-        Log.v(LOG_TAG, "item: " + item.isEquipped());
         webView.call("destinyService.TransferItem", obj).then(new ClientWebView.Callback() {
             @Override
             public void onAccept(String result) {
@@ -225,7 +222,6 @@ public class ItemMover {
             Log.e(LOG_TAG, "exception", e);
             e.printStackTrace();
         }
-        Log.v(LOG_TAG + "moveJson", json.toString());
         return json;
     }
 

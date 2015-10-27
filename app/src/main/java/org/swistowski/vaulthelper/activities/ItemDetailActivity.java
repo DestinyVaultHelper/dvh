@@ -31,7 +31,6 @@ public class ItemDetailActivity extends ActionBarActivity {
     private static final String LOG_TAG = "ItemDetailActivity";
 
     public static void showItemItent(Context parent, Item item) {
-        Log.v(LOG_TAG, "owner: " + Data.getInstance().getItemOwner(item));
         Intent intent = new Intent(parent, ItemDetailActivity.class);
         Bundle b = new Bundle();
         b.putLong(ItemDetailActivity.ITEM, item.getItemHash());
@@ -61,31 +60,8 @@ public class ItemDetailActivity extends ActionBarActivity {
         ListView lv = (ListView) findViewById(R.id.item_actions_list);
         lv.setAdapter(new ItemActionAdapter(this, item));
 
-        /*
-        for (String debugAttr : item.debugAttrs()) {
-            Log.v(LOG_TAG, debugAttr);
-        }
-        */
         item.debugAttrs();
-        //ListView debug = (ListView) findViewById(R.id.detail_list_view);
-        //debug.setAdapter(new ArrayAdapter<String>(this, R.layout.simple_list_item, item.debugAttrs()));
-        //Log.v(LOG_TAG, item.debugAttrs().toString());
-
         setListViewHeightBasedOnChildren((ListView) findViewById(R.id.item_actions_list));
-        //setListViewHeightBasedOnChildren((ListView) findViewById(R.id.detail_list_view));
-        /*
-        setListViewHeightBasedOnChildren((ListView) findViewById(R.id.layouts_list));
-
-        ((ImageButton) findViewById(R.id.new_layout_button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.v(LOG_TAG, "Add layout clicked");
-                handleCreateNewLayout();
-            }
-        });
-        */
-
-
     }
 
     private void handleCreateNewLayout() {
@@ -95,7 +71,6 @@ public class ItemDetailActivity extends ActionBarActivity {
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Log.v(LOG_TAG, "Create new layout clicked, text typed: " + input.getText().toString());
             }
         });
 

@@ -44,7 +44,6 @@ public class Inventory {
 
     /** Returns whether or not there exists a purchase of the given product. */
     public boolean hasPurchase(String sku) {
-        Log.v("mPurchaseMap", mPurchaseMap.keySet().toString());
         return mPurchaseMap.containsKey(sku);
     }
 

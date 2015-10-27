@@ -88,7 +88,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 @Override
                 public void run() {
                     goLogin();
-                    Log.v(LOG_TAG, "Fallback go login");
                     mSuccessLoginTimer = null;
                 }
             }, 60000);
@@ -96,7 +95,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             getWebView().prepare(new Runnable() {
                 @Override
                 public void run() {
-                    Log.v(LOG_TAG, "web view initialized");
                     reloadDatabase();
                 }
             });
@@ -126,10 +124,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                                 mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
                             public void onQueryInventoryFinished(IabResult result,
                                                                  Inventory inventory) {
-                                Log.v(LOG_TAG, "IabHelper " + result.toString());
 
                                 if (result.isFailure()) {
-                                    Log.v(LOG_TAG, "failure " + result.toString());
                                     // handle error here
                                 } else {
                                     // does the user have the premium upgrade?
@@ -242,18 +238,15 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     private void goLogin() {
-        Log.v(LOG_TAG, "go login");
         getWebView().callAny("document.getElementsByClassName(\"exempt psn\")[0].href+\"#\"+document.getElementsByClassName(\"exempt live\")[0].href").then(new ClientWebView.Callback() {
             @Override
             public void onAccept(String result) {
                 String[] urls = result.split("#");
-                Log.v(LOG_TAG, "Xbox url:" + urls[1]);
                 LoginActivity.goLogin(MainActivity.this, urls[1], urls[0]);
             }
 
             @Override
             public void onError(String result) {
-                Log.v(LOG_TAG, "error url:" + result);
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivityForResult(intent, LoginActivity.LOGIN_REQUEST);
             }
@@ -270,7 +263,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                         .setAction(getString(R.string.tracker_action_loaded))
                         .setLabel("Success")
                         .build());
-                Log.v(LOG_TAG, "web view data loaded");
                 Data.getInstance().setIsLoading(false);
                 // cancel fallback login timer
                 if (mSuccessLoginTimer != null)
@@ -295,7 +287,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 } catch (JSONException e) {
                     errorMesssage = message;
                 }
-                Log.v(LOG_TAG, "Error status " + errorStatus);
                 if (errorStatus.equals("WebAuthRequired")) {
                     goLogin();
                 } else {
@@ -306,8 +297,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                             builder.setMessage(messageToShow)
                                     .setTitle("Bungie Api error");
-                            Log.v(LOG_TAG, "error " + message);
-                            Log.v(LOG_TAG, "i'm not logged in");
                             builder.show();
                         }
                     });
@@ -317,12 +306,10 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         }, new DataLoader.Callback() {
             @Override
             public void onMessage(final String message) {
-                Log.v("ON message", message);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (Data.getInstance().getIsLoading()) {
-                            Log.v(LOG_TAG, message);
                             try {
                                 ((TextView) findViewById(R.id.progress_text)).setText(message);
                             } catch (NullPointerException e) {
@@ -363,9 +350,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         } else {
             doMove(item, subject, stackSize);
         }
-
-
-        Log.v(LOG_TAG, item.toString() + " clicked");
     }
 
     private void doMove(final Item item, String subject, int stackSize) {
@@ -373,7 +357,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 new ItemMover.Result() {
                     @Override
                     public void onSuccess() {
-                        Log.v(LOG_TAG, "Move success " + item);
                     }
 
                     @Override
@@ -423,7 +406,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(LOG_TAG, "onActivityResult requestCOde: " + requestCode + " resultCode" + resultCode);
         if (requestCode == LoginActivity.LOGIN_REQUEST) {
             if (resultCode == WebViewActivity.RESULT_RELOAD) {
                 reloadDatabase();
@@ -475,7 +457,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     private void setFiltersVisible(boolean visibility) {
         filtersVisible = visibility;
         View container = findViewById(R.id.fragment_container);
-        Log.v(LOG_TAG, "filters show: " + container + " " + visibility);
         if (container != null) {
             if (visibility) {
                 container.setVisibility(View.VISIBLE);
@@ -488,7 +469,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            Log.v(LOG_TAG, "Back button!");
             if (filtersVisible) {
                 setFiltersVisible(false);
                 return true;
@@ -503,7 +483,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.toggle_filters:
-                Log.v(LOG_TAG, "item checked: " + item.isChecked());
                 item.setChecked(!item.isChecked());
                 setFiltersVisible(item.isChecked());
                 return true;
@@ -511,7 +490,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                 actionRefresh();
                 return true;
             case R.id.show_all:
-                Log.v(LOG_TAG, "item checked: " + item.isChecked());
                 item.setChecked(!item.isChecked());
                 Data.getInstance().setShowAll(item.isChecked());
                 return true;

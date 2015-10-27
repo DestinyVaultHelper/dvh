@@ -23,7 +23,7 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     public ItemsFragmentPagerAdapter(FragmentManager fm, Context context, boolean isPremium) {
         super(fm);
-        if(!isPremium) {
+        if (!isPremium) {
             mPages.add(new Page(context.getString(R.string.ad), new FragmentProvider() {
                 @Override
                 public Fragment getFragment() {
@@ -73,7 +73,7 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
             }));
         }
         */
-        if(isPremium) {
+        if (isPremium) {
             mPages.add(new Page(context.getString(R.string.ad), new FragmentProvider() {
                 @Override
                 public Fragment getFragment() {
@@ -99,7 +99,7 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public int getItemPosition(Object object){
+    public int getItemPosition(Object object) {
         return POSITION_NONE;
     }
 
@@ -110,9 +110,11 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
                 mPages.set(i, mPages.get(i + 1));
             }
             mPages.set(mPages.size() - 1, ad_page);
-            notifyDataSetChanged();
-
-
+            try {
+                notifyDataSetChanged();
+            } catch (IllegalStateException e) {
+                // really rare issue, when notifiDataSetChanged is called when screen is changed from horizontal to vertical
+            }
         } else {
         }
 

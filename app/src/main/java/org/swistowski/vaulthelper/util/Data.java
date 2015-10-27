@@ -142,8 +142,8 @@ public class Data implements Serializable {
     }
 
     private boolean isVisible(Item item) {
-        for(BaseFilter filter: getFilters()){
-            if(!filter.filter(item)){
+        for (BaseFilter filter : getFilters()) {
+            if (!filter.filter(item)) {
                 return false;
             }
         }
@@ -236,11 +236,12 @@ public class Data implements Serializable {
 
     public void changeOwner(Item item, String target, int stackSize) {
         if (item.getInstanceId() != 0) {
-            Log.v(LOG_TAG, "move not stackable " + stackSize + item.getItemId());
             String owner = getItemOwner(item);
-            items.get(owner).remove(item);
-            items.get(target).add(item);
-            itemsOwners.put(item, target);
+            if (items.get(owner) != null) {
+                items.get(owner).remove(item);
+                items.get(target).add(item);
+                itemsOwners.put(item, target);
+            }
 
         } else {
             int leftOvers = item.getStackSize() - stackSize;
@@ -253,9 +254,11 @@ public class Data implements Serializable {
                 if (tmp_item.getItemHash() == item.getItemHash()) {
                     // exists!
                     item.setStackSize(tmp_item.getStackSize() + stackSize);
-                    items.get(target).remove(tmp_item);
-                    itemsOwners.remove(tmp_item);
-                    exists = true;
+                    if (items.get(target) != null) {
+                        items.get(target).remove(tmp_item);
+                        itemsOwners.remove(tmp_item);
+                        exists = true;
+                    }
                     break;
 
                 }
@@ -266,9 +269,11 @@ public class Data implements Serializable {
             }
 
             String owner = getItemOwner(item);
-            items.get(owner).remove(item);
-            items.get(target).add(item);
-            itemsOwners.put(item, target);
+            if (items.get(owner) != null) {
+                items.get(owner).remove(item);
+                items.get(target).add(item);
+                itemsOwners.put(item, target);
+            }
 
             if (leftOvers > 0) {
                 // recreate!
@@ -277,36 +282,6 @@ public class Data implements Serializable {
                 items.get(owner).add(new_item);
                 itemsOwners.put(new_item, owner);
             }
-            /*
-            // put clone back to place
-            if(new_item.getStackSize()>0) {
-                items.get(owner).add(new_item);
-                itemsOwners.put(new_item, owner);
-            }
-            */
-
-            //item.setStackSize;
-            /*
-            Log.v(LOG_TAG, "move stackable " + stackSize);
-            // stackable
-            item.setStackSize(item.getStackSize() - stackSize);
-            // now add :)
-            boolean added = false;
-            for (Item tmp_item : items.get(target)) {
-                if (tmp_item.getItemHash() == item.getItemHash()) {
-                    tmp_item.setStackSize(tmp_item.getStackSize() + stackSize);
-                    added = true;
-                    break;
-                }
-            }
-            if (!added) {
-                // create brand new item
-                Item new_item = item.make_clone();
-                new_item.setStackSize(stackSize);
-                items.get(target).add(new_item);
-                itemsOwners.put(new_item, target);
-                item = new_item;
-            }*/
         }
         notifyItemsChanged();
     }
@@ -318,12 +293,10 @@ public class Data implements Serializable {
     }
 
     public void registerItemAdapter(BaseAdapter adapter) {
-        Log.v(LOG_TAG, "Adding adapter: " + adapter.toString());
         registeredAdapters.add(adapter);
     }
 
     public void unregisterItemAdapter(BaseAdapter adapter) {
-        Log.v(LOG_TAG, "Removing adapter: " + adapter.toString());
         registeredAdapters.remove(adapter);
     }
 
@@ -353,7 +326,6 @@ public class Data implements Serializable {
             mAllLabels = new ArrayList<String>();
             Cursor c = getDb().getAllLabels();
             while (c.moveToNext()) {
-                Log.v(LOG_TAG, "labels: " + c.toString());
                 mAllLabels.add(c.getString(0));
             }
         }

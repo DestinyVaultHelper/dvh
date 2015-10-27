@@ -11,7 +11,6 @@ public class Membership  implements Serializable {
     private final int mType;
 
     private Membership(String id, int type){
-        Log.v("memebership id", ""+id);
         mId = id;
         mType = type;
     }
@@ -33,7 +32,6 @@ public class Membership  implements Serializable {
     }
 
     public static Membership fromJson(JSONObject jsonObject) {
-        Log.v("membership", jsonObject.toString());
         return new Membership(jsonObject.optString("membershipId"), jsonObject.optInt("membershipType"));
     }
 }

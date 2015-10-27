@@ -110,7 +110,6 @@ public class Item implements Serializable, Comparable<Item> {
 
         mJson = json;
         mUnlockFlagHashRequiredToEquip = unlockFlagHashRequiredToEquip;
-        Log.v(LOG_TAG, "unlock flaggg " + unlockFlagHashRequiredToEquip);
         //mDefinition = definition;
     }
 
@@ -377,7 +376,6 @@ public class Item implements Serializable, Comparable<Item> {
                 new ItemMover.Result() {
                     @Override
                     public void onSuccess() {
-                        Log.v(LOG_TAG, "Move success " + Item.this);
                         activity.finish();
                     }
 
@@ -445,21 +443,16 @@ public class Item implements Serializable, Comparable<Item> {
 
         final ClientWebView webView = ((Application) activity.getApplication()).getWebView();
         final String owner = Data.getInstance().getItemOwner(this);
-        Log.v(LOG_TAG, "owner: " + owner);
         ItemMover.equip(webView, owner, this, null).then(
                 new ItemMover.Result() {
                     @Override
                     public void onSuccess() {
-                        Log.v(LOG_TAG, "doGetCharacterInventory");
                         Membership membership = Data.getInstance().getMembership();
-                        Log.v(LOG_TAG, "owner: " + owner);
                         org.swistowski.vaulthelper.models.Character character = Data.getInstance().getCharacter(owner);
                         webView.call("destinyService.GetCharacterInventory", "" + membership.getType(), "" + membership.getId(), character.getId(), "true").then(new ClientWebView.Callback() {
                             @Override
                             public void onAccept(String result) {
-                                Log.v("Got character info", result);
                                 List<Item> items = Data.getInstance().getItems().get(owner);
-                                Log.v(LOG_TAG, Data.getInstance().getItems().keySet().toString());
                                 HashMap<Long, Item> hash2item = new HashMap<Long, Item>();
                                 for (Item ii : items) {
                                     hash2item.put(ii.getInstanceId(), ii);
@@ -467,7 +460,6 @@ public class Item implements Serializable, Comparable<Item> {
 
                                 try {
                                     JSONObject loadedItems = new JSONObject(result);
-                                    //Log.v(LOG_TAG, loadedItems.optJSONObject("data").optJSONObject("buckets").toString());
                                     for (Iterator<String> iter = loadedItems.optJSONObject("data").optJSONObject("buckets").keys(); iter.hasNext(); ) {
                                         JSONArray bucketData = loadedItems.optJSONObject("data").optJSONObject("buckets").optJSONArray(iter.next());
                                         for (int i = 0; i < bucketData.length(); i++) {
@@ -475,15 +467,14 @@ public class Item implements Serializable, Comparable<Item> {
                                             for (int j = 0; j < bucketItems.length(); j++) {
                                                 JSONObject bi = bucketData.optJSONObject(j);
                                                 if (bi != null) {
-                                                    Log.v(LOG_TAG, "bi" + bi.toString());
                                                     Item currentItem = hash2item.get(bi.optLong("itemHash"));
                                                     if (currentItem != null) {
+                                                        /*
                                                         if (currentItem.getCanEquip() != bi.optBoolean("canEquip")) {
-                                                            Log.v(LOG_TAG, "ci" + currentItem.toString());
                                                         }
                                                         if (currentItem.getIsEquipped() != bi.opt("isEquipped")) {
-                                                            Log.v(LOG_TAG, "is equipped update" + currentItem.toString());
                                                         }
+                                                        */
                                                         currentItem.setIsEquipped(bi.optBoolean("isEquipped"));
                                                         currentItem.setCanEquip(bi.optBoolean("canEquip"));
                                                     }
