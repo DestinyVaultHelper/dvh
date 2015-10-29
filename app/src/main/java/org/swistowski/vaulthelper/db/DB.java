@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,12 +15,16 @@ public class DB {
     private static final String LOG_TAG = "DB";
 
     private class DBHelper extends SQLiteOpenHelper {
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 2;
         public static final String DATABASE_NAME = "vaulthelper.db";
 
         public static final String TABLE_LABELS_NAME = "labels";
         public static final String TABLE_LABELS_COL_LABEL = "label";
-        public static final String TABLE_LABELS_COL_ITEM = "item";
+        public static final String TABLE_LABELS_COL_COLOR = "color";
+
+        public static final String TABLE_ITEMS_NAME = "items";
+        public static final String TABLE_ITEMS_COL_LABEL_ID = "label_id";
+        public static final String TABLE_ITEMS_COL_ITEM = "item";
 
         public DBHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,14 +32,25 @@ public class DB {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            final String sql = "create table " + TABLE_LABELS_NAME + "(id integer primary key autoincrement, " + TABLE_LABELS_COL_LABEL + " text, " + TABLE_LABELS_COL_ITEM + " integer,  UNIQUE(" + TABLE_LABELS_COL_LABEL + ", " + TABLE_LABELS_COL_ITEM + ") ON CONFLICT REPLACE)";
-            db.execSQL(sql);
+            db.execSQL("create table labels (id integer primary key autoincrement, label text, color integer default 0, unique(label) on conflict replace)");
+            db.execSQL("insert into labels (label) values (\"Favorites\")");
+            db.execSQL("create table items (label_id integer, item integer, unique(label_id, item) on conflict replace);");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            if (newVersion == 1) {
+            if (newVersion == 2 && oldVersion != 1) {
                 onCreate(db);
+            }
+            if (newVersion == 2 && oldVersion == 1) {
+                db.execSQL("create table labels_v2 (id integer primary key autoincrement, label text, color integer default 0, unique(label) on conflict replace)");
+                db.execSQL("insert into labels_v2 (label) values (\"Favorites\")");
+                db.execSQL("create table items_v2 (label_id integer, item integer, unique(label_id, item) on conflict replace);");
+                db.execSQL("insert into items_v2 (label_id, item) select 1, item from labels");
+                db.execSQL("drop table labels");
+
+                db.execSQL("alter table items_v2 rename to items;");
+                db.execSQL("alter table labels_v2 rename to labels;");
             }
         }
     }
@@ -47,47 +63,35 @@ public class DB {
         database = helper.getWritableDatabase();
     }
 
-    public Cursor getAllLabels() {
-        String[] cols = new String[]{DBHelper.TABLE_LABELS_COL_LABEL};
-        Cursor cursor = database.query(true, DBHelper.TABLE_LABELS_NAME, cols, null, null, null, null, null, null);
+    public HashMap<Long, Set<Long>> getAllItems() {
+        String[] cols = new String[]{DBHelper.TABLE_ITEMS_COL_LABEL_ID, DBHelper.TABLE_ITEMS_COL_ITEM};
+        Cursor cursor = database.query(true, DBHelper.TABLE_ITEMS_NAME, cols, null, null, null, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
         }
-        return cursor;
-    }
-
-    public void addLabel(long item, String label) {
-        ContentValues values = new ContentValues();
-        values.put(DBHelper.TABLE_LABELS_COL_ITEM, item);
-        values.put(DBHelper.TABLE_LABELS_COL_LABEL, label);
-        database.insert(DBHelper.TABLE_LABELS_NAME, null, values);
-    }
-
-    public void deleteLabel(long item, String label) {
-        database.delete(DBHelper.TABLE_LABELS_NAME, DBHelper.TABLE_LABELS_COL_ITEM + "=? and " + DBHelper.TABLE_LABELS_COL_LABEL + "=?", new String[]{Long.toString(item), label});
-    }
-
-    public Cursor itemLabels(long item) {
-        Cursor cursor = database.query(true, DBHelper.TABLE_LABELS_NAME, new String[]{DBHelper.TABLE_LABELS_COL_LABEL}, DBHelper.TABLE_LABELS_COL_ITEM + "=?", new String[]{Long.toString(item)}, null, null, null, null);
-        return cursor;
-
-    }
-
-    public Set<Long> labelItems(String label) {
-        Cursor cursor = database.query(true, DBHelper.TABLE_LABELS_NAME, new String[]{DBHelper.TABLE_LABELS_COL_ITEM}, DBHelper.TABLE_LABELS_COL_LABEL + "=?", new String[]{label}, null, null, null, null);
-        Set<Long> items = new HashSet<Long>();
-        while(cursor.moveToNext()){
-            items.add( cursor.getLong(0));
+        HashMap<Long, Set<Long>> allItems = new HashMap<>();
+        while (cursor.moveToNext()) {
+            Long labelId = cursor.getLong(0);
+            Long item = cursor.getLong(1);
+            if (allItems.get(labelId) == null) {
+                allItems.put(labelId, new HashSet<Long>());
+            }
+            allItems.get(labelId).add(item);
         }
         cursor.close();
-        return items;
+        return allItems;
+    };
+
+
+    public void addItem(long item, long labelId) {
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.TABLE_ITEMS_COL_ITEM, item);
+        values.put(DBHelper.TABLE_ITEMS_COL_LABEL_ID, labelId);
+        database.insert(DBHelper.TABLE_ITEMS_NAME, null, values);
     }
 
-    public boolean itemHasLabel(long item, String label) {
-        Cursor cursor = database.query(true, DBHelper.TABLE_LABELS_NAME, new String[]{DBHelper.TABLE_LABELS_COL_ITEM}, DBHelper.TABLE_LABELS_COL_ITEM + "=? and " + DBHelper.TABLE_LABELS_COL_LABEL + "=?", new String[]{Long.toString(item), label}, null, null, null, null);
-        cursor.moveToFirst();
-        int count = cursor.getCount();
-        cursor.close();
-        return count > 0;
+    public void deleteItem(long item, long labelId) {
+        database.delete(DBHelper.TABLE_ITEMS_NAME, DBHelper.TABLE_ITEMS_COL_LABEL_ID + "=? and " + DBHelper.TABLE_ITEMS_COL_ITEM + "=?", new String[]{Long.toString(labelId), Long.toString(item)});
     }
+
 }

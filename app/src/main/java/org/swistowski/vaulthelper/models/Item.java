@@ -228,8 +228,8 @@ public class Item implements Serializable, Comparable<Item> {
 
     @Override
     public int compareTo(Item another) {
-        boolean is_fav = Labels.getInstance().hasLabel(getInstanceId(), "Favorites");
-        boolean other_is_fav = Labels.getInstance().hasLabel(another.getInstanceId(), "Favorites");
+        boolean is_fav = Labels.getInstance().hasLabel(getInstanceId(), Labels.getInstance().getCurrent());
+        boolean other_is_fav = Labels.getInstance().hasLabel(another.getInstanceId(), Labels.getInstance().getCurrent());
         if (is_fav && !other_is_fav) {
             return -1;
         } else if (other_is_fav && !is_fav) {
@@ -264,6 +264,7 @@ public class Item implements Serializable, Comparable<Item> {
 
     public String[] debugAttrs() {
         String[] ret = new String[]{};
+        Log.v(LOG_TAG, "item id: "+mItemInstanceId);
         return ret;
     }
 

@@ -15,7 +15,9 @@ public class Labels {
     private DB mDb;
     private static Labels mInstance = new Labels();
     private Context context;
-    private HashMap<String, Set<Long>> mLabels = new HashMap<String, Set<Long>>();
+    private HashMap<Long, Set<Long>> mLabels;
+    private long current = 1;
+
 
     private Labels() {
     }
@@ -30,29 +32,29 @@ public class Labels {
         }
         return mDb;
     }
-
-
-    private Set<Long> getLabelItems(String label) {
-        Set<Long> labels = mLabels.get(label);
-        if (labels == null) {
-            labels = getDb().labelItems(label);
-            mLabels.put(label, labels);
+    private  HashMap<Long, Set<Long>> getLabels(){
+        if(mLabels==null){
+            mLabels = getDb().getAllItems();
         }
-        return labels;
+        return mLabels;
     }
 
-    public void addLabel(long item_id, String label) {
-        getDb().addLabel(item_id, label);
-        getLabelItems(label).add(item_id);
+    private Set<Long> getLabelItems(Long labelId) {
+        return getLabels().get(labelId);
     }
 
-    public void deleteLabel(long item_id, String label) {
-        getDb().deleteLabel(item_id, label);
-        getLabelItems(label).remove(item_id);
+    public void addLabelToItem(long item, long labelId) {
+        getDb().addItem(item, labelId);
+        getLabelItems(labelId).add(item);
     }
 
-    public boolean hasLabel(long item_id, String label) {
-        return getLabelItems(label).contains(item_id);
+    public void deleteLabelFromItem(long item, long labelId) {
+        getDb().deleteItem(item, labelId);
+        getLabelItems(labelId).remove(item);
+    }
+
+    public boolean hasLabel(long item, long labelId) {
+        return getLabelItems(labelId).contains(item);
     }
 
     public void setContext(Context context) {
@@ -61,5 +63,13 @@ public class Labels {
 
     public Context getContext() {
         return context;
+    }
+
+    public int count() {
+        return mLabels.size();
+    }
+
+    public long getCurrent() {
+        return current;
     }
 }

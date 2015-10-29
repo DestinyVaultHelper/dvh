@@ -13,7 +13,6 @@ import android.widget.TextView;
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.models.Item;
 import org.swistowski.vaulthelper.storage.Items;
-import org.swistowski.vaulthelper.storage.Data;
 import org.swistowski.vaulthelper.storage.Labels;
 import org.swistowski.vaulthelper.util.ImageStorage;
 
@@ -75,8 +74,13 @@ public class ItemView extends FrameLayout {
         setOwner(Items.getInstance().getItemOwnerName(item));
         CheckBox cb = ((CheckBox) findViewById(R.id.favorite_button));
         final long item_id = item.getInstanceId();
+        if(item_id==0){
+            cb.setVisibility(INVISIBLE);
+        } else {
+            cb.setVisibility(VISIBLE);
+        }
 
-        boolean hasLabel = Labels.getInstance().hasLabel(item_id, FAVORITES_LABEL);
+        boolean hasLabel = Labels.getInstance().hasLabel(item_id, Labels.getInstance().getCurrent());
         cb.setOnCheckedChangeListener(null);
         cb.setChecked(hasLabel);
         /*
@@ -93,9 +97,9 @@ public class ItemView extends FrameLayout {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Labels.getInstance().addLabel(item_id, FAVORITES_LABEL);
+                    Labels.getInstance().addLabelToItem(item_id, Labels.getInstance().getCurrent());
                 } else {
-                    Labels.getInstance().deleteLabel(item_id, FAVORITES_LABEL);
+                    Labels.getInstance().deleteLabelFromItem(item_id, Labels.getInstance().getCurrent());
                 }
                 requireReloadDataListener.run();
             }

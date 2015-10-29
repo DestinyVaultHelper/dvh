@@ -1,72 +1,38 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
-
-        <org.swistowski.vaulthelper.views.DisableableViewPager xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context="org.swistowski.vaulthelper.MainActivity"
-           >
-
-            <android.support.v4.view.PagerTabStrip
-                android:id="@+id/pager_title_strip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
-                style="@style/Base.TextAppearance.AppCompat.Large.Inverse" />
-
-
-        </org.swistowski.vaulthelper.views.DisableableViewPager>
-
-
-    <RelativeLayout
-        android:id="@+id/tutorial_overflow"
-        android:layout_width="fill_parent"
+    <org.swistowski.vaulthelper.views.DisableableViewPager xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:background="@color/overflow_background"
-        android:visibility="gone">
+        tools:context="org.swistowski.vaulthelper.MainActivity"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:layout_above="@+id/label_selector">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/pager_title_strip"
+            style="@style/Base.TextAppearance.AppCompat.Large.Inverse"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Swipe to change current character"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/textView"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="72dp"
-            android:layout_marginLeft="48dp"
-            android:layout_marginRight="49dp"
-            android:autoText="false"
-            android:gravity="center"
-            android:background="@drawable/tutorial_background"
-            android:padding="8dp" />
+            android:layout_gravity="top"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp" />
 
-        <TextView
-            android:layout_width="192dp"
-            android:layout_height="192dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Touch to move item to your current character"
-            android:id="@+id/textView2"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="48dp"
-            android:layout_marginRight="48dp"
-            android:layout_marginLeft="96dp"
-            android:background="@drawable/tutorial_circle"
-            android:gravity="center"
-            android:singleLine="false"
-            android:phoneNumber="false"
-            android:password="false"
-            android:padding="8dp" />
 
-    </RelativeLayout>
-</FrameLayout>
+    </org.swistowski.vaulthelper.views.DisableableViewPager>
+
+    <org.swistowski.vaulthelper.views.LabelSelector
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        android:id="@+id/label_selector"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>
