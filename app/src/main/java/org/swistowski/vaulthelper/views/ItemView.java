@@ -3,9 +3,7 @@ package org.swistowski.vaulthelper.views;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -14,7 +12,9 @@ import android.widget.TextView;
 
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.models.Item;
-import org.swistowski.vaulthelper.util.Data;
+import org.swistowski.vaulthelper.storage.Items;
+import org.swistowski.vaulthelper.storage.Data;
+import org.swistowski.vaulthelper.storage.Labels;
 import org.swistowski.vaulthelper.util.ImageStorage;
 
 
@@ -72,11 +72,11 @@ public class ItemView extends FrameLayout {
             removeBorder();
         }
         setUrl(item);
-        setOwner(Data.getInstance().getItemOwnerName(item));
+        setOwner(Items.getInstance().getItemOwnerName(item));
         CheckBox cb = ((CheckBox) findViewById(R.id.favorite_button));
         final long item_id = item.getInstanceId();
 
-        boolean hasLabel = Data.getInstance().hasLabel(item_id, FAVORITES_LABEL);
+        boolean hasLabel = Labels.getInstance().hasLabel(item_id, FAVORITES_LABEL);
         cb.setOnCheckedChangeListener(null);
         cb.setChecked(hasLabel);
         /*
@@ -93,9 +93,9 @@ public class ItemView extends FrameLayout {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Data.getInstance().addLabel(item_id, FAVORITES_LABEL);
+                    Labels.getInstance().addLabel(item_id, FAVORITES_LABEL);
                 } else {
-                    Data.getInstance().deleteLabel(item_id, FAVORITES_LABEL);
+                    Labels.getInstance().deleteLabel(item_id, FAVORITES_LABEL);
                 }
                 requireReloadDataListener.run();
             }

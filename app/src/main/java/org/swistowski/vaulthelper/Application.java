@@ -3,7 +3,7 @@ package org.swistowski.vaulthelper;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
-import org.swistowski.vaulthelper.util.Data;
+import org.swistowski.vaulthelper.storage.Data;
 import org.swistowski.vaulthelper.util.ImageStorage;
 import org.swistowski.vaulthelper.views.ClientWebView;
 

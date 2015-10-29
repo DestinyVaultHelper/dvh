@@ -64,12 +64,12 @@ public class Inventory {
         if (mPurchaseMap.containsKey(sku)) mPurchaseMap.remove(sku);
     }
 
-    /** Returns a list of all owned product IDs. */
+    /** Returns a list of allAsMap owned product IDs. */
     List<String> getAllOwnedSkus() {
         return new ArrayList<String>(mPurchaseMap.keySet());
     }
 
-    /** Returns a list of all owned product IDs of a given type */
+    /** Returns a list of allAsMap owned product IDs of a given type */
     List<String> getAllOwnedSkus(String itemType) {
         List<String> result = new ArrayList<String>();
         for (Purchase p : mPurchaseMap.values()) {
@@ -78,7 +78,7 @@ public class Inventory {
         return result;
     }
 
-    /** Returns a list of all purchases. */
+    /** Returns a list of allAsMap purchases. */
     List<Purchase> getAllPurchases() {
         return new ArrayList<Purchase>(mPurchaseMap.values());
     }

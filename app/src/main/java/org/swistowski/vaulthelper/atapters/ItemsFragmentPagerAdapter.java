@@ -10,7 +10,7 @@ import org.swistowski.vaulthelper.fragments.AdFragment;
 import org.swistowski.vaulthelper.fragments.ItemListFragment;
 import org.swistowski.vaulthelper.models.Character;
 import org.swistowski.vaulthelper.storage.Characters;
-import org.swistowski.vaulthelper.util.Data;
+import org.swistowski.vaulthelper.storage.Items;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,12 +52,12 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
             }
         }
 
-        if (Data.getInstance().getItems().size() > 0) {
+        if (Items.getInstance().allAsMap().size() > 0) {
             mPages.add(new Page(context.getString(R.string.vault), new FragmentProvider() {
 
                 @Override
                 public Fragment getFragment() {
-                    return ItemListFragment.newInstance(ItemListFragment.DIRECTION_TO, Data.VAULT_ID);
+                    return ItemListFragment.newInstance(ItemListFragment.DIRECTION_TO, Items.VAULT_ID);
                 }
             }));
         }

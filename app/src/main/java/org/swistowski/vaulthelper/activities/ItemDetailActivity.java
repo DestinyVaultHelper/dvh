@@ -6,13 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -21,7 +18,7 @@ import android.widget.TextView;
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.atapters.ItemActionAdapter;
 import org.swistowski.vaulthelper.models.Item;
-import org.swistowski.vaulthelper.util.Data;
+import org.swistowski.vaulthelper.storage.Items;
 import org.swistowski.vaulthelper.util.ImageStorage;
 
 
@@ -48,7 +45,7 @@ public class ItemDetailActivity extends ActionBarActivity {
         long itemHash = b.getLong(ITEM);
         long itemStackSize = b.getLong(STACK_SIZE);
 
-        for (Item tmp_item : Data.getInstance().getAllItems()) {
+        for (Item tmp_item : Items.getInstance().all()) {
             if (tmp_item.getItemHash() == itemHash && tmp_item.getStackSize() == itemStackSize) {
                 item = tmp_item;
                 break;

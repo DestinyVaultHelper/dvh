@@ -7,7 +7,6 @@ import org.swistowski.vaulthelper.filters.DamageFilter;
 import org.swistowski.vaulthelper.filters.LightLevelFilter;
 import org.swistowski.vaulthelper.filters.TierNameFilter;
 import org.swistowski.vaulthelper.models.Item;
-import org.swistowski.vaulthelper.util.Data;
 
 import java.io.Serializable;
 import java.util.Collection;

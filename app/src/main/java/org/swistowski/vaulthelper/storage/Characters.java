@@ -8,7 +8,7 @@ import org.swistowski.vaulthelper.models.Character;
 import java.util.List;
 
 /**
- * Created by damian on 29.10.15.
+ * Store information about characters
  */
 public class Characters {
     public static Characters mInstance = new Characters();

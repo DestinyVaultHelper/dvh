@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +16,10 @@ import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.filters.BaseFilter;
 import org.swistowski.vaulthelper.storage.Filters;
 import org.swistowski.vaulthelper.storage.ItemMonitor;
-import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.views.GroupDetailView;
 import org.swistowski.vaulthelper.views.GroupTitleView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 

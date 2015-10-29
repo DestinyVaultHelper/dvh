@@ -1,16 +1,14 @@
 package org.swistowski.vaulthelper.models;
 
-import android.app.AlertDialog;
 import android.util.Log;
 
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.swistowski.vaulthelper.Application;
 import org.swistowski.vaulthelper.R;
-import org.swistowski.vaulthelper.util.Data;
+import org.swistowski.vaulthelper.storage.Items;
+import org.swistowski.vaulthelper.storage.Data;
 import org.swistowski.vaulthelper.views.ClientWebView;
-import org.swistowski.vaulthelper.fragments.ItemListFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,8 +33,8 @@ public class ItemMover {
         webView.call("destinyService.EquipItem", obj).then(new ClientWebView.Callback() {
             @Override
             public void onAccept(String result) {
-                for (Item tested_item : Data.getInstance().getAllItems()) {
-                    if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Data.getInstance().getItemOwner(tested_item).equals(owner) && tested_item.getCanEquip()) {
+                for (Item tested_item : Items.getInstance().all()) {
+                    if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Items.getInstance().getItemOwner(tested_item).equals(owner) && tested_item.getCanEquip()) {
                         tested_item.setIsEquipped(false);
                         item.setIsEquipped(true);
                         break;
@@ -59,9 +57,9 @@ public class ItemMover {
         if (item.isEquipped()) {
             /* find items from the same hash */
             List<Item> proposed = new ArrayList<Item>();
-            String item_owner = Data.getInstance().getItemOwner(item);
-            for (Item tested_item : Data.getInstance().getAllItems()) {
-                if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Data.getInstance().getItemOwner(tested_item).equals(item_owner) && tested_item.getCanEquip()) {
+            String item_owner = Items.getInstance().getItemOwner(item);
+            for (Item tested_item : Items.getInstance().all()) {
+                if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Items.getInstance().getItemOwner(tested_item).equals(item_owner) && tested_item.getCanEquip()) {
                     proposed.add(tested_item);
                 }
             }
@@ -118,7 +116,7 @@ public class ItemMover {
                 webView.queueRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        item.moveTo(Data.VAULT_ID, stackSize);
+                        item.moveTo(Items.VAULT_ID, stackSize);
                         if (p != null)
                             p.onSuccess();
                         p_inner.onSuccess();
@@ -172,9 +170,9 @@ public class ItemMover {
     public static Promise move(final ClientWebView webView, final Item item, final String subject, final int stackSize) {
         final Promise p = new Promise();
 
-        final String owner = Data.getInstance().getItemOwner(item);
-        if ((owner.equals(Data.VAULT_ID) || subject.equals(Data.VAULT_ID))) {
-            if (subject.equals(Data.VAULT_ID)) {
+        final String owner = Items.getInstance().getItemOwner(item);
+        if ((owner.equals(Items.VAULT_ID) || subject.equals(Items.VAULT_ID))) {
+            if (subject.equals(Items.VAULT_ID)) {
                 moveToVault(webView, owner, item, stackSize, p);
             } else {
                 moveFromVault(webView, subject, item, stackSize, p);
@@ -184,7 +182,7 @@ public class ItemMover {
                 @Override
                 public void onSuccess() {
                     Item vault_item = null;
-                    for (Item tmp_item : Data.getInstance().getItems().get(Data.VAULT_ID)) {
+                    for (Item tmp_item : Items.getInstance().allAsMap().get(Items.VAULT_ID)) {
                         if (tmp_item.getItemHash() == item.getItemHash() && tmp_item.getItemId() == item.getItemId()) {
                             vault_item = tmp_item;
                             break;

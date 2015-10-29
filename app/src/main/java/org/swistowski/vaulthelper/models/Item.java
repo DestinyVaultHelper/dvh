@@ -13,7 +13,9 @@ import org.swistowski.vaulthelper.Application;
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.storage.Characters;
 import org.swistowski.vaulthelper.storage.ItemMonitor;
-import org.swistowski.vaulthelper.util.Data;
+import org.swistowski.vaulthelper.storage.Items;
+import org.swistowski.vaulthelper.storage.Data;
+import org.swistowski.vaulthelper.storage.Labels;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.views.QuantitySelectView;
 
@@ -226,9 +228,8 @@ public class Item implements Serializable, Comparable<Item> {
 
     @Override
     public int compareTo(Item another) {
-        Data data = Data.getInstance();
-        boolean is_fav = data.hasLabel(getInstanceId(), "Favorites");
-        boolean other_is_fav = data.hasLabel(another.getInstanceId(), "Favorites");
+        boolean is_fav = Labels.getInstance().hasLabel(getInstanceId(), "Favorites");
+        boolean other_is_fav = Labels.getInstance().hasLabel(another.getInstanceId(), "Favorites");
         if (is_fav && !other_is_fav) {
             return -1;
         } else if (other_is_fav && !is_fav) {
@@ -306,7 +307,7 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     public void moveTo(String target, int stackSize) {
-        Data.getInstance().changeOwner(this, target, stackSize);
+        Items.getInstance().changeOwner(this, target, stackSize);
     }
 
     public boolean isEquipped() {
@@ -401,15 +402,14 @@ public class Item implements Serializable, Comparable<Item> {
             }));
         }
         if (isMoveable()) {
-            Data data = Data.getInstance();
-            for (final String owner : data.getItems().keySet()) {
-                if (!owner.equals(data.getItemOwner(this))) {
+            for (final String owner : Items.getInstance().allAsMap().keySet()) {
+                if (!owner.equals(Items.getInstance().getItemOwner(this))) {
                     String ownerLabel = owner;
                     if (Characters.getInstance().get(owner) != null) {
                         ownerLabel = Characters.getInstance().get(owner).toString();
                     }
                     Item item = null;
-                    for (Item tmp_item : data.getAllItems()) {
+                    for (Item tmp_item : Items.getInstance().all()) {
                         if (Item.this.getItemHash() == tmp_item.getItemHash()) {
                             item = tmp_item;
                             break;
@@ -444,7 +444,7 @@ public class Item implements Serializable, Comparable<Item> {
         // activity.finish();
 
         final ClientWebView webView = ((Application) activity.getApplication()).getWebView();
-        final String owner = Data.getInstance().getItemOwner(this);
+        final String owner = Items.getInstance().getItemOwner(this);
         ItemMover.equip(webView, owner, this, null).then(
                 new ItemMover.Result() {
                     @Override
@@ -454,7 +454,7 @@ public class Item implements Serializable, Comparable<Item> {
                         webView.call("destinyService.GetCharacterInventory", "" + membership.getType(), "" + membership.getId(), character.getId(), "true").then(new ClientWebView.Callback() {
                             @Override
                             public void onAccept(String result) {
-                                List<Item> items = Data.getInstance().getItems().get(owner);
+                                List<Item> items = Items.getInstance().allAsMap().get(owner);
                                 HashMap<Long, Item> hash2item = new HashMap<Long, Item>();
                                 for (Item ii : items) {
                                     hash2item.put(ii.getInstanceId(), ii);

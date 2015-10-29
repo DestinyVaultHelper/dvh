@@ -523,7 +523,7 @@ public class IabHelper {
     }
 
     /**
-     * Queries the inventory. This will query all owned items from the server, as well as
+     * Queries the inventory. This will query allAsMap owned items from the server, as well as
      * information on additional skus, if specified. This method may block or take long to execute.
      * Do not call from a UI thread. For that, use the non-blocking version {@link #refreshInventoryAsync}.
      *

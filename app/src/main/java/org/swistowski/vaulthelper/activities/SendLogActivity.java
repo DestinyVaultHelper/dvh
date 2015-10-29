@@ -134,14 +134,14 @@ public class SendLogActivity extends Activity {
         filterspecs are a series of
           <tag>[:priority]
 
-        where <tag> is a log component tag (or * for all) and priority is:
+        where <tag> is a log component tag (or * for allAsMap) and priority is:
           V    Verbose
           D    Debug
           I    Info
           W    Warn
           E    Error
           F    Fatal
-          S    Silent (supress all output)
+          S    Silent (supress allAsMap output)
 
         '*' means '*:d' and <tag> by itself means <tag>:v
 

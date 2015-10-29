@@ -1,14 +1,12 @@
 package org.swistowski.vaulthelper.atapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import org.swistowski.vaulthelper.fragments.ItemListFragment;
 import org.swistowski.vaulthelper.models.Item;
-import org.swistowski.vaulthelper.util.Data;
+import org.swistowski.vaulthelper.storage.Items;
 import org.swistowski.vaulthelper.views.ItemView;
 
 import java.util.List;
@@ -32,9 +30,9 @@ public class ItemAdapter extends BaseAdapter {
 
     private void reloadItems() {
         if(mSubject!=null) {
-            mItems = Data.getInstance().notForItems(mSubject);
+            mItems = Items.getInstance().allNotFor(mSubject);
         } else {
-            mItems = Data.getInstance().getAllItems();
+            mItems = Items.getInstance().all();
         }
     }
 
@@ -74,8 +72,8 @@ public class ItemAdapter extends BaseAdapter {
                 notifyDataSetChanged();
             }
         });
-        if(Data.getInstance().getItemOwner(item)!=null) {
-            itemView.setIsGrayed(Data.getInstance().getItemOwner(item).equals(mSubject));
+        if(Items.getInstance().getItemOwner(item)!=null) {
+            itemView.setIsGrayed(Items.getInstance().getItemOwner(item).equals(mSubject));
         }
 
         return itemView;

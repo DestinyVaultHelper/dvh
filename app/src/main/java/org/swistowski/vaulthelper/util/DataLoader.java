@@ -9,6 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.storage.Characters;
+import org.swistowski.vaulthelper.storage.Data;
+import org.swistowski.vaulthelper.storage.Items;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.models.Character;
 import org.swistowski.vaulthelper.models.Item;
@@ -71,7 +73,7 @@ public class DataLoader {
             doGetAccount(data.getMembership());
             return;
         }
-        if (data.getItems().size() == 0) {
+        if (Items.getInstance().allAsMap().size() == 0) {
             doLoadItems(data.getMembership(), Characters.getInstance().all());
             return;
         }
@@ -181,7 +183,7 @@ public class DataLoader {
             @Override
             public void onAccept(String result) {
                 try {
-                    Data.getInstance().putItems(character.getId(), Item.fromJson(result));
+                    Items.getInstance().put(character.getId(), Item.fromJson(result));
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "exception", e);
                     onError("Cannot get character inventory data");
@@ -204,7 +206,7 @@ public class DataLoader {
             @Override
             public void onAccept(String result) {
                 try {
-                    Data.getInstance().putItems(Data.VAULT_ID, Item.fromJson(result, true));
+                    Items.getInstance().put(Items.VAULT_ID, Item.fromJson(result, true));
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "exception", e);
                 }
