@@ -106,7 +106,8 @@ Build number: <xliff:g id="build_number">%s</xliff:g>\n
     <string name="ligth_level_1" translatable="false">200-250</string>
     <string name="ligth_level_2" translatable="false">250-280</string>
     <string name="ligth_level_3" translatable="false">280-300</string>
-    <string name="ligth_level_4" translatable="false">300+</string>
+    <string name="ligth_level_4" translatable="false">300-310</string>
+    <string name="ligth_level_5" translatable="false">310+</string>
     <string name="please_select_a_quantity">Please select a quantity</string>
     <string name="armor_for_hunter">Hunter</string>
     <string name="armor_for_titan">Titan</string>

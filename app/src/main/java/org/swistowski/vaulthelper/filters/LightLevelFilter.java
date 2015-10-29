@@ -9,7 +9,7 @@ import org.swistowski.vaulthelper.models.Item;
 public class LightLevelFilter extends BaseFilter {
     @Override
     protected int[] getLabels() {
-        return new int[]{R.string.ligth_level_0, R.string.ligth_level_1, R.string.ligth_level_2, R.string.ligth_level_3, R.string.ligth_level_4};
+        return new int[]{R.string.ligth_level_0, R.string.ligth_level_1, R.string.ligth_level_2, R.string.ligth_level_3, R.string.ligth_level_4, R.string.ligth_level_5};
     }
 
     @Override
@@ -30,7 +30,10 @@ public class LightLevelFilter extends BaseFilter {
             if (getFilters().get(R.string.ligth_level_3) && item.getPrimaryStatValue() >= 280 && item.getPrimaryStatValue() < 300) {
                 return true;
             }
-            if (getFilters().get(R.string.ligth_level_4) && item.getPrimaryStatValue() >= 300) {
+            if (getFilters().get(R.string.ligth_level_4) && item.getPrimaryStatValue() >= 300 && item.getPrimaryStatValue() < 310) {
+                return true;
+            }
+            if(getFilters().get(R.string.ligth_level_5) && item.getPrimaryStatValue() >= 310){
                 return true;
             }
             return false;

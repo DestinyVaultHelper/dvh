@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="app_name">Vault Helper dla Destiny</string>
   <string name="title_activity_login">Zaloguj</string>
-  <string name="refresh">Odświerz</string>
+  <string name="refresh">Odśwież</string>
   <string name="login">Login</string>
   <string name="relogin">Przeloguj</string>
   <string name="login_information"><![CDATA[ <p>Nie przejmuj się, Vault Helper dla Destiny nie przechowuje żadnych informacji twoich kontach</p> <p>Kiedy klikniesz przycisk zaloguj, wewnętrzna przeglądarka internetowe zostanie przekierowana do strony logowania na konto psn lub microsoft. Cały proces odbędzie się tak samo jakbyś łączył się ze stroną bungie za pomocą zwykłej przeglądarki internetowej. Po zakończeniu autoryzacji przeglądarka zostanie ukryta, a ty będziesz mógł używać wygodniejszego interface do wszystkich operacji na twoich przedmiotach. ]]></string>
@@ -71,22 +71,20 @@
   <string name="chooser_title">Wybierz aplikację do wysłania logu</string>
   <string name="failed_to_get_log_message">Nie udało się uzyskać logu systemowego</string>
   <string name="main_dialog_text">\"Ta aplikacja spróbuje zebrać log systemowy, Zebrany log zostanie wysłany przy użyciu alikacji, którą wypierzesz. Będziesz miał także możliwość aby przejrzać i zmieniać wszelkie informacji, która będą wysłane.\"</string>
-
   <string name="show_login_page">Pokaż stronę logowania</string>
   <string name="add_new_layout_label">Dodaj nowy zestaw</string>
   <string name="add_new_layout_hint">Nazwa nowego zestawu</string>
-  <string name="artifacts_bucket">Artefakt</string>
+  <string name="artifacts_bucket">Artefakty</string>
   <string name="emotes_bucket">Emoty</string>
-  <string name="tier_name_rare">Rzadki</string>
-  <string name="tier_name_common">Powszechny</string>
-  <string name="tier_name_exotic">Egzotyczny</string>
-  <string name="tier_name_legendary">Legendarny</string>
-  <string name="tier_filter_label">Zestaw</string>
-  <string name="light_level_filter_label">Poziom Światła</string>
-  <string name="please_select_a_quantity">Please select a quantity</string>
-  <string name="armor_for_hunter">Hunter</string>
-  <string name="armor_for_titan">Titan</string>
-  <string name="armor_for_warlock">Warlock</string>
-  <string name="item_for_label">Is for</string>
-
+  <string name="tier_name_rare">Rzadkie</string>
+  <string name="tier_name_common">Powszechne</string>
+  <string name="tier_name_exotic">Egzotyczne</string>
+  <string name="tier_name_legendary">Legendarne</string>
+  <string name="tier_filter_label">Poziom</string>
+  <string name="light_level_filter_label">Poziom  światła</string>
+  <string name="please_select_a_quantity">Wybierz liczbę</string>
+  <string name="armor_for_hunter">Huntera</string>
+  <string name="armor_for_titan">Titana</string>
+  <string name="armor_for_warlock">Warlocka</string>
+  <string name="item_for_label">Dla</string>
 </resources>
