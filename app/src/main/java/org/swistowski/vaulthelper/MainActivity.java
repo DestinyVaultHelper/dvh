@@ -1,7 +1,6 @@
 package org.swistowski.vaulthelper;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -17,7 +16,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,6 +43,8 @@ import org.swistowski.vaulthelper.purchase.IabHelper;
 import org.swistowski.vaulthelper.purchase.IabResult;
 import org.swistowski.vaulthelper.purchase.Inventory;
 import org.swistowski.vaulthelper.purchase.Purchase;
+import org.swistowski.vaulthelper.storage.Characters;
+import org.swistowski.vaulthelper.storage.Filters;
 import org.swistowski.vaulthelper.util.BackgroundDrawable;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.util.DataLoader;
@@ -433,7 +433,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
             @Override
             public boolean onQueryTextChange(String s) {
-                Data.getInstance().setFilterText(s);
+                Filters.getInstance().setFilterText(s);
                 return false;
             }
         });
@@ -523,8 +523,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         if (!mIsPremium) {
             position -= 1;
         }
-        if (position >= 0 && Data.getInstance().getCharacters() != null && position < Data.getInstance().getCharacters().size()) {
-            Character c = Data.getInstance().getCharacters().get(position);
+        if (position >= 0 && Characters.getInstance().all() != null && position < Characters.getInstance().all().size()) {
+            Character c = Characters.getInstance().all().get(position);
             mPageTabs.setBackgroundDrawable(new BackgroundDrawable(c.getEmblemPath(), c.getBackgroundPath()));
 
         } else {

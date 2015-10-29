@@ -113,5 +113,6 @@ Build number: <xliff:g id="build_number">%s</xliff:g>\n
     <string name="armor_for_titan">Titan</string>
     <string name="armor_for_warlock">Warlock</string>
     <string name="item_for_label">Is for</string>
+    <string name="cannot_move_error">Cannot move equipped item, Do not know how to unequip %s</string>
 
 </resources>

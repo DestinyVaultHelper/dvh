@@ -70,4 +70,5 @@ public class Character implements Serializable {
     public String getEmblemPath(){
         return mEmblemPath;
     }
+
 }

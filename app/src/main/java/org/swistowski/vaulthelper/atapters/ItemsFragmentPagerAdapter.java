@@ -4,17 +4,15 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.Log;
 
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.fragments.AdFragment;
 import org.swistowski.vaulthelper.fragments.ItemListFragment;
-import org.swistowski.vaulthelper.fragments.SettingsFragment;
 import org.swistowski.vaulthelper.models.Character;
+import org.swistowski.vaulthelper.storage.Characters;
 import org.swistowski.vaulthelper.util.Data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
@@ -32,8 +30,8 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
             }));
         }
 
-        if (Data.getInstance().getCharacters() != null) {
-            for (final Character character : Data.getInstance().getCharacters()) {
+        if (Characters.getInstance().all() != null) {
+            for (final Character character : Characters.getInstance().all()) {
 
                 mPages.add(new Page(character.toString(), new FragmentProvider() {
                     @Override

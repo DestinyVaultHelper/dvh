@@ -15,6 +15,8 @@ import android.widget.ExpandableListView;
 
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.filters.BaseFilter;
+import org.swistowski.vaulthelper.storage.Filters;
+import org.swistowski.vaulthelper.storage.ItemMonitor;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.views.GroupDetailView;
 import org.swistowski.vaulthelper.views.GroupTitleView;
@@ -69,7 +71,7 @@ public class ListFilteringFragment extends Fragment {
             super();
             mContext = context;
             mGroups = new ArrayList<FilterGroup>();
-            for (BaseFilter filter : Data.getInstance().getFilters()) {
+            for (BaseFilter filter : Filters.getInstance().getFilters()) {
                 mGroups.add(new FilterGroup(getResources().getString(filter.getMenuLabel()), filter));
             }
         }
@@ -140,7 +142,7 @@ public class ListFilteringFragment extends Fragment {
                         for (Map.Entry<Integer, Boolean> entry : mGroups.get(groupPosition).mEntries) {
                             entry.setValue(false);
                         }
-                        Data.getInstance().notifyItemsChanged();
+                        ItemMonitor.getInstance().notifyItemsChanged();
                         mFilterAdapter.notifyDataSetChanged();
                     }
                 }
@@ -173,7 +175,7 @@ public class ListFilteringFragment extends Fragment {
                             ((GroupTitleView) parent).doCheck();
                         }
                         */
-                        Data.getInstance().notifyItemsChanged();
+                        ItemMonitor.getInstance().notifyItemsChanged();
                         mFilterAdapter.notifyDataSetChanged();
                     }
                 }

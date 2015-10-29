@@ -87,4 +87,5 @@
   <string name="armor_for_titan">Titana</string>
   <string name="armor_for_warlock">Warlocka</string>
   <string name="item_for_label">Dla</string>
+  <string name="cannot_move_error">Cannot move equipped item, Do not know how to unequip %s</string>
 </resources>

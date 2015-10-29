@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.swistowski.vaulthelper.R;
+import org.swistowski.vaulthelper.storage.Characters;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.models.Character;
 import org.swistowski.vaulthelper.models.Item;
@@ -66,12 +67,12 @@ public class DataLoader {
             doSearchDestinyPlayer(""+ data.getUser().getAccountType(), data.getUser().getAccountName());
             return;
         }
-        if (data.getCharacters() == null) {
+        if (Characters.getInstance().all() == null) {
             doGetAccount(data.getMembership());
             return;
         }
         if (data.getItems().size() == 0) {
-            doLoadItems(data.getMembership(), data.getCharacters());
+            doLoadItems(data.getMembership(), Characters.getInstance().all());
             return;
         }
 
@@ -135,7 +136,7 @@ public class DataLoader {
             @Override
             public void onAccept(String result) {
                 try {
-                    Data.getInstance().loadCharactersFromJson(new JSONObject(result).getJSONObject("data").getJSONArray("characters"));
+                    Characters.getInstance().loadFromJson(new JSONObject(result).getJSONObject("data").getJSONArray("characters"));
                     doLoadAllData();
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, "exception", e);

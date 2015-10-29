@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.atapters.ItemAdapter;
 import org.swistowski.vaulthelper.models.Item;
+import org.swistowski.vaulthelper.storage.ItemMonitor;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.views.ItemView;
 
@@ -45,12 +46,12 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
         }
 
         mAdapter = new ItemAdapter(getActivity(), mSubject);
-        Data.getInstance().registerItemAdapter(mAdapter);
+        ItemMonitor.getInstance().registerItemAdapter(mAdapter);
     }
 
     @Override
     public void onDestroy() {
-        Data.getInstance().unregisterItemAdapter(mAdapter);
+        ItemMonitor.getInstance().unregisterItemAdapter(mAdapter);
         super.onDestroy();
     }
 

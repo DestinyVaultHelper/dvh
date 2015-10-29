@@ -1,36 +1,23 @@
 package org.swistowski.vaulthelper.util;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.util.Log;
-import android.widget.BaseAdapter;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.db.DB;
-import org.swistowski.vaulthelper.filters.BaseFilter;
-import org.swistowski.vaulthelper.filters.BucketFilter;
-import org.swistowski.vaulthelper.filters.CompletedFilter;
-import org.swistowski.vaulthelper.filters.DamageFilter;
-import org.swistowski.vaulthelper.filters.LightLevelFilter;
-import org.swistowski.vaulthelper.filters.TierNameFilter;
 import org.swistowski.vaulthelper.models.Character;
 import org.swistowski.vaulthelper.models.Item;
 import org.swistowski.vaulthelper.models.Membership;
 import org.swistowski.vaulthelper.models.User;
-import org.swistowski.vaulthelper.purchase.Inventory;
+import org.swistowski.vaulthelper.storage.Characters;
+import org.swistowski.vaulthelper.storage.Filters;
+import org.swistowski.vaulthelper.storage.ItemMonitor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,22 +28,11 @@ public class Data implements Serializable {
     private static final Data ourInstance = new Data();
     private User mUser;
     private Membership mMembership;
-    private List<Character> mCharacters;
+
     private Map<String, List<Item>> items = new HashMap<String, List<Item>>();
     private Map<Item, String> itemsOwners = new HashMap<Item, String>();
     private Set<String> bucketNames = new HashSet<String>();
-    private final Set<BaseAdapter> registeredAdapters = new HashSet<BaseAdapter>();
 
-    private final static Collection<BaseFilter> FILTERS;
-
-    static {
-        FILTERS = new LinkedList<>();
-        FILTERS.add(new BucketFilter());
-        FILTERS.add(new DamageFilter());
-        FILTERS.add(new CompletedFilter());
-        FILTERS.add(new TierNameFilter());
-        FILTERS.add(new LightLevelFilter());
-    }
 
     private HashMap<String, Set<Long>> mLabels = new HashMap<String, Set<Long>>();
     private List<String> mAllLabels = null;
@@ -67,8 +43,6 @@ public class Data implements Serializable {
     private boolean mShowAll = true;
 
     private boolean mIsLoading = false;
-
-    private String mFilterText = "";
 
     private Data() {
     }
@@ -92,16 +66,9 @@ public class Data implements Serializable {
         return mMembership;
     }
 
-    public void loadCharactersFromJson(JSONArray jsonArray) throws JSONException {
-        mCharacters = Character.collectionFromJson(jsonArray);
-    }
 
     public Membership getMembership() {
         return mMembership;
-    }
-
-    public List<Character> getCharacters() {
-        return mCharacters;
     }
 
     public Map<String, List<Item>> getItems() {
@@ -121,7 +88,7 @@ public class Data implements Serializable {
 
         for (Map.Entry<String, List<Item>> entry : items.entrySet()) {
             for (Item i : entry.getValue()) {
-                if (i.isVisible() && isVisible(i))
+                if (i.isVisible() && Filters.getInstance().isVisible(i))
                     allItems.add(i);
             }
         }
@@ -132,7 +99,7 @@ public class Data implements Serializable {
     public void clean() {
         mUser = null;
         mMembership = null;
-        mCharacters = null;
+        Characters.getInstance().clean();
         cleanItems();
     }
 
@@ -141,29 +108,13 @@ public class Data implements Serializable {
         itemsOwners = new HashMap<Item, String>();
     }
 
-    private boolean isVisible(Item item) {
-        for (BaseFilter filter : getFilters()) {
-            if (!filter.filter(item)) {
-                return false;
-            }
-        }
-        return filterByText(item);
-    }
-
-
-    private boolean filterByText(Item item) {
-        if (!mFilterText.equals("")) {
-            return item.getName().toLowerCase().contains(mFilterText.toLowerCase());
-        }
-        return true;
-    }
 
     public List<Item> notForItems(String key) {
         List<Item> allItems = new ArrayList<Item>();
         for (Map.Entry<String, List<Item>> entry : items.entrySet()) {
             if (showAll() || !entry.getKey().equals(key)) {
                 for (Item i : entry.getValue()) {
-                    if (i.isVisible() && isVisible(i))
+                    if (i.isVisible() && Filters.getInstance().isVisible(i))
                         allItems.add(i);
                 }
             }
@@ -181,22 +132,11 @@ public class Data implements Serializable {
 
     public void setShowAll(boolean showall) {
         mShowAll = showall;
-        notifyItemsChanged();
-    }
-
-
-    public ArrayList<Item> getItemsFiltered(String id) {
-        ArrayList<Item> allItems = new ArrayList<Item>();
-        for (Item item : items.get(id)) {
-            if (item.isVisible() && isVisible(item))
-                allItems.add(item);
-        }
-        Collections.sort(allItems);
-        return allItems;
+        ItemMonitor.getInstance().notifyItemsChanged();
     }
 
     public void cleanCharacters() {
-        mCharacters = null;
+        Characters.getInstance().clean();
         cleanItems();
     }
 
@@ -226,11 +166,11 @@ public class Data implements Serializable {
         if (owner.equals(VAULT_ID)) {
             return "Vault";
         }
-        for (Character character : mCharacters) {
-            if (character.getId().equals(owner)) {
-                return character.toString();
-            }
+        Character character = Characters.getInstance().get(owner);
+        if (character != null) {
+            return character.toString();
         }
+
         return "None";
     }
 
@@ -283,28 +223,9 @@ public class Data implements Serializable {
                 itemsOwners.put(new_item, owner);
             }
         }
-        notifyItemsChanged();
+        ItemMonitor.getInstance().notifyItemsChanged();
     }
 
-    public void notifyItemsChanged() {
-        for (BaseAdapter adapter : registeredAdapters) {
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    public void registerItemAdapter(BaseAdapter adapter) {
-        registeredAdapters.add(adapter);
-    }
-
-    public void unregisterItemAdapter(BaseAdapter adapter) {
-        registeredAdapters.remove(adapter);
-    }
-
-
-    public void setFilterText(String filterText) {
-        this.mFilterText = filterText;
-        notifyItemsChanged();
-    }
 
     public synchronized void setIsLoading(boolean isLoading) {
         mIsLoading = isLoading;
@@ -321,19 +242,6 @@ public class Data implements Serializable {
         return mDb;
     }
 
-    public List<String> getAllLabels() {
-        if (mAllLabels == null) {
-            mAllLabels = new ArrayList<String>();
-            Cursor c = getDb().getAllLabels();
-            while (c.moveToNext()) {
-                mAllLabels.add(c.getString(0));
-            }
-        }
-        return mAllLabels;
-        //mLabels.keySet();
-    }
-
-    ;
 
     private Set<Long> getLabelItems(String label) {
         Set<Long> labels = mLabels.get(label);
@@ -362,24 +270,8 @@ public class Data implements Serializable {
         return context;
     }
 
-
     public void setContext(Context context) {
         this.context = context;
 
-    }
-
-
-    public Character getCharacter(String owner) {
-        for (Character character : getCharacters()) {
-            if (character.getId().equals(owner)) {
-                return character;
-            }
-        }
-        return null;
-    }
-
-
-    public Collection<BaseFilter> getFilters() {
-        return FILTERS;
     }
 }

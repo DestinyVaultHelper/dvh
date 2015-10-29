@@ -11,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.swistowski.vaulthelper.Application;
 import org.swistowski.vaulthelper.R;
+import org.swistowski.vaulthelper.storage.Characters;
+import org.swistowski.vaulthelper.storage.ItemMonitor;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.views.QuantitySelectView;
@@ -403,8 +405,8 @@ public class Item implements Serializable, Comparable<Item> {
             for (final String owner : data.getItems().keySet()) {
                 if (!owner.equals(data.getItemOwner(this))) {
                     String ownerLabel = owner;
-                    if (data.getCharacter(owner) != null) {
-                        ownerLabel = data.getCharacter(owner).toString();
+                    if (Characters.getInstance().get(owner) != null) {
+                        ownerLabel = Characters.getInstance().get(owner).toString();
                     }
                     Item item = null;
                     for (Item tmp_item : data.getAllItems()) {
@@ -448,7 +450,7 @@ public class Item implements Serializable, Comparable<Item> {
                     @Override
                     public void onSuccess() {
                         Membership membership = Data.getInstance().getMembership();
-                        org.swistowski.vaulthelper.models.Character character = Data.getInstance().getCharacter(owner);
+                        org.swistowski.vaulthelper.models.Character character = Characters.getInstance().get(owner);
                         webView.call("destinyService.GetCharacterInventory", "" + membership.getType(), "" + membership.getId(), character.getId(), "true").then(new ClientWebView.Callback() {
                             @Override
                             public void onAccept(String result) {
@@ -490,7 +492,7 @@ public class Item implements Serializable, Comparable<Item> {
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Data.getInstance().notifyItemsChanged();
+                                        ItemMonitor.getInstance().notifyItemsChanged();
                                         Toast.makeText(activity, String.format(activity.getString(R.string.do_equip_finished), Item.this.toString()), Toast.LENGTH_SHORT).show();
                                         activity.finish();
                                     }

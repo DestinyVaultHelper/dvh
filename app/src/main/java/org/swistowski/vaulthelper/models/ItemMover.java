@@ -7,6 +7,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.swistowski.vaulthelper.Application;
+import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.util.Data;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.fragments.ItemListFragment;
@@ -99,7 +100,8 @@ public class ItemMover {
                 webView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        String message = "Cannot move equipped item, Do not know how to unequip " + item;
+                        String message = webView.getContext().getString(R.string.cannot_move_error, item.toString());
+                        p_inner.onError(message);
                         if (p != null) {
                             p.onError(message);
                         } else {
