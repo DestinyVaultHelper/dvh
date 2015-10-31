@@ -72,7 +72,7 @@
   <string name="failed_to_get_log_message">Nie udało się uzyskać logu systemowego</string>
   <string name="main_dialog_text">\"Ta aplikacja spróbuje zebrać log systemowy, Zebrany log zostanie wysłany przy użyciu alikacji, którą wypierzesz. Będziesz miał także możliwość aby przejrzać i zmieniać wszelkie informacji, która będą wysłane.\"</string>
   <string name="show_login_page">Pokaż stronę logowania</string>
-  <string name="add_new_layout_label">Dodaj nowy zestaw</string>
+  <string name="add_new_layout_label">Dodaj nową etykietę</string>
   <string name="add_new_layout_hint">Nazwa nowego zestawu</string>
   <string name="artifacts_bucket">Artefakty</string>
   <string name="emotes_bucket">Emoty</string>

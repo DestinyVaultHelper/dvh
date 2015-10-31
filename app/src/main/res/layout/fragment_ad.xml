@@ -16,8 +16,9 @@
         android:layout_height="wrap_content"
         ads:adSize="BANNER"
         ads:adUnitId="@string/ad_small"
-        android:layout_below="@+id/textView4"
-        android:layout_centerHorizontal="true">
+        android:layout_marginTop="48dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true">
     </com.google.android.gms.ads.AdView>
 
     <TextView
@@ -25,11 +26,14 @@
         android:layout_height="wrap_content"
         android:text="@string/ad_text"
         android:id="@+id/textView4"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_margin="48dp"
         android:textSize="18dp"
-        android:typeface="serif" />
+        android:typeface="serif"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp"
+        android:layout_marginBottom="48dp"
+        android:layout_marginTop="48dp"
+        android:layout_below="@+id/isues_button" />
 
     <Button
         android:layout_width="fill_parent"
