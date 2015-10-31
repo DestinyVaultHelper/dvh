@@ -94,8 +94,6 @@ public class ItemView extends FrameLayout {
                 requireReloadDataListener.run();
             }
         });
-        ItemLabelsView itemLabelsView = (ItemLabelsView) findViewById(R.id.item_labels_view);
-        itemLabelsView.setLabels(item.getLabels());
     }
 
     private void removeBorder() {

@@ -94,4 +94,5 @@
   <string name="confirm_label_delete">Delete label %s</string>
   <string name="yes">Yes</string>
   <string name="no">No</string>
+  <string name="labels_label">Labels</string>
 </resources>

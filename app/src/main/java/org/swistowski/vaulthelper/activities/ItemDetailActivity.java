@@ -4,10 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -18,8 +20,10 @@ import android.widget.TextView;
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.adapters.ItemActionAdapter;
 import org.swistowski.vaulthelper.models.Item;
+import org.swistowski.vaulthelper.models.Label;
 import org.swistowski.vaulthelper.storage.Items;
 import org.swistowski.vaulthelper.util.ImageStorage;
+import org.swistowski.vaulthelper.views.LabelView;
 
 
 public class ItemDetailActivity extends ActionBarActivity {
@@ -56,33 +60,12 @@ public class ItemDetailActivity extends ActionBarActivity {
         ((TextView) findViewById(R.id.detail_name)).setText(item.getDetails());
         ListView lv = (ListView) findViewById(R.id.item_actions_list);
         lv.setAdapter(new ItemActionAdapter(this, item));
+        setListViewHeightBasedOnChildren(lv);
 
-        item.debugAttrs();
-        setListViewHeightBasedOnChildren((ListView) findViewById(R.id.item_actions_list));
+        lv = (ListView) findViewById(R.id.item_labels_list);
+        lv.setAdapter(new ItemLabelsAdapter(this, item));
+        setListViewHeightBasedOnChildren(lv);
     }
-
-    private void handleCreateNewLayout() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final EditText input = new EditText(this);
-        input.setHint(R.string.add_new_layout_hint);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-            }
-        });
-
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        builder.setTitle(R.string.add_new_layout_label);
-
-        builder.setView(input);
-        builder.show();
-    }
-
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
@@ -104,5 +87,82 @@ public class ItemDetailActivity extends ActionBarActivity {
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
         listView.requestLayout();
+    }
+
+    private class ItemLabelsAdapter implements ListAdapter {
+        private final Item item;
+        private final Context context;
+
+        public ItemLabelsAdapter(Context context, Item item) {
+            this.context = context;
+            this.item = item;
+        }
+
+        @Override
+        public boolean areAllItemsEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isEnabled(int position) {
+            return true;
+        }
+
+        @Override
+        public void registerDataSetObserver(DataSetObserver observer) {
+
+        }
+
+        @Override
+        public void unregisterDataSetObserver(DataSetObserver observer) {
+
+        }
+
+        @Override
+        public int getCount() {
+            return item.getLabels().size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return item.getLabels().get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return ((Label) getItem(position)).getId();
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final LabelView itemView;
+            if (convertView == null) {
+                itemView = new LabelView(context);
+            } else {
+                itemView = (LabelView) convertView;
+            }
+            itemView.setLabel((Label) getItem(position));
+            return itemView;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return 0;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 1;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
     }
 }

@@ -41,8 +41,6 @@ public class LabelEditorAdapter extends BaseAdapter {
         final LabelView itemView;
         if (convertView == null) {
             itemView = new LabelView(context);
-            //itemView.setPadding(48, 48, 48, 48);
-            //itemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 128));
         } else {
             itemView = (LabelView) convertView;
         }

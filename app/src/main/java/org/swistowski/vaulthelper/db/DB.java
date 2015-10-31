@@ -37,7 +37,7 @@ public class DB {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("create table labels (id integer primary key autoincrement, label text, color integer default 0, unique(label) on conflict replace)");
+            db.execSQL("create table labels (id integer primary key autoincrement, label text, color integer default -196602, unique(label) on conflict replace)");
             db.execSQL("insert into labels (label) values (\"Favorites\")");
             db.execSQL("create table items (label_id integer, item integer, unique(label_id, item) on conflict replace);");
         }
@@ -48,7 +48,7 @@ public class DB {
                 onCreate(db);
             }
             if (newVersion == 2 && oldVersion == 1) {
-                db.execSQL("create table labels_v2 (id integer primary key autoincrement, label text, color integer default 0, unique(label) on conflict replace)");
+                db.execSQL("create table labels_v2 (id integer primary key autoincrement, label text, color integer default -196602, unique(label) on conflict replace)");
                 db.execSQL("insert into labels_v2 (label) values (\"Favorites\")");
                 db.execSQL("create table items_v2 (label_id integer, item integer, unique(label_id, item) on conflict replace);");
                 db.execSQL("insert into items_v2 (label_id, item) select 1, item from labels");

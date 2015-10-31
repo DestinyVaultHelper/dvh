@@ -7,28 +7,34 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/detail_icon"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:paddingBottom="8dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp" />
-
-        <TextView
-            android:id="@+id/detail_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/detail_icon"
-            android:layout_toRightOf="@+id/detail_icon"
-            android:maxHeight="80dp"
-            android:paddingBottom="8dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:id="@+id/icon_description_container">
+
+            <ImageView
+                android:id="@+id/detail_icon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp" />
+
+            <TextView
+                android:id="@+id/detail_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/detail_icon"
+                android:layout_toRightOf="@+id/detail_icon"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </LinearLayout>
 
         <!--ListView
             android:layout_width="wrap_content"
@@ -43,38 +49,36 @@
             android:id="@+id/item_actions_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/detail_icon"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_below="@+id/icon_description_container" />
 
-        <ListView
-            android:id="@+id/detail_list_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/item_actions_list"
-            android:layout_centerHorizontal="true" />
-        <!--
         <TextView
-            android:id="@+id/layouts_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/labels_label"
             android:layout_below="@+id/item_actions_list"
-            android:layout_marginTop="48dp"
-            android:text="@string/layouts_label"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:id="@+id/labels_label" />
 
         <ListView
-            android:id="@+id/layouts_list"
+            android:id="@+id/item_labels_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/layouts_label" />
+            android:layout_below="@+id/labels_label"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_centerHorizontal="true" />
 
-        <ImageButton
-            android:id="@+id/new_layout_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/layouts_list"
-            android:src="@android:drawable/ic_input_add"
-            android:text="@string/new_layout_button" />
-        -->
+
     </RelativeLayout>
 </ScrollView>

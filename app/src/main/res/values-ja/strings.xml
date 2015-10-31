@@ -97,4 +97,5 @@ You also will have an opportunity to see and modify the data being sent."
     <string name="confirm_label_delete">Delete label %s</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="labels_label">Labels</string>
 </resources>
