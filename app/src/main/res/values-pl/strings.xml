@@ -87,12 +87,12 @@
   <string name="armor_for_titan">Titana</string>
   <string name="armor_for_warlock">Warlocka</string>
   <string name="item_for_label">Dla</string>
-  <string name="cannot_move_error">Cannot move equipped item, Do not know how to unequip %s</string>
-  <string name="title_activity_labels_editor">Labels Editor</string>
-  <string name="new_label">New label</string>
-  <string name="edit_layout_label">Edit label</string>
-  <string name="confirm_label_delete">Delete label %s</string>
-  <string name="yes">Yes</string>
-  <string name="no">No</string>
-  <string name="labels_label">Labels</string>
+  <string name="cannot_move_error">Nie potafię przenieść przedmiotu. Nie wiem jak ściągnąć przedmiot %s</string>
+  <string name="title_activity_labels_editor">Edytor etykiet</string>
+  <string name="new_label">Nowa etykieta</string>
+  <string name="edit_layout_label">Edytuj etykietę</string>
+  <string name="confirm_label_delete">Usuń etykietę %s</string>
+  <string name="yes">Tak</string>
+  <string name="no">Nie</string>
+  <string name="labels_label">Etykiety</string>
 </resources>
