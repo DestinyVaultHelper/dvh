@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import org.swistowski.vaulthelper.R;
-import org.swistowski.vaulthelper.atapters.ItemAdapter;
+import org.swistowski.vaulthelper.adapters.ItemAdapter;
 import org.swistowski.vaulthelper.models.Item;
 import org.swistowski.vaulthelper.storage.ItemMonitor;
 import org.swistowski.vaulthelper.views.ItemView;
@@ -45,12 +45,12 @@ public class ItemListFragment extends Fragment implements AdapterView.OnItemLong
         }
 
         mAdapter = new ItemAdapter(getActivity(), mSubject);
-        ItemMonitor.getInstance().registerItemAdapter(mAdapter);
+        ItemMonitor.getInstance().registerAdapter(mAdapter);
     }
 
     @Override
     public void onDestroy() {
-        ItemMonitor.getInstance().unregisterItemAdapter(mAdapter);
+        ItemMonitor.getInstance().unregisterAdapter(mAdapter);
         super.onDestroy();
     }
 

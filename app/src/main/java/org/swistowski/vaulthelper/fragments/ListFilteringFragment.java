@@ -138,7 +138,7 @@ public class ListFilteringFragment extends Fragment {
                         for (Map.Entry<Integer, Boolean> entry : mGroups.get(groupPosition).mEntries) {
                             entry.setValue(false);
                         }
-                        ItemMonitor.getInstance().notifyItemsChanged();
+                        ItemMonitor.getInstance().notifyChanged();
                         mFilterAdapter.notifyDataSetChanged();
                     }
                 }
@@ -171,7 +171,7 @@ public class ListFilteringFragment extends Fragment {
                             ((GroupTitleView) parent).doCheck();
                         }
                         */
-                        ItemMonitor.getInstance().notifyItemsChanged();
+                        ItemMonitor.getInstance().notifyChanged();
                         mFilterAdapter.notifyDataSetChanged();
                     }
                 }

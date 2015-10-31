@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.swistowski.vaulthelper.R;
-import org.swistowski.vaulthelper.atapters.ItemActionAdapter;
+import org.swistowski.vaulthelper.adapters.ItemActionAdapter;
 import org.swistowski.vaulthelper.models.Item;
 import org.swistowski.vaulthelper.storage.Items;
 import org.swistowski.vaulthelper.util.ImageStorage;

@@ -155,7 +155,7 @@ public class Items {
                 itemsOwners.put(new_item, owner);
             }
         }
-        ItemMonitor.getInstance().notifyItemsChanged();
+        ItemMonitor.getInstance().notifyChanged();
     }
 
 }

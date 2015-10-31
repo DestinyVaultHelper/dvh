@@ -88,7 +88,7 @@ public class Data implements Serializable {
 
     public void setShowAll(boolean showall) {
         mShowAll = showall;
-        ItemMonitor.getInstance().notifyItemsChanged();
+        ItemMonitor.getInstance().notifyChanged();
     }
 
 }

@@ -92,4 +92,10 @@ You also will have an opportunity to see and modify the data being sent."
     <string name="armor_for_warlock">Warlock</string>
     <string name="item_for_label">Is for</string>
     <string name="cannot_move_error">Cannot move equipped item, Do not know how to unequip %s</string>
+    <string name="title_activity_labels_editor">Labels Editor</string>
+    <string name="new_label">New label</string>
+    <string name="edit_layout_label">Edit label</string>
+    <string name="confirm_label_delete">Delete label %s</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

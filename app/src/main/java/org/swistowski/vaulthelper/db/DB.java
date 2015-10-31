@@ -7,12 +7,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.swistowski.vaulthelper.models.Label;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class DB {
     private static final String LOG_TAG = "DB";
+
 
     private class DBHelper extends SQLiteOpenHelper {
         private static final int DATABASE_VERSION = 2;
@@ -66,9 +71,10 @@ public class DB {
     public HashMap<Long, Set<Long>> getAllItems() {
         String[] cols = new String[]{DBHelper.TABLE_ITEMS_COL_LABEL_ID, DBHelper.TABLE_ITEMS_COL_ITEM};
         Cursor cursor = database.query(true, DBHelper.TABLE_ITEMS_NAME, cols, null, null, null, null, null, null);
+        /*
         if (cursor != null) {
             cursor.moveToFirst();
-        }
+        }*/
         HashMap<Long, Set<Long>> allItems = new HashMap<>();
         while (cursor.moveToNext()) {
             Long labelId = cursor.getLong(0);
@@ -80,7 +86,24 @@ public class DB {
         }
         cursor.close();
         return allItems;
-    };
+    }
+
+    ;
+
+    public Collection<Label> getLabels() {
+        Cursor cursor = database.query(true, DBHelper.TABLE_LABELS_NAME, new String[]{"id", DBHelper.TABLE_LABELS_COL_LABEL, DBHelper.TABLE_LABELS_COL_COLOR}, null, null, null, null, null, null);
+        /*
+        if (cursor != null) {
+            cursor.moveToPosition(0);
+        }
+        */
+        LinkedList<Label> labels = new LinkedList<Label>();
+        while (cursor.moveToNext()) {
+            labels.add(new Label(cursor.getString(1), cursor.getLong(0), cursor.getLong(2)));
+        }
+        cursor.close();
+        return labels;
+    }
 
 
     public void addItem(long item, long labelId) {
@@ -90,8 +113,27 @@ public class DB {
         database.insert(DBHelper.TABLE_ITEMS_NAME, null, values);
     }
 
+    public long addLabel(String name, long color) {
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.TABLE_LABELS_COL_LABEL, name);
+        values.put(DBHelper.TABLE_LABELS_COL_COLOR, color);
+        return database.insert(DBHelper.TABLE_LABELS_NAME, null, values);
+    }
+
+
     public void deleteItem(long item, long labelId) {
         database.delete(DBHelper.TABLE_ITEMS_NAME, DBHelper.TABLE_ITEMS_COL_LABEL_ID + "=? and " + DBHelper.TABLE_ITEMS_COL_ITEM + "=?", new String[]{Long.toString(labelId), Long.toString(item)});
     }
 
+    public void updateLabel(long id, String name, long color) {
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.TABLE_LABELS_COL_LABEL, name);
+        values.put(DBHelper.TABLE_LABELS_COL_COLOR, color);
+        database.update(DBHelper.TABLE_LABELS_NAME, values, "id=?", new String[]{Long.toString(id)});
+    }
+
+    public void deleteLabel(long id) {
+        database.delete(DBHelper.TABLE_ITEMS_NAME, DBHelper.TABLE_ITEMS_COL_LABEL_ID+"=?", new String[]{Long.toString(id)});
+        database.delete(DBHelper.TABLE_LABELS_NAME, "id=?", new String[]{Long.toString(id)});
+    }
 }

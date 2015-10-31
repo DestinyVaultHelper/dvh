@@ -29,10 +29,11 @@ import com.google.android.gms.analytics.Tracker;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.swistowski.vaulthelper.activities.ItemDetailActivity;
+import org.swistowski.vaulthelper.activities.LabelsEditorActivity;
 import org.swistowski.vaulthelper.activities.LoginActivity;
 import org.swistowski.vaulthelper.activities.SendLogActivity;
 import org.swistowski.vaulthelper.activities.WebViewActivity;
-import org.swistowski.vaulthelper.atapters.ItemsFragmentPagerAdapter;
+import org.swistowski.vaulthelper.adapters.ItemsFragmentPagerAdapter;
 import org.swistowski.vaulthelper.fragments.AdFragment;
 import org.swistowski.vaulthelper.fragments.ItemListFragment;
 import org.swistowski.vaulthelper.fragments.SettingsFragment;
@@ -45,12 +46,12 @@ import org.swistowski.vaulthelper.purchase.Inventory;
 import org.swistowski.vaulthelper.purchase.Purchase;
 import org.swistowski.vaulthelper.storage.Characters;
 import org.swistowski.vaulthelper.storage.Filters;
-import org.swistowski.vaulthelper.storage.Items;
 import org.swistowski.vaulthelper.util.BackgroundDrawable;
 import org.swistowski.vaulthelper.storage.Data;
 import org.swistowski.vaulthelper.util.DataLoader;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.views.DisableableViewPager;
+import org.swistowski.vaulthelper.views.LabelSelector;
 import org.swistowski.vaulthelper.views.QuantitySelectView;
 
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener, AdFragment.OnAdIterationListener, ClientWebView.ErrorHandler {
+public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener, AdFragment.OnAdIterationListener, ClientWebView.ErrorHandler, LabelSelector.HandleEditListener {
     private static final String LOG_TAG = "MainActivity";
     private static final String SKU_PREMIUM = "dvh_1";
 
@@ -212,6 +213,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         } else {
             findViewById(R.id.waiting_screen).setVisibility(View.VISIBLE);
         }
+        ((LabelSelector) findViewById(R.id.label_selector)).setHandleEditListener(this);
     }
 
 
@@ -585,5 +587,10 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         }
         */
         return false;
+    }
+
+    @Override
+    public void doRequestEditLabels() {
+        LabelsEditorActivity.showIntent(this);
     }
 }

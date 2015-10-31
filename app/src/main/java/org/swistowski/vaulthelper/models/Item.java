@@ -493,7 +493,7 @@ public class Item implements Serializable, Comparable<Item> {
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        ItemMonitor.getInstance().notifyItemsChanged();
+                                        ItemMonitor.getInstance().notifyChanged();
                                         Toast.makeText(activity, String.format(activity.getString(R.string.do_equip_finished), Item.this.toString()), Toast.LENGTH_SHORT).show();
                                         activity.finish();
                                     }

@@ -8,15 +8,15 @@ import java.util.Set;
 /**
  * Created by damian on 29.10.15.
  */
-public class ItemMonitor {
+public class LabelMonitor {
     private final Set<BaseAdapter> registeredAdapters = new HashSet<BaseAdapter>();
-    private static final ItemMonitor mInstance = new ItemMonitor();
+    private static final LabelMonitor mInstance = new LabelMonitor();
 
-    private ItemMonitor() {
+    private LabelMonitor() {
 
     }
 
-    static public ItemMonitor getInstance() {
+    static public LabelMonitor getInstance() {
         return mInstance;
     }
 

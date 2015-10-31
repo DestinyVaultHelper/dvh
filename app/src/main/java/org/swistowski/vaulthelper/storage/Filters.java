@@ -55,7 +55,7 @@ public class Filters implements Serializable {
 
     public void setFilterText(String filterText) {
         this.mFilterText = filterText;
-        ItemMonitor.getInstance().notifyItemsChanged();
+        ItemMonitor.getInstance().notifyChanged();
     }
 
     public Collection<BaseFilter> getFilters() {

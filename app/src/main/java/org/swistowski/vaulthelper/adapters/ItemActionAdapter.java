@@ -1,4 +1,4 @@
-package org.swistowski.vaulthelper.atapters;
+package org.swistowski.vaulthelper.adapters;
 
 import android.app.Activity;
 import android.database.DataSetObserver;

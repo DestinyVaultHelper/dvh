@@ -1,4 +1,4 @@
-package org.swistowski.vaulthelper.atapters;
+package org.swistowski.vaulthelper.adapters;
 
 import android.content.Context;
 import android.view.View;

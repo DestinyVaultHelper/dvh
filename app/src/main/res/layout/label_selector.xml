@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/label_selector_root"
     android:background="@color/background_material_dark">
 
     <Spinner
@@ -12,16 +13,18 @@
         android:layout_marginLeft="0dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="0dp"
-        android:layout_toLeftOf="@+id/layout_select_button"
-        android:layout_toStartOf="@+id/layout_select_button"
+        android:layout_toLeftOf="@+id/label_selector_button"
+        android:layout_toStartOf="@+id/label_selector_button"
         android:layout_alignParentBottom="true" />
 
-    <Button
+    <ImageButton
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:id="@+id/layout_select_button"
+        android:id="@+id/label_selector_button"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
-        android:text="options" />
+        android:text="options"
+        android:src="@drawable/ic_action_edit"
+        android:background="@color/transparent" />
 </RelativeLayout>

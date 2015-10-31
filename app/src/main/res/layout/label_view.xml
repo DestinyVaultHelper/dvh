@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/label_label"
+    android:singleLine="true"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:ellipsize="marquee"
+    android:textAlignment="inherit"
+    android:text="fsadfas"
+    android:gravity="center_vertical"
+    android:paddingLeft="12dp"
+    android:textSize="@dimen/abc_text_size_medium_material"
+    style="@style/LabelText" />
