@@ -69,6 +69,7 @@ public class Item implements Serializable, Comparable<Item> {
     //private final String mDefinition;
     private final String mBucketDescription;
 
+
     private Item(long itemHash, int bindStatus, boolean isEquipped, int itemLevel, int stackSize, int qualityLevel, boolean canEquip, boolean isEquipment, boolean isGridComplete, String itemInstanceId,
 
                  String itemName, String itemDescription, String icon, String secondaryIcon, String tierTypeName, int tierType, String itemTypeName, long bucketTypeHash, int itemType, int itemSubType, int classType,
@@ -541,6 +542,10 @@ public class Item implements Serializable, Comparable<Item> {
                 mPrimaryStatValue, mDamageType, mBucketName, mCannotEquipReason,
                 mLocation, "", "", "", mUnlockFlagHashRequiredToEquip
         );
+    }
+
+    public List<Label> getLabels() {
+        return Labels.getInstance().getLabelsForItem(getInstanceId());
     }
 
     public static class Action {

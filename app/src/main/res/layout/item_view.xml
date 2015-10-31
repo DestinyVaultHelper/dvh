@@ -67,5 +67,14 @@
         android:layout_alignParentTop="true"
          />
 
+    <org.swistowski.vaulthelper.views.ItemLabelsView
+        android:layout_width="wrap_content"
+        android:layout_height="12dp"
+        android:id="@+id/item_labels_view"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/icon_preview"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 
 </RelativeLayout>

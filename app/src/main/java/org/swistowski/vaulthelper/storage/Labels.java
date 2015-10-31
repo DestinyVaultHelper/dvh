@@ -1,6 +1,7 @@
 package org.swistowski.vaulthelper.storage;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.swistowski.vaulthelper.db.DB;
 import org.swistowski.vaulthelper.models.Label;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +25,7 @@ public class Labels {
     private Context context;
     private HashMap<Long, Set<Long>> items;
     private HashMap<Long, Label> labels;
+    private HashMap<Long, Set<Long>> itemLabels;
     private List<Label> labelsList;
 
     private long current = -1;
@@ -56,6 +59,7 @@ public class Labels {
         }
         return labelsList;
     }
+
 
     public Map<Long, Label> getLabels() {
         if (labels == null) {
@@ -125,6 +129,7 @@ public class Labels {
         labelsList = null;
         labels = null;
         items = null;
+        itemLabels = null;
     }
 
     public void update(Label label) {
@@ -139,5 +144,30 @@ public class Labels {
             current = -1;
         }
         LabelMonitor.getInstance().notifyChanged();
+    }
+
+    private Map<Long, Set<Long>> getItemLabels(){
+        if(itemLabels==null) {
+            itemLabels = new HashMap<>();
+            for(Map.Entry<Long, Set<Long>> entry: getItems().entrySet()){
+                for (Long itemId : entry.getValue()) {
+                    if(!itemLabels.containsKey(itemId)){
+                        itemLabels.put(itemId, new HashSet<Long>());
+                    }
+                    itemLabels.get(itemId).add(entry.getKey());
+                }
+            }
+        }
+        return itemLabels;
+    }
+
+    public List<Label> getLabelsForItem(long itemId) {
+        LinkedList<Label> labels = new LinkedList<>();
+        if(getItemLabels().containsKey(itemId)){
+            for (Long labelId : getItemLabels().get(itemId)) {
+                labels.add(getLabels().get(labelId));
+            }
+        }
+        return labels;
     }
 }

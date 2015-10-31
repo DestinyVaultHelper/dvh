@@ -19,7 +19,6 @@ import org.swistowski.vaulthelper.util.ImageStorage;
 
 public class ItemView extends FrameLayout {
     private static final String LOG_TAG = "ItemView";
-    private final String FAVORITES_LABEL = "Favorites";
     private ImageStorage.DownloadImageTask mDownloadImageTask;
     private Runnable requireReloadDataListener;
     private boolean isGrayed;
@@ -83,16 +82,7 @@ public class ItemView extends FrameLayout {
         boolean hasLabel = Labels.getInstance().hasLabel(item_id, Labels.getInstance().getCurrent());
         cb.setOnCheckedChangeListener(null);
         cb.setChecked(hasLabel);
-        /*
-        if (!item.isOnCharacter()) {
-            findViewById(R.id.item_view_root).setBackgroundColor(getResources().getColor(android.R.color.background_dark));
-        }
-        */
 
-        /*
-        final DB db = new DB(getContext());
-        cb.setChecked(db.itemHasLabel(item.getItemHash(), FAVORITES_LABEL));
-        */
         cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -104,8 +94,8 @@ public class ItemView extends FrameLayout {
                 requireReloadDataListener.run();
             }
         });
-
-
+        ItemLabelsView itemLabelsView = (ItemLabelsView) findViewById(R.id.item_labels_view);
+        itemLabelsView.setLabels(item.getLabels());
     }
 
     private void removeBorder() {
