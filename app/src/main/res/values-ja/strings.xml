@@ -98,4 +98,5 @@ You also will have an opportunity to see and modify the data being sent."
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="labels_label">Labels</string>
+    <string name="isues_comments">Issues, suggestions</string>
 </resources>

@@ -56,6 +56,12 @@ public class AdFragment extends Fragment {
                 handleRateMeClick(view);
             }
         });
+        view.findViewById(R.id.isues_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleIssuesClick(v);
+            }
+        });
         return view;
     }
 
@@ -80,6 +86,12 @@ public class AdFragment extends Fragment {
                     Toast.makeText(getActivity(), "Could not open Android market, please install the market app.", Toast.LENGTH_SHORT).show();
                 }
             }
+    }
+
+    private void handleIssuesClick(View view){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://github.com/DestinyVaultHelper/dvh/issues"));
+        startActivityHelper(intent);
     }
 
     @Override

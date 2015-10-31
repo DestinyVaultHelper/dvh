@@ -52,5 +52,15 @@
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp" />
 
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/isues_comments"
+        android:id="@+id/isues_button"
+        android:layout_below="@+id/rate_me_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp" />
+
 </RelativeLayout>
 </ScrollView>
