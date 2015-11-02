@@ -50,9 +50,6 @@ if (propFile.canRead()) {
     android.buildTypes.release.signingConfig = null
 }
 
-repositories {
-    maven { url 'http://clinker.47deg.com/nexus/content/groups/public' }
-}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -62,7 +59,4 @@ dependencies {
     compile 'com.google.android.gms:play-services:8.1.0'
     compile 'com.android.support:design:22.2.1'
     compile 'com.larswerkman:HoloColorPicker:1.5'
-    compile ('com.fortysevendeg.swipelistview:swipelistview:1.0-SNAPSHOT@aar') {
-        transitive = true
-    }
 }

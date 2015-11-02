@@ -71,8 +71,8 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     private boolean filtersVisible = false;
 
     IabHelper mHelper;
-    private boolean mIsPremium = false;
     private Timer mSuccessLoginTimer;
+    private boolean premium;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,32 +120,35 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
                     if (!result.isSuccess()) {
                         Log.d(LOG_TAG, "Problem setting up In-app Billing: " + result);
                     } else {
-                        final ItemsFragmentPagerAdapter pg = (ItemsFragmentPagerAdapter) mPagerAdapter;
+                        Log.d(LOG_TAG, "Setting up in app billing finished");
+                        if (!isPremium()) {
+                            List additionalSkuList = new ArrayList();
+                            additionalSkuList.add(SKU_PREMIUM);
+                            final ItemsFragmentPagerAdapter pg = (ItemsFragmentPagerAdapter) mPagerAdapter;
+                            // if it's not premium, query of state
 
-                        IabHelper.QueryInventoryFinishedListener
-                                mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
-                            public void onQueryInventoryFinished(IabResult result,
-                                                                 Inventory inventory) {
+                            IabHelper.QueryInventoryFinishedListener
+                                    mQueryFinishedListener = new IabHelper.QueryInventoryFinishedListener() {
+                                public void onQueryInventoryFinished(IabResult result,
+                                                                     Inventory inventory) {
 
-                                if (result.isFailure()) {
-                                    // handle error here
-                                } else {
-                                    // does the user have the premium upgrade?
-                                    mIsPremium = inventory.hasPurchase(SKU_PREMIUM);
-
-                                    if (mIsPremium) {
-                                        mIsPremium = true;
-                                    }
-                                    // update UI accordingly
-                                    if (pg != null) {
-                                        pg.setIsPremium(MainActivity.this);
+                                    if (result.isFailure()) {
+                                        // handle error here
+                                    } else {
+                                        // does the user have the premium upgrade?
+                                        if (inventory.hasPurchase(SKU_PREMIUM)) {
+                                            setIsPremium();
+                                            if (pg != null) {
+                                                pg.setIsPremium(MainActivity.this);
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                        };
-                        List additionalSkuList = new ArrayList();
-                        additionalSkuList.add(SKU_PREMIUM);
-                        mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
+                            };
+                            mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
+                        }
+
+
                     }
                     // Hooray, IAB is fully set up!
                 }
@@ -202,7 +205,9 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             findViewById(R.id.waiting_screen).setVisibility(View.GONE);
             mViewPager = (DisableableViewPager) findViewById(R.id.pager);
 
-            mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager(), this, mIsPremium);
+            mPagerAdapter = new ItemsFragmentPagerAdapter(getSupportFragmentManager(), this, isPremium());
+
+
             mPageTabs = (PagerTabStrip) findViewById(R.id.pager_title_strip);
             mViewPager.setOnPageChangeListener(this);
 
@@ -523,7 +528,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
 
     @Override
     public void onPageSelected(int position) {
-        if (!mIsPremium) {
+        if (!isPremium()) {
             position -= 1;
         }
         if (position >= 0 && Characters.getInstance().all() != null && position < Characters.getInstance().all().size()) {
@@ -580,17 +585,23 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     @Override
     public boolean processError(ConsoleMessage cm) {
         Log.d(LOG_TAG, "got errror: " + cm.message());
-        //goLogin();
-        /*
-        if (cm.message().contains("has no method 'showSignInAlert'")) {
-            goLogin();
-        }
-        */
         return false;
     }
 
     @Override
     public void doRequestEditLabels() {
         LabelsEditorActivity.showIntent(this);
+    }
+
+    public boolean isPremium() {
+        //return true;
+        return getPreferences(MODE_PRIVATE).getBoolean("isPremium", false);
+    }
+
+    public void setIsPremium() {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("isPremium", true);
+        editor.apply();
     }
 }
