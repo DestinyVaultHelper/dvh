@@ -530,6 +530,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             Character c = Characters.getInstance().all().get(position);
             mPageTabs.setBackgroundDrawable(new BackgroundDrawable(c.getEmblemPath(), c.getBackgroundPath()));
 
+
         } else {
             mPageTabs.setBackgroundDrawable(new BitmapDrawable(Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8)));
             mPageTabs.setBackgroundColor(getResources().getColor(R.color.background_material_dark));

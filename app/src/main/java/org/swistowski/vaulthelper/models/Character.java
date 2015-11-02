@@ -1,5 +1,6 @@
 package org.swistowski.vaulthelper.models;
 
+import android.text.Html;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -16,13 +17,17 @@ public class Character implements Serializable {
     private final String mEmblemPath;
     private final String mBackgroundPath;
     private final String mId;
+    private final long mGenderHash;
+    private final long mRaceHash;
 
-    private Character(final String characterId, final int classType, final int level, final String emblemPath, final String backgroundPath) {
+    private Character(final String characterId, final int classType, final int level, final String emblemPath, final String backgroundPath, final long raceHash, final long genderHash) {
         mId = characterId;
         mLevel = level;
         mClassType = classType;
         mEmblemPath = emblemPath;
         mBackgroundPath = backgroundPath;
+        mRaceHash = raceHash;
+        mGenderHash = genderHash;
     }
 
     static public ArrayList<Character> collectionFromJson(JSONArray data) throws JSONException {
@@ -36,12 +41,15 @@ public class Character implements Serializable {
     }
 
     private static Character fromJson(JSONObject data) throws JSONException {
+        Log.v("Character", data.toString());
         return new Character(
                 data.getJSONObject("characterBase").getString("characterId"),
                 data.getJSONObject("characterBase").getInt("classType"),
                 data.getInt("characterLevel"),
                 data.optString("emblemPath", ""),
-                data.optString("backgroundPath", "")
+                data.optString("backgroundPath", ""),
+                data.getJSONObject("characterBase").optLong("raceHash"),
+                data.getJSONObject("characterBase").optLong("genderHash")
         );
     }
 
@@ -60,14 +68,36 @@ public class Character implements Serializable {
         }
     }
 
+    String getGenderName(){
+        if(mGenderHash==2204441813L){
+            return "Female";
+        } else if(mGenderHash==3111576190L) {
+            return "Male";
+        }
+        return "Unknown";
+    }
+
+    String getRaceName(){
+        Log.v("Character", ""+ mRaceHash);
+        if(mRaceHash==898834093L){
+            return "Exo";
+        } else if(mRaceHash==2803282938L){
+            return "Awoken";
+        } else if(mRaceHash ==3887404748L)  {
+            return "Human";
+        }
+        return "Unknown";
+    }
+
     public String toString() {
-        return getClassName() + " " + mLevel;
+        return "<b>"+ mLevel + " " + getClassName() + "</b> " + getRaceName() + " "+getGenderName();
     }
 
     public String getBackgroundPath() {
         return mBackgroundPath;
     }
-    public String getEmblemPath(){
+
+    public String getEmblemPath() {
         return mEmblemPath;
     }
 

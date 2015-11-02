@@ -2,6 +2,7 @@ package org.swistowski.vaulthelper.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.CheckBox;
@@ -115,7 +116,7 @@ public class ItemView extends FrameLayout {
 
     private void setOwner(String text) {
         TextView tv = (TextView) findViewById(R.id.label_owner);
-        tv.setText(text);
+        tv.setText(Html.fromHtml(text));
     }
 
     private void setDetails(String text) {
