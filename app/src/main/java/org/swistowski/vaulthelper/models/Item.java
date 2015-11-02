@@ -142,7 +142,7 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     private static List<Item> fromJson(JSONObject data, boolean isVault) throws JSONException {
-        List<Item> items = new ArrayList<Item>();
+        List<Item> items = new ArrayList<>();
         JSONObject items_definitions = data.getJSONObject("definitions").getJSONObject("items");
         JSONObject bucket_definitions = data.getJSONObject("definitions").getJSONObject("buckets");
         if (!isVault) {
@@ -270,7 +270,7 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     public String toString() {
-        return mName != null ? mName : "Item without name";
+        return mName;
     }
 
     public long getItemHash() {
@@ -394,7 +394,7 @@ public class Item implements Serializable, Comparable<Item> {
 
     public List<Action> posibleActions() {
 
-        List<Action> actions = new LinkedList<Action>();
+        List<Action> actions = new LinkedList<>();
         if (mCanEquip) {
             actions.add(new Action(R.string.equip, new Action.ActionRunnable() {
                 @Override
@@ -457,7 +457,7 @@ public class Item implements Serializable, Comparable<Item> {
                             @Override
                             public void onAccept(String result) {
                                 List<Item> items = Items.getInstance().allAsMap().get(owner);
-                                HashMap<Long, Item> hash2item = new HashMap<Long, Item>();
+                                HashMap<Long, Item> hash2item = new HashMap<>();
                                 for (Item ii : items) {
                                     hash2item.put(ii.getInstanceId(), ii);
                                 }
@@ -545,7 +545,7 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     public List<Label> getLabels() {
-        return Labels.getInstance().getLabelsForItem(getInstanceId());
+        return Labels.getInstance().getLabelsForItem(getItemHash());
     }
 
     public static class Action {

@@ -1,9 +1,7 @@
 package org.swistowski.vaulthelper.filters;
 
-import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.models.Item;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 /**

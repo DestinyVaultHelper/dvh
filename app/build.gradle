@@ -11,8 +11,8 @@ android {
         applicationId 'org.swistowski.vaulthelper'
         minSdkVersion 10
         targetSdkVersion 22
-        versionCode 17
-        versionName "1.6"
+        versionCode 19
+        versionName "1.6.1"
         signingConfig signingConfigs.release
     }
     buildTypes {

@@ -16,7 +16,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.json.JSONObject;
-import org.swistowski.vaulthelper.MainActivity;
 import org.swistowski.vaulthelper.R;
 
 import java.util.HashMap;
@@ -37,7 +36,7 @@ public class ClientWebView extends WebView {
     private final String LOG_TAG = "ClientWebView";
     private boolean mPrepared = false;
     private boolean mInitialized = false;
-    private final Map<String, Promise> mPromises = new HashMap<String, Promise>();
+    private final Map<String, Promise> mPromises = new HashMap<>();
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private Activity currentActivity;
 

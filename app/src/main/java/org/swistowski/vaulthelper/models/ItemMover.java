@@ -56,7 +56,7 @@ public class ItemMover {
         final Promise p_inner = new Promise();
         if (item.isEquipped()) {
             /* find items from the same hash */
-            List<Item> proposed = new ArrayList<Item>();
+            List<Item> proposed = new ArrayList<>();
             String item_owner = Items.getInstance().getItemOwner(item);
             for (Item tested_item : Items.getInstance().all()) {
                 if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Items.getInstance().getItemOwner(tested_item).equals(item_owner) && tested_item.getCanEquip()) {

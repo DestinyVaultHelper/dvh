@@ -34,7 +34,6 @@
         android:layout_toEndOf="@+id/icon_preview"
         android:singleLine="true"
         android:paddingLeft="8dp"
-        android:text="lorem ipsum"
         android:layout_alignParentBottom="true"
         android:paddingBottom="8dp" />
 
@@ -49,7 +48,6 @@
         android:layout_alignParentRight="false"
         android:paddingRight="8dp"
         android:singleLine="true"
-        android:text="lorem ipsum"
         android:layout_toStartOf="@id/favorite_button"
         android:layout_toLeftOf="@id/favorite_button" />
 
@@ -63,7 +61,7 @@
         android:layout_alignParentBottom="false"
         android:paddingLeft="8dp"
         android:singleLine="true"
-        android:text="details"
+        android:text="@string/details"
         android:layout_alignParentTop="true"
          />
 </RelativeLayout>

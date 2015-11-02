@@ -9,7 +9,7 @@ import java.util.Set;
  * Created by damian on 29.10.15.
  */
 public class ItemMonitor {
-    private final Set<BaseAdapter> registeredAdapters = new HashSet<BaseAdapter>();
+    private final Set<BaseAdapter> registeredAdapters = new HashSet<>();
     private static final ItemMonitor mInstance = new ItemMonitor();
 
     private ItemMonitor() {

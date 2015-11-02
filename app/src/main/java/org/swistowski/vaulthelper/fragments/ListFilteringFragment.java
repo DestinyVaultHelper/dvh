@@ -39,7 +39,7 @@ public class ListFilteringFragment extends Fragment {
         public FilterGroup(String title, BaseFilter filter) {
             mTitle = title;
             mFilter = filter;
-            mEntries = new ArrayList<Map.Entry<Integer, Boolean>>();
+            mEntries = new ArrayList<>();
             reloadEntries();
         }
 
@@ -66,7 +66,7 @@ public class ListFilteringFragment extends Fragment {
         public FilterAdapter(Context context) {
             super();
             mContext = context;
-            mGroups = new ArrayList<FilterGroup>();
+            mGroups = new ArrayList<>();
             for (BaseFilter filter : Filters.getInstance().getFilters()) {
                 mGroups.add(new FilterGroup(getResources().getString(filter.getMenuLabel()), filter));
             }

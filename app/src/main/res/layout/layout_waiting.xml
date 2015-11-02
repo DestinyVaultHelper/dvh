@@ -9,7 +9,7 @@
         android:layout_width="144dp"
         android:layout_height="144dp"
         android:id="@+id/imageView"
-        android:contentDescription="Logo"
+        android:contentDescription="@string/Logo"
         android:src="@drawable/logo"
         android:layout_gravity="center_horizontal"
         android:layout_margin="48dp" />

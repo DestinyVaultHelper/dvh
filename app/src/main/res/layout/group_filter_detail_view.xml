@@ -7,6 +7,5 @@
     android:layout_alignParentTop="false"
     android:layout_marginLeft="48dp"
     android:singleLine="true"
-    android:text="lorem ipsum"
     android:textAppearance="?android:attr/textAppearanceLarge" />
 

@@ -100,4 +100,7 @@ You also will have an opportunity to see and modify the data being sent."
     <string name="no">No</string>
     <string name="labels_label">Labels</string>
     <string name="isues_comments">Issues, suggestions</string>
+    <string name="Logo">Logo</string>
+    <string name="details">details</string>
+    <string name="options">options</string>
 </resources>

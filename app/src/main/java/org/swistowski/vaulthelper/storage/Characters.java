@@ -2,7 +2,6 @@ package org.swistowski.vaulthelper.storage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.swistowski.vaulthelper.models.*;
 import org.swistowski.vaulthelper.models.Character;
 
 import java.util.List;

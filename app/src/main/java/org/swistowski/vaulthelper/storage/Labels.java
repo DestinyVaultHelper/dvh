@@ -1,7 +1,6 @@
 package org.swistowski.vaulthelper.storage;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.swistowski.vaulthelper.db.DB;
 import org.swistowski.vaulthelper.models.Label;

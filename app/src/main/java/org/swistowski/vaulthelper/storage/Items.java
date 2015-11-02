@@ -14,8 +14,8 @@ import java.util.Map;
 public class Items {
     public static final String VAULT_ID = "VAULT";
 
-    private Map<String, List<Item>> items = new HashMap<String, List<Item>>();
-    private Map<Item, String> itemsOwners = new HashMap<Item, String>();
+    private Map<String, List<Item>> items = new HashMap<>();
+    private Map<Item, String> itemsOwners = new HashMap<>();
 
 
     static public Items mInstance = new Items();
@@ -40,7 +40,7 @@ public class Items {
     }
 
     public List<Item> allNotFor(String key) {
-        List<Item> allItems = new ArrayList<Item>();
+        List<Item> allItems = new ArrayList<>();
         for (Map.Entry<String, List<Item>> entry : items.entrySet()) {
             if (Data.getInstance().showAll() || !entry.getKey().equals(key)) {
                 for (Item i : entry.getValue()) {
@@ -54,7 +54,7 @@ public class Items {
     }
 
     public List<Item> all() {
-        List<Item> allItems = new ArrayList<Item>();
+        List<Item> allItems = new ArrayList<>();
 
         for (Map.Entry<String, List<Item>> entry : items.entrySet()) {
             for (Item i : entry.getValue()) {
@@ -67,8 +67,8 @@ public class Items {
     }
 
     public void clean() {
-        items = new HashMap<String, List<Item>>();
-        itemsOwners = new HashMap<Item, String>();
+        items = new HashMap<>();
+        itemsOwners = new HashMap<>();
     }
 
     public String getItemOwner(Item item) {

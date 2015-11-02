@@ -122,5 +122,8 @@ Build number: <xliff:g id="build_number">%s</xliff:g>\n
     <string name="no">No</string>
     <string name="labels_label">Labels</string>
     <string name="isues_comments">Issues, suggestions</string>
+    <string name="details">details</string>
+    <string name="options">options</string>
+    <string name="Logo">Logo</string>
 
 </resources>

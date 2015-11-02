@@ -9,18 +9,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.adapters.LabelEditorAdapter;
 import org.swistowski.vaulthelper.models.Label;
-import org.swistowski.vaulthelper.storage.ItemMonitor;
 import org.swistowski.vaulthelper.storage.LabelMonitor;
 import org.swistowski.vaulthelper.views.LabelEditView;
 

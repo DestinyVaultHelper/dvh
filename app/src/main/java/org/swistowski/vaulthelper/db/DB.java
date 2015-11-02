@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import org.swistowski.vaulthelper.models.Label;
 
@@ -97,7 +96,7 @@ public class DB {
             cursor.moveToPosition(0);
         }
         */
-        LinkedList<Label> labels = new LinkedList<Label>();
+        LinkedList<Label> labels = new LinkedList<>();
         while (cursor.moveToNext()) {
             labels.add(new Label(cursor.getString(1), cursor.getLong(0), cursor.getLong(2)));
         }

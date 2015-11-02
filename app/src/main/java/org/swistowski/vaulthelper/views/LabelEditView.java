@@ -12,8 +12,6 @@ import android.widget.TextView;
 import com.larswerkman.holocolorpicker.ColorPicker;
 import com.larswerkman.holocolorpicker.OpacityBar;
 import com.larswerkman.holocolorpicker.SVBar;
-import com.larswerkman.holocolorpicker.SaturationBar;
-import com.larswerkman.holocolorpicker.ValueBar;
 
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.models.Label;

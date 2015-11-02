@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +17,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -151,7 +151,7 @@ public class SendLogActivity extends Activity {
         If not specified with -v, format is set from ANDROID_PRINTF_LOG
         or defaults to "brief"*/
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
 
         if (mFormat != null) {
             list.add("-v");
@@ -164,9 +164,7 @@ public class SendLogActivity extends Activity {
         }
 
         if (mFilterSpecs != null) {
-            for (String filterSpec : mFilterSpecs) {
-                list.add(filterSpec);
-            }
+            Collections.addAll(list, mFilterSpecs);
         }
 
         mCollectLogTask = (CollectLogTask) new CollectLogTask().execute(list);
@@ -182,7 +180,7 @@ public class SendLogActivity extends Activity {
         protected StringBuilder doInBackground(ArrayList<String>... params) {
             final StringBuilder log = new StringBuilder();
             try {
-                ArrayList<String> commandLine = new ArrayList<String>();
+                ArrayList<String> commandLine = new ArrayList<>();
                 commandLine.add("logcat");//$NON-NLS-1$
                 commandLine.add("-d");//$NON-NLS-1$
                 ArrayList<String> arguments = ((params != null) && (params.length > 0)) ? params[0] : null;

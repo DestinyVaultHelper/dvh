@@ -26,7 +26,7 @@ public class Character implements Serializable {
     }
 
     static public ArrayList<Character> collectionFromJson(JSONArray data) throws JSONException {
-        ArrayList<Character> collection = new ArrayList<Character>();
+        ArrayList<Character> collection = new ArrayList<>();
 
         for (int i = 0; i < data.length(); i++) {
             final Character c = Character.fromJson(data.getJSONObject(i));

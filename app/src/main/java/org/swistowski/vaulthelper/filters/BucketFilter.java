@@ -1,11 +1,8 @@
 package org.swistowski.vaulthelper.filters;
 
-import android.util.Log;
-
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.models.Item;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

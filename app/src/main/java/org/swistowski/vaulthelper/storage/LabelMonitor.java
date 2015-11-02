@@ -9,7 +9,7 @@ import java.util.Set;
  * Created by damian on 29.10.15.
  */
 public class LabelMonitor {
-    private final Set<BaseAdapter> registeredAdapters = new HashSet<BaseAdapter>();
+    private final Set<BaseAdapter> registeredAdapters = new HashSet<>();
     private static final LabelMonitor mInstance = new LabelMonitor();
 
     private LabelMonitor() {

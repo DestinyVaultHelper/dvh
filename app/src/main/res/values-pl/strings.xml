@@ -96,4 +96,7 @@
   <string name="no">Nie</string>
   <string name="labels_label">Etykiety</string>
   <string name="isues_comments">Problemy, komentarze</string>
+  <string name="Logo">Logo</string>
+  <string name="details">details</string>
+  <string name="options">options</string>
 </resources>

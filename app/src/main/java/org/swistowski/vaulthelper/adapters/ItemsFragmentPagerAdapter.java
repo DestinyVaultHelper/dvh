@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
     private static final String LOG_TAG = "ItemsFragmentPagerAdapter";
-    private final List<Page> mPages = new ArrayList<Page>();
+    private final List<Page> mPages = new ArrayList<>();
 
     public ItemsFragmentPagerAdapter(FragmentManager fm, Context context, boolean isPremium) {
         super(fm);
