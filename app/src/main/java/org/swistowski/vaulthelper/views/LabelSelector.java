@@ -42,8 +42,8 @@ public class LabelSelector extends FrameLayout implements AdapterView.OnItemSele
         LayoutInflater.from(getContext()).inflate(R.layout.label_selector, this, true);
         Spinner label_selector = (Spinner) findViewById(R.id.label_selector_spinner);
         adapter = new LabelSelectorAdapter(getContext());
-
         label_selector.setAdapter(adapter);
+
         ImageButton button = (ImageButton) findViewById((R.id.label_selector_button));
 
         button.setOnClickListener(new OnClickListener() {

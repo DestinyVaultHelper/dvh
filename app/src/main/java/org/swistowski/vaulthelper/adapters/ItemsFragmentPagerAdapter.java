@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.text.Html;
 
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.fragments.AdFragment;
@@ -32,13 +33,14 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
         if (Characters.getInstance().all() != null) {
             for (final Character character : Characters.getInstance().all()) {
-
-                mPages.add(new Page(character.toString(), new FragmentProvider() {
+                Page page = new Page(Html.fromHtml(character.toString()), new FragmentProvider() {
                     @Override
                     public Fragment getFragment() {
                         return ItemListFragment.newInstance(ItemListFragment.DIRECTION_TO, character.getId());
                     }
-                }));
+                });
+
+                mPages.add(page);
                 /*
                   Future functionality, move from character too
                 "▼ " +
