@@ -13,13 +13,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.plus.PlusOneButton;
 
 import org.swistowski.vaulthelper.R;
 
 
 public class AdFragment extends Fragment {
 
+    private static final String URL = "https://play.google.com/store/apps/details?id=org.swistowski.vaulthelper";
+    private static final int PLUS_ONE_REQUEST_CODE = 0;
     private OnAdIterationListener mListener;
+    private PlusOneButton mPlusOneButton;
 
 
     public static AdFragment newInstance() {
@@ -62,7 +66,27 @@ public class AdFragment extends Fragment {
                 handleIssuesClick(v);
             }
         });
+        mPlusOneButton = (PlusOneButton) view.findViewById(R.id.plus_one_button);
+        /*
+        view.findViewById(R.id.share_button).setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                handleShareClick(v);
+            }
+        });
+        */
         return view;
+    }
+
+    private void handleShareClick(View v) {
+        /*
+        Intent shareIntent = new PlusShare.Builder(getActivity()).setType("text/plain")
+                .setText(getActivity().getString(R.string.google_plus_share_title))
+                .setContentUrl(Uri.parse("https://play.google.com/store/apps/details?id=org.swistowski.vaulthelper"))
+                .getIntent();
+        getActivity().startActivityForResult(shareIntent, 0);
+        */
     }
 
     private boolean startActivityHelper(Intent aIntent) {
@@ -115,4 +139,9 @@ public class AdFragment extends Fragment {
         public void onRequestSupportDev();
     }
 
+    @Override
+    public void onResume() {
+        mPlusOneButton.initialize(URL, PLUS_ONE_REQUEST_CODE);
+        super.onResume();
+    }
 }

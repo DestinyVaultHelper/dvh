@@ -125,5 +125,7 @@ Build number: <xliff:g id="build_number">%s</xliff:g>\n
     <string name="details">details</string>
     <string name="options">options</string>
     <string name="Logo">Logo</string>
+    <string name="share_on_google_plus">Share on Google+</string>
+    <string name="google_plus_share_title">Vault Helper for Destiny, best destiny item manager</string>
 
 </resources>

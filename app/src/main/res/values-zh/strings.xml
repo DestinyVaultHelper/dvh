@@ -103,4 +103,6 @@ You also will have an opportunity to see and modify the data being sent."
     <string name="Logo">Logo</string>
     <string name="details">details</string>
     <string name="options">options</string>
+    <string name="google_plus_share_title">Vault Helper for Destiny, best destiny item manager</string>
+    <string name="share_on_google_plus">Share on Google+</string>
 </resources>

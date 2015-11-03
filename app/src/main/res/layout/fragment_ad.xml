@@ -56,6 +56,8 @@
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp" />
 
+
+
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -65,6 +67,17 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp" />
+
+    <com.google.android.gms.plus.PlusOneButton
+        xmlns:plus="http://schemas.android.com/apk/lib/com.google.android.gms.plus"
+        android:id="@+id/plus_one_button"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/isues_button"
+        android:layout_height="wrap_content"
+        plus:size="standard"
+        plus:annotation="inline"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp"  />
 
 </RelativeLayout>
 </ScrollView>
