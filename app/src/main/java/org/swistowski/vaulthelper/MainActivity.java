@@ -28,10 +28,12 @@ import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.swistowski.vaulthelper.activities.HelpActivity;
 import org.swistowski.vaulthelper.activities.ItemDetailActivity;
 import org.swistowski.vaulthelper.activities.LabelsEditorActivity;
 import org.swistowski.vaulthelper.activities.LoginActivity;
 import org.swistowski.vaulthelper.activities.SendLogActivity;
+import org.swistowski.vaulthelper.activities.SettingsActivity;
 import org.swistowski.vaulthelper.activities.WebViewActivity;
 import org.swistowski.vaulthelper.adapters.ItemsFragmentPagerAdapter;
 import org.swistowski.vaulthelper.fragments.AdFragment;
@@ -47,6 +49,7 @@ import org.swistowski.vaulthelper.purchase.Purchase;
 import org.swistowski.vaulthelper.storage.Characters;
 import org.swistowski.vaulthelper.storage.Filters;
 import org.swistowski.vaulthelper.storage.Data;
+import org.swistowski.vaulthelper.storage.Preferences;
 import org.swistowski.vaulthelper.util.DataLoader;
 import org.swistowski.vaulthelper.views.BackgroundDrawable;
 import org.swistowski.vaulthelper.views.ClientWebView;
@@ -60,7 +63,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener, AdFragment.OnAdIterationListener, ClientWebView.ErrorHandler, LabelSelector.HandleEditListener {
+public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener, AdFragment.OnAdIterationListener, ClientWebView.ErrorHandler {
     private static final String LOG_TAG = "MainActivity";
     private static final String SKU_PREMIUM = "dvh_1";
 
@@ -160,6 +163,7 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         }
         getWebView().setCurrentActivity(this);
         getWebView().setErrorHandler(this);
+        Preferences.getInstance(this);
     }
 
     @Override
@@ -218,7 +222,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
         } else {
             findViewById(R.id.waiting_screen).setVisibility(View.VISIBLE);
         }
-        ((LabelSelector) findViewById(R.id.label_selector)).setHandleEditListener(this);
     }
 
 
@@ -455,10 +458,12 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             //mFilterMenuItem.setChecked(false);
             mFilterMenuItem.setChecked(filtersVisible);
         }
+        /*
         MenuItem mShowAllMenuItem = menu.findItem(R.id.show_all);
         if (mShowAllMenuItem != null) {
             mShowAllMenuItem.setChecked(Data.getInstance().showAll());
         }
+        */
         return true;
     }
 
@@ -497,15 +502,22 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
             case R.id.action_refresh:
                 actionRefresh();
                 return true;
-            case R.id.show_all:
-                item.setChecked(!item.isChecked());
-                Data.getInstance().setShowAll(item.isChecked());
-                return true;
+            /*
             case R.id.send_logs:
                 collectAndSendLog();
                 return true;
             case R.id.show_login_page:
                 goLogin();
+                return true;
+                */
+            case R.id.show_label_editor:
+                LabelsEditorActivity.showIntent(this);
+                return true;
+            case R.id.settings_menu_item:
+                SettingsActivity.openSettingsActivity(this);
+                return true;
+            case R.id.help_menu_item:
+                HelpActivity.showIntent(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -587,11 +599,6 @@ public class MainActivity extends ActionBarActivity implements ItemListFragment.
     public boolean processError(ConsoleMessage cm) {
         Log.d(LOG_TAG, "got errror: " + cm.message());
         return false;
-    }
-
-    @Override
-    public void doRequestEditLabels() {
-        LabelsEditorActivity.showIntent(this);
     }
 
     public boolean isPremium() {

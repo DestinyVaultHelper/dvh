@@ -13,18 +13,6 @@
         android:layout_marginLeft="0dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="0dp"
-        android:layout_toLeftOf="@+id/label_selector_button"
-        android:layout_toStartOf="@+id/label_selector_button"
         android:layout_alignParentBottom="true" />
 
-    <ImageButton
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:id="@+id/label_selector_button"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
-        android:text="@string/options"
-        android:src="@drawable/ic_action_edit"
-        android:background="@color/transparent" />
 </RelativeLayout>

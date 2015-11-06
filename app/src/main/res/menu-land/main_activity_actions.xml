@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:yourapp="http://schemas.android.com/apk/res-auto"  xmlns:dvh="http://schemas.android.com/apk/res-auto" >
-    <item android:id="@+id/action_search"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dvh="http://schemas.android.com/apk/res-auto"
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_search"
         android:icon="@drawable/ic_action_search"
         android:title="@string/search"
-        yourapp:showAsAction="ifRoom|collapseActionView"
-        yourapp:actionViewClass="android.support.v7.widget.SearchView" />
+        yourapp:actionViewClass="android.support.v7.widget.SearchView"
+        yourapp:showAsAction="ifRoom|collapseActionView" />
 
     <item
-        android:id="@+id/show_all"
-        android:checkable="true"
-        dvh:showAsAction="ifRoom"
-        android:title="@string/show_all" />
-    <item android:id="@+id/action_refresh"
+        android:id="@+id/action_refresh"
         android:title="@string/refresh" />
+
+    <item
+        android:id="@+id/settings_menu_item"
+        android:title="@string/settings"
+        dvh:showAsAction="never" />
 </menu>

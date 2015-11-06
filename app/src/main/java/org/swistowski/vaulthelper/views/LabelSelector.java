@@ -19,7 +19,6 @@ import org.swistowski.vaulthelper.storage.Labels;
  * Created by damian on 29.10.15.
  */
 public class LabelSelector extends FrameLayout implements AdapterView.OnItemSelectedListener {
-    private HandleEditListener listener;
     private BaseAdapter adapter;
 
     public LabelSelector(Context context) {
@@ -44,29 +43,17 @@ public class LabelSelector extends FrameLayout implements AdapterView.OnItemSele
         adapter = new LabelSelectorAdapter(getContext());
         label_selector.setAdapter(adapter);
 
-        ImageButton button = (ImageButton) findViewById((R.id.label_selector_button));
 
-        button.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.doRequestEditLabels();
-                }
-            }
-        });
         label_selector.setOnItemSelectedListener(this);
 
     }
 
-    public void setHandleEditListener(HandleEditListener listener) {
-        this.listener = listener;
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Label label = (Label) adapter.getItem(position);
         Labels.getInstance().setCurrent(label.getId());
-        findViewById(R.id.label_selector_root).setBackgroundColor((int)label.getColor());
+        findViewById(R.id.label_selector_root).setBackgroundColor((int) label.getColor());
     }
 
     @Override
@@ -74,7 +61,4 @@ public class LabelSelector extends FrameLayout implements AdapterView.OnItemSele
 
     }
 
-    public interface HandleEditListener {
-        void doRequestEditLabels();
-    }
 }

@@ -16,6 +16,7 @@ import org.swistowski.vaulthelper.storage.ItemMonitor;
 import org.swistowski.vaulthelper.storage.Items;
 import org.swistowski.vaulthelper.storage.Data;
 import org.swistowski.vaulthelper.storage.Labels;
+import org.swistowski.vaulthelper.storage.Preferences;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.views.QuantitySelectView;
 
@@ -408,7 +409,7 @@ public class Item implements Serializable, Comparable<Item> {
                 if (!owner.equals(Items.getInstance().getItemOwner(this))) {
                     String ownerLabel = owner;
                     if (Characters.getInstance().get(owner) != null) {
-                        ownerLabel = Characters.getInstance().get(owner).toString();
+                        ownerLabel = Characters.getInstance().get(owner).getLabel();
                     }
                     Item item = null;
                     for (Item tmp_item : Items.getInstance().all()) {
@@ -545,7 +546,7 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     public List<Label> getLabels() {
-        return Labels.getInstance().getLabelsForItem(getItemHash());
+        return Labels.getInstance().getLabelsForItem(getInstanceId());
     }
 
     public static class Action {

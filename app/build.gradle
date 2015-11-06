@@ -11,13 +11,13 @@ android {
         applicationId 'org.swistowski.vaulthelper'
         minSdkVersion 10
         targetSdkVersion 22
-        versionCode 19
-        versionName "1.6.1"
+        versionCode 20
+        versionName "1.6.2"
         signingConfig signingConfigs.release
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }

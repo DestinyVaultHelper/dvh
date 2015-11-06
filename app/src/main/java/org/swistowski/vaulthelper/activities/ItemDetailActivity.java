@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
@@ -60,6 +61,7 @@ public class ItemDetailActivity extends ActionBarActivity {
 
         lv = (ListView) findViewById(R.id.item_labels_list);
         lv.setAdapter(new ItemLabelsAdapter(this, item));
+        Log.v(LOG_TAG, item.getLabels().toString());
         setListViewHeightBasedOnChildren(lv);
     }
 

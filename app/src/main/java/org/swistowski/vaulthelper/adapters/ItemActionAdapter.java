@@ -2,6 +2,7 @@ package org.swistowski.vaulthelper.adapters;
 
 import android.app.Activity;
 import android.database.DataSetObserver;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -80,7 +81,7 @@ public class ItemActionAdapter implements ListAdapter {
         } else {
             view = (Button) view;
         }
-        ((Button) view).setText(String.format(view.getResources().getString(action.getLabel()), action.getArgs()));
+        ((Button) view).setText(Html.fromHtml(String.format(view.getResources().getString(action.getLabel()), action.getArgs())));
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

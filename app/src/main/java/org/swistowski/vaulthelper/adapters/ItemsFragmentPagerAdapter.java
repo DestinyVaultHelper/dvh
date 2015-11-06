@@ -33,7 +33,7 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
         if (Characters.getInstance().all() != null) {
             for (final Character character : Characters.getInstance().all()) {
-                Page page = new Page(Html.fromHtml(character.toString()), new FragmentProvider() {
+                Page page = new Page(Html.fromHtml(character.getLabel()), new FragmentProvider() {
                     @Override
                     public Fragment getFragment() {
                         return ItemListFragment.newInstance(ItemListFragment.DIRECTION_TO, character.getId());

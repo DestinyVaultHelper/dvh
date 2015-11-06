@@ -6,12 +6,21 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.swistowski.vaulthelper.storage.Preferences;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Character implements Serializable {
     private static final String LOG_TAG = "ModelCharacter";
+    private static final long GENDER_FEMALE = 2204441813L;
+    private static final long GENDER_MALE = 3111576190L;
+    private static final long RACE_EXO = 898834093L;
+    private static final long RACE_AWOKEN = 2803282938L;
+    private static final long RACE_HUMAN = 3887404748L;
+    private static final int APPEARANCE_SHORT = 0;
+    private static final int APPEARANCE_LONG = 1;
+    private static final int APPEARANCE_MEDIUM = 2;
     private final int mClassType;
     private final int mLevel;
     private final String mEmblemPath;
@@ -68,30 +77,43 @@ public class Character implements Serializable {
         }
     }
 
-    String getGenderName(){
-        if(mGenderHash==2204441813L){
+    String getGenderName() {
+        if (mGenderHash == GENDER_FEMALE) {
             return "Female";
-        } else if(mGenderHash==3111576190L) {
+        } else if (mGenderHash == GENDER_MALE) {
             return "Male";
         }
         return "Unknown";
     }
 
-    String getRaceName(){
-        Log.v("Character", ""+ mRaceHash);
-        if(mRaceHash==898834093L){
+    String getGenderSymbol() {
+        if (mGenderHash == GENDER_FEMALE) {
+            return "♀";
+        } else if (mGenderHash == GENDER_MALE) {
+            return "♂";
+        }
+        return "";
+    }
+
+    String getRaceName() {
+        Log.v("Character", "" + mRaceHash);
+        if (mRaceHash == RACE_EXO) {
             return "Exo";
-        } else if(mRaceHash==2803282938L){
+        } else if (mRaceHash == RACE_AWOKEN) {
             return "Awoken";
-        } else if(mRaceHash ==3887404748L)  {
+        } else if (mRaceHash == RACE_HUMAN) {
             return "Human";
         }
         return "Unknown";
     }
 
-    public String toString() {
-        return "<b>"+ mLevel + " " + getClassName() + "</b> " + getRaceName() + " "+getGenderName();
+    String getRaceSymbol() {
+        return getRaceName().substring(0, 1);
     }
+    /*
+    private String toString() {
+        return "<b>"+ mLevel + " " + getClassName() + "</b> " + getRaceName() + " "+getGenderName();
+    }*/
 
     public String getBackgroundPath() {
         return mBackgroundPath;
@@ -101,4 +123,19 @@ public class Character implements Serializable {
         return mEmblemPath;
     }
 
+    public String getLabel(int i) {
+        switch (i) {
+            case APPEARANCE_SHORT:
+                return "<b>" + getClassName() + "</b> " + mLevel;
+            case APPEARANCE_LONG:
+                return "<b>" + mLevel + " " + getClassName() + "</b> " + getRaceName() + " " + getGenderName();
+            case APPEARANCE_MEDIUM:
+                return "<b>" + mLevel + " " + getClassName() + "</b> " + getRaceSymbol() + getGenderSymbol();
+        }
+        return "<b>" + getClassName() + "</b> " + mLevel;
+    }
+
+    public String getLabel() {
+        return getLabel(Preferences.getInstance().tabStyle());
+    }
 }

@@ -81,14 +81,4 @@ public class Data implements Serializable {
         this.context = context;
         Labels.getInstance().setContext(context);
     }
-
-    public boolean showAll() {
-        return mShowAll;
-    }
-
-    public void setShowAll(boolean showall) {
-        mShowAll = showall;
-        ItemMonitor.getInstance().notifyChanged();
-    }
-
 }

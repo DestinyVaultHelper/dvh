@@ -11,25 +11,28 @@
         dvh:showAsAction="ifRoom"
         android:title="@string/toggle_filters"
         />
-    <item
-        android:id="@+id/show_all"
-        android:checkable="true"
-        dvh:showAsAction="ifRoom"
-        android:title="@string/show_all" />
 
     <item android:id="@+id/action_refresh"
         android:title="@string/refresh" />
-
-    <item
-        android:title=""
-        dvh:showAsAction="never"
-        android:enabled="false" />
-
+    <!--
     <item android:id="@+id/show_login_page"
         dvh:showAsAction="never"
         android:title="@string/show_login_page"/>
     <item android:id="@+id/send_logs"
         dvh:showAsAction="never"
         android:title="@string/send_logs"/>
+    -->
+    <item android:id="@+id/show_label_editor"
+        dvh:showAsAction="never"
+        android:title="@string/title_activity_labels_editor" />
+
+    <item android:id="@+id/settings_menu_item"
+        dvh:showAsAction="never"
+        android:title="@string/settings" />
+
+
+    <item android:id="@+id/help_menu_item"
+        dvh:showAsAction="never"
+        android:title="@string/help" />
 
 </menu>

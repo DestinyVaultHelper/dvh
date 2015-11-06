@@ -42,7 +42,7 @@ public class Items {
     public List<Item> allNotFor(String key) {
         List<Item> allItems = new ArrayList<>();
         for (Map.Entry<String, List<Item>> entry : items.entrySet()) {
-            if (Data.getInstance().showAll() || !entry.getKey().equals(key)) {
+            if (Preferences.getInstance().showAll() || !entry.getKey().equals(key)) {
                 for (Item i : entry.getValue()) {
                     if (i.isVisible() && Filters.getInstance().isVisible(i))
                         allItems.add(i);
@@ -99,7 +99,7 @@ public class Items {
         }
         org.swistowski.vaulthelper.models.Character character = Characters.getInstance().get(owner);
         if (character != null) {
-            return character.toString();
+            return character.getLabel();
         }
 
         return "None";
