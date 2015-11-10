@@ -1,8 +1,5 @@
 package org.swistowski.vaulthelper.models;
 
-import android.text.Html;
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,7 +47,6 @@ public class Character implements Serializable {
     }
 
     private static Character fromJson(JSONObject data) throws JSONException {
-        Log.v("Character", data.toString());
         return new Character(
                 data.getJSONObject("characterBase").getString("characterId"),
                 data.getJSONObject("characterBase").getInt("classType"),
@@ -96,7 +92,6 @@ public class Character implements Serializable {
     }
 
     String getRaceName() {
-        Log.v("Character", "" + mRaceHash);
         if (mRaceHash == RACE_EXO) {
             return "Exo";
         } else if (mRaceHash == RACE_AWOKEN) {
@@ -110,10 +105,6 @@ public class Character implements Serializable {
     String getRaceSymbol() {
         return getRaceName().substring(0, 1);
     }
-    /*
-    private String toString() {
-        return "<b>"+ mLevel + " " + getClassName() + "</b> " + getRaceName() + " "+getGenderName();
-    }*/
 
     public String getBackgroundPath() {
         return mBackgroundPath;

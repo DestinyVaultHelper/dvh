@@ -48,4 +48,14 @@
         android:summaryOn="@string/pref_desription_show_all_label"
         android:summaryOff="@string/pref_desription_show_all_off"
         android:defaultValue="true" />
+
+    <ListPreference
+        android:key="ordering"
+        android:title="@string/pref_ordering_title"
+        android:defaultValue="0"
+        android:entries="@array/pref_ordering_titles"
+        android:entryValues="@array/pref_ordering_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        />
 </PreferenceScreen>

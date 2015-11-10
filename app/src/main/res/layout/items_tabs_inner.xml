@@ -9,30 +9,28 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        tools:context="org.swistowski.vaulthelper.MainActivity"
+        android:layout_above="@+id/label_selector"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="0dp"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"
-        android:layout_above="@+id/label_selector">
+        tools:context="org.swistowski.vaulthelper.MainActivity">
 
         <android.support.v4.view.PagerTabStrip
             android:id="@+id/pager_title_strip"
             style="@style/Base.TextAppearance.AppCompat.Large.Inverse"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp" />
+            android:layout_height="48dp"
+            android:layout_gravity="top" />
 
 
     </org.swistowski.vaulthelper.views.DisableableViewPager>
 
     <org.swistowski.vaulthelper.views.LabelSelector
+        android:id="@+id/label_selector"
         android:layout_width="fill_parent"
         android:layout_height="48dp"
-        android:id="@+id/label_selector"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal" />
 
 </RelativeLayout>

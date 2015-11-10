@@ -16,7 +16,6 @@ import org.swistowski.vaulthelper.storage.ItemMonitor;
 import org.swistowski.vaulthelper.storage.Items;
 import org.swistowski.vaulthelper.storage.Data;
 import org.swistowski.vaulthelper.storage.Labels;
-import org.swistowski.vaulthelper.storage.Preferences;
 import org.swistowski.vaulthelper.views.ClientWebView;
 import org.swistowski.vaulthelper.views.QuantitySelectView;
 
@@ -26,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Item implements Serializable, Comparable<Item> {
     public static final int LOCATION_UNKNOWN = 0;
@@ -62,12 +62,10 @@ public class Item implements Serializable, Comparable<Item> {
     private final int mItemSubType;
     private final int mClassType;
     private final String mBucketName;
-    private Runnable requireReloadDataListener;
     private final long mUnlockFlagHashRequiredToEquip;
 
 
     private final String mJson;
-    //private final String mDefinition;
     private final String mBucketDescription;
 
 
@@ -228,45 +226,16 @@ public class Item implements Serializable, Comparable<Item> {
         return 3;
     }
 
+
     @Override
     public int compareTo(Item another) {
-        boolean is_fav = Labels.getInstance().hasLabel(getInstanceId(), Labels.getInstance().getCurrent());
-        boolean other_is_fav = Labels.getInstance().hasLabel(another.getInstanceId(), Labels.getInstance().getCurrent());
-        if (is_fav && !other_is_fav) {
-            return -1;
-        } else if (other_is_fav && !is_fav) {
-            return 1;
-        }
-        ;
-        int t = typeToImportance(another.mItemType) - typeToImportance(mItemType);
-        if (t != 0) {
-            return t;
-        }
-        int tt = another.mTierType - mTierType;
-        if (tt != 0) {
-            return tt;
-        }
-        int psv = another.getPrimaryStatValue() / 10 - getPrimaryStatValue() / 10;
-        if (psv != 0) {
-            return psv;
-        }
-        /*
-        int ql = another.mQualityLevel - mQualityLevel;
-        if (ql != 0) {
-            return ql;
-        }
-        */
-        int compare = mBucketName.compareTo(another.mBucketName);
-        if (compare != 0) {
-            return compare;
-        }
-        ;
-        return mName.compareTo(another.mName);
+        return Ordering.getInstance().doOrder(this, another);
+        //return orderFunctionMap.get(Preferences.getInstance().getOrdering()).doOrder(this, another);
     }
 
     public String[] debugAttrs() {
         String[] ret = new String[]{};
-        Log.v(LOG_TAG, "item id: "+mItemInstanceId);
+        Log.v(LOG_TAG, "item id: " + mItemInstanceId);
         return ret;
     }
 
@@ -547,6 +516,14 @@ public class Item implements Serializable, Comparable<Item> {
 
     public List<Label> getLabels() {
         return Labels.getInstance().getLabelsForItem(getInstanceId());
+    }
+
+    public int getTierType() {
+        return mTierType;
+    }
+
+    public int getTypeImportance() {
+        return typeToImportance(mItemType);
     }
 
     public static class Action {

@@ -62,8 +62,8 @@
   <string name="do_equip_in_progress">Zakładanie przedmiotu</string>
   <string name="do_equip_finished">Przedmiot %s jest założony</string>
   <string name="move_to">Przenieś do %s</string>
-  <string name="layouts_label">Zestawy</string>
-  <string name="new_layout_button">Nowy zestaw</string>
+  <string name="layouts_label">Etykiety</string>
+  <string name="new_layout_button">Nowa etykieta</string>
   <string name="logout">Wyloguj</string>
   <string name="send_logs">Prześlij logi</string>
   <string name="message_subject">Vault helper log</string>
@@ -72,8 +72,8 @@
   <string name="failed_to_get_log_message">Nie udało się uzyskać logu systemowego</string>
   <string name="main_dialog_text">\"Ta aplikacja spróbuje zebrać log systemowy, Zebrany log zostanie wysłany przy użyciu alikacji, którą wypierzesz. Będziesz miał także możliwość aby przejrzać i zmieniać wszelkie informacji, która będą wysłane.\"</string>
   <string name="show_login_page">Pokaż stronę logowania</string>
-  <string name="add_new_layout_label">Dodaj nową etykietę</string>
-  <string name="add_new_layout_hint">Nazwa nowego zestawu</string>
+  <string name="add_new_layout_label">Dodaj etykietę</string>
+  <string name="add_new_layout_hint">Nowa etykieta</string>
   <string name="artifacts_bucket">Artefakty</string>
   <string name="emotes_bucket">Emoty</string>
   <string name="tier_name_rare">Rzadkie</string>
@@ -96,9 +96,26 @@
   <string name="no">Nie</string>
   <string name="labels_label">Etykiety</string>
   <string name="isues_comments">Problemy, komentarze</string>
+  <string name="details">szczegóły</string>
+  <string name="options">opcje</string>
   <string name="Logo">Logo</string>
-  <string name="details">details</string>
-  <string name="options">options</string>
-  <string name="google_plus_share_title">Vault Helper for Destiny, best destiny item manager</string>
-  <string name="share_on_google_plus">Share on Google+</string>
+  <string name="share_on_google_plus">Podziel się na Google+</string>
+  <string name="google_plus_share_title">Vault Helper dla Destiny, najlepszy manager przedmiotów</string>
+  <string name="title_activity_settings">Ustawienia</string>
+  <!--Strings related to Settings-->
+  <!--Example General settings-->
+  <string-array name="pref_ordering_titles">
+    <item>Zestaw→Jakość→Światło (grupowane po 10)→Nazwa</item>
+    <item>Zestaw→Jakość→Światło→Nazwa</item>
+    <item>Zestaw→Jakość→Nazwa</item>
+    <item>Zestaw→Jakość→Położenie→Nazwa</item>
+    <item>Położenie→Zestaw→Jakość→Światło→Nazwa</item>
+    <item>Nazwa</item>
+  </string-array>
+  <string name="pref_title_tab_style">Styl taba</string>
+  <string name="pref_desription_show_all_label">Pokaż wszystko</string>
+  <string name="pref_desription_show_all_off">Pokaż tylko przedmioty do przeniesienia</string>
+  <string name="pref_show_all_label">Pokaż nie przenoszalne przedmioty</string>
+  <string name="help">Pomoc</string>
+  <string name="pref_ordering_title">Kolejność</string>
 </resources>
