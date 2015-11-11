@@ -51,6 +51,8 @@ public class ItemMover {
         return p_inner;
     }
 
+
+
     private static Promise moveToVault(final ClientWebView webView, final String owner, final Item item, final int stackSize, final Promise p) {
         JSONObject obj = generateMoveJson(owner, item, true, stackSize);
         final Promise p_inner = new Promise();
@@ -110,6 +112,7 @@ public class ItemMover {
             }
             return p_inner;
         }
+
         webView.call("destinyService.TransferItem", obj).then(new ClientWebView.Callback() {
             @Override
             public void onAccept(String result) {
@@ -126,16 +129,26 @@ public class ItemMover {
 
             @Override
             public void onError(String result) {
+
                 try {
                     if (new JSONObject(result).optInt("errorCode") == 1656) {
-                        // do reload database
+                        // fix equipped status
+                        String item_owner = Items.getInstance().getItemOwner(item);
+                        for (Item tested_item : Items.getInstance().all()) {
+                            if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Items.getInstance().getItemOwner(tested_item).equals(item_owner) && tested_item.isEquipped()) {
+                                tested_item.setIsEquipped(false);
+                            }
+                        }
+                        item.setIsEquipped(true);
+                        moveToVault(webView, owner, item, stackSize, p_inner);
+                    } else {
+                        if (p != null)
+                            p.onError(result);
+                        p_inner.onError(result);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (p != null)
-                    p.onError(result);
-                p_inner.onError(result);
             }
         });
         return p_inner;
@@ -199,6 +212,7 @@ public class ItemMover {
 
                 @Override
                 public void onError(String e) {
+
                     p.onError(e);
                 }
             });
