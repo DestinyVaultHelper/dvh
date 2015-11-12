@@ -23,6 +23,27 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="0dp" />
 
+    <ImageView
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:id="@+id/icon_damange"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="36dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="36dp"
+        />
+
+    <ImageView
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:id="@+id/icon_locked"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="36dp"
+        android:src="@drawable/ic_lock_black_24dp" />
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

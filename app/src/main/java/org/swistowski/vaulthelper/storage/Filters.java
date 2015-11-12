@@ -5,6 +5,7 @@ import org.swistowski.vaulthelper.filters.BucketFilter;
 import org.swistowski.vaulthelper.filters.CompletedFilter;
 import org.swistowski.vaulthelper.filters.DamageFilter;
 import org.swistowski.vaulthelper.filters.LightLevelFilter;
+import org.swistowski.vaulthelper.filters.LockedFilter;
 import org.swistowski.vaulthelper.filters.TierNameFilter;
 import org.swistowski.vaulthelper.models.Item;
 
@@ -25,6 +26,7 @@ public class Filters implements Serializable {
         FILTERS.add(new BucketFilter());
         FILTERS.add(new DamageFilter());
         FILTERS.add(new CompletedFilter());
+        FILTERS.add(new LockedFilter());
         FILTERS.add(new TierNameFilter());
         FILTERS.add(new LightLevelFilter());
     }

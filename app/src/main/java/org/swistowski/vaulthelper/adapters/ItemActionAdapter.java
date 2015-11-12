@@ -3,8 +3,10 @@ package org.swistowski.vaulthelper.adapters;
 import android.app.Activity;
 import android.database.DataSetObserver;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 
@@ -15,7 +17,7 @@ import java.util.List;
 /**
  * Created by damian on 18.05.15.
  */
-public class ItemActionAdapter implements ListAdapter {
+public class ItemActionAdapter extends BaseAdapter {
     private final Activity mActivity;
     private final Item mItem;
     private List<Item.Action> mActions;
@@ -35,18 +37,10 @@ public class ItemActionAdapter implements ListAdapter {
         return false;
     }
 
-    @Override
-    public void registerDataSetObserver(DataSetObserver dataSetObserver) {
-
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
-
-    }
-
     private List<Item.Action> getActions() {
+        Log.v("ItemActionAdapter", "getActions");
         if (mActions == null) {
+            Log.v("ItemActionAdapter", "getActions create");
             mActions = mItem.posibleActions();
         }
         return mActions;
@@ -105,5 +99,12 @@ public class ItemActionAdapter implements ListAdapter {
     @Override
     public boolean isEmpty() {
         return getCount() == 0;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        Log.v("ItemActionAdapter", "clearingActions");
+        mActions=null;
+        super.notifyDataSetChanged();
     }
 }

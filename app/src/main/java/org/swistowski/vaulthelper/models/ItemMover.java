@@ -51,6 +51,47 @@ public class ItemMover {
         return p_inner;
     }
 
+    public static Promise setLockState(final ClientWebView webView, final Item item, final String owner, final boolean lockState, final Promise p) {
+        final Promise p_inner = new Promise();
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("characterId", owner);
+            obj.put("itemId", item.getItemId());
+            obj.put("membershipType", Data.getInstance().getMembership().getType());
+            obj.put("state", lockState);
+        }catch (JSONException e) {
+            Log.e(LOG_TAG, "exception", e);
+            e.printStackTrace();
+        }
+
+        webView.call("destinyService.SetItemLockState", obj).then(new ClientWebView.Callback() {
+            @Override
+            public void onAccept(String result) {
+                for (Item tested_item : Items.getInstance().all()) {
+                    if (tested_item.getBucketTypeHash() == item.getBucketTypeHash() && item.getItemHash() != tested_item.getItemHash() && Items.getInstance().getItemOwner(tested_item).equals(owner) && tested_item.getCanEquip()) {
+                        item.setIsLocked(lockState);
+                        break;
+                    }
+                }
+                p_inner.onSuccess();
+            }
+
+            @Override
+            public void onError(String result) {
+                p_inner.onError(result);
+            }
+        });
+        return p_inner;
+    }
+
+    public static Promise lock(final ClientWebView webView, final Item item, final Promise p) {
+        final Promise p_inner = new Promise();
+
+
+        return p_inner;
+    }
+
+
 
 
     private static Promise moveToVault(final ClientWebView webView, final String owner, final Item item, final int stackSize, final Promise p) {

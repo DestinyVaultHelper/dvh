@@ -5,13 +5,9 @@ host = https://www.transifex.com
 source_file = app/src/main/res/values/strings.xml
 source_lang = en
 trans.pl = app/src/main/res/values-pl/strings.xml
-trans.zh = app/src/main/res/values-zh/strings.xml
-trans.ja = app/src/main/res/values-ja/strings.xml
 
 [dvh.description]
 source_file = ./description.html
 source_lang = en
 trans.pl = ./description-pl.html
-trans.zh = ./description-zh.html
-trans.ja = ./description-ja.html
 type = HTML

@@ -29,11 +29,11 @@
         android:layout_centerHorizontal="true"
         android:textSize="18dp"
         android:typeface="serif"
-        android:layout_marginLeft="48dp"
-        android:layout_marginRight="48dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
         android:layout_marginBottom="48dp"
         android:layout_marginTop="48dp"
-        android:layout_below="@+id/isues_button" />
+        android:layout_below="@+id/plus_one_button" />
 
     <Button
         android:layout_width="fill_parent"
@@ -57,7 +57,6 @@
         android:layout_marginRight="48dp" />
 
 
-
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -68,11 +67,21 @@
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp" />
 
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/share_label"
+        android:id="@+id/share_button"
+        android:layout_below="@+id/isues_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp" />
+
     <com.google.android.gms.plus.PlusOneButton
         xmlns:plus="http://schemas.android.com/apk/lib/com.google.android.gms.plus"
         android:id="@+id/plus_one_button"
         android:layout_width="fill_parent"
-        android:layout_below="@+id/isues_button"
+        android:layout_below="@+id/share_button"
         android:layout_height="wrap_content"
         plus:size="standard"
         plus:annotation="inline"

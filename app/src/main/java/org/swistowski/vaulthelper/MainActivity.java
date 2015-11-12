@@ -13,6 +13,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -63,7 +64,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends ActionBarActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener, AdFragment.OnAdIterationListener, ClientWebView.ErrorHandler {
+public class MainActivity extends AppCompatActivity implements ItemListFragment.OnItemIterationListener, SettingsFragment.OnSettingsIterationListener, ViewPager.OnPageChangeListener, AdFragment.OnAdIterationListener, ClientWebView.ErrorHandler {
     private static final String LOG_TAG = "MainActivity";
     private static final String SKU_PREMIUM = "dvh_1";
 

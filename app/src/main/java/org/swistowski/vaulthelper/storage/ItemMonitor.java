@@ -1,5 +1,6 @@
 package org.swistowski.vaulthelper.storage;
 
+import android.util.Log;
 import android.widget.BaseAdapter;
 
 import java.util.HashSet;
@@ -31,6 +32,7 @@ public class ItemMonitor {
 
     public void notifyChanged() {
         for (BaseAdapter adapter : registeredAdapters) {
+            Log.v("ItemMonitor", "notifing: "+adapter);
             adapter.notifyDataSetChanged();
         }
     }

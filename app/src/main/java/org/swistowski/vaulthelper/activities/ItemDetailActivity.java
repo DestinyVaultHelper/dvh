@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -18,6 +19,7 @@ import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.adapters.ItemActionAdapter;
 import org.swistowski.vaulthelper.models.Item;
 import org.swistowski.vaulthelper.models.Label;
+import org.swistowski.vaulthelper.storage.ItemMonitor;
 import org.swistowski.vaulthelper.storage.Items;
 import org.swistowski.vaulthelper.util.ImageStorage;
 import org.swistowski.vaulthelper.views.LabelView;
@@ -27,6 +29,7 @@ public class ItemDetailActivity extends ActionBarActivity {
     public static final String ITEM = "item";
     public static final String STACK_SIZE = "stack-size";
     private static final String LOG_TAG = "ItemDetailActivity";
+    private BaseAdapter mAdapter;
 
     public static void showItemItent(Context parent, Item item) {
         Intent intent = new Intent(parent, ItemDetailActivity.class);
@@ -35,6 +38,12 @@ public class ItemDetailActivity extends ActionBarActivity {
         b.putLong(ItemDetailActivity.STACK_SIZE, item.getStackSize());
         intent.putExtras(b);
         parent.startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ItemMonitor.getInstance().unregisterAdapter(mAdapter);
     }
 
     @Override
@@ -56,13 +65,23 @@ public class ItemDetailActivity extends ActionBarActivity {
         setTitle(item.getName());
         ((TextView) findViewById(R.id.detail_name)).setText(item.getDetails());
         ListView lv = (ListView) findViewById(R.id.item_actions_list);
-        lv.setAdapter(new ItemActionAdapter(this, item));
+
+        mAdapter = new ItemActionAdapter(this, item);
+
+        ItemMonitor.getInstance().registerAdapter(mAdapter);
+        lv.setAdapter(mAdapter);
         setListViewHeightBasedOnChildren(lv);
 
         lv = (ListView) findViewById(R.id.item_labels_list);
         lv.setAdapter(new ItemLabelsAdapter(this, item));
-        Log.v(LOG_TAG, item.getLabels().toString());
         setListViewHeightBasedOnChildren(lv);
+
+        TextView labelsLabel = (TextView) findViewById(R.id.labels_label);
+        if (lv.getAdapter().getCount() == 0) {
+            labelsLabel.setVisibility(View.INVISIBLE);
+        } else {
+            labelsLabel.setVisibility(View.VISIBLE);
+        }
     }
 
     public static void setListViewHeightBasedOnChildren(ListView listView) {
@@ -87,7 +106,7 @@ public class ItemDetailActivity extends ActionBarActivity {
         listView.requestLayout();
     }
 
-    private class ItemLabelsAdapter implements ListAdapter {
+    private class ItemLabelsAdapter extends BaseAdapter {
         private final Item item;
         private final Context context;
 
@@ -106,15 +125,6 @@ public class ItemDetailActivity extends ActionBarActivity {
             return true;
         }
 
-        @Override
-        public void registerDataSetObserver(DataSetObserver observer) {
-
-        }
-
-        @Override
-        public void unregisterDataSetObserver(DataSetObserver observer) {
-
-        }
 
         @Override
         public int getCount() {

@@ -33,7 +33,10 @@ public class Item implements Serializable, Comparable<Item> {
     public static final int LOCATION_VAULT = 2;
     public static final int LOCATION_VENDOR = 3;
     public static final int LOCATION_POSTMASTER = 4;
-    private static final String LOG_TAG = "Item Class";
+    private static final String LOG_TAG = "Item";
+    public static final int DAMAGE_TYPE_SOLAR = 3;
+    public static final int DAMAGE_TYPE_ARC = 2;
+    public static final int DAMAGE_TYPE_VOID = 4;
 
     private final long mItemHash;
     private final String mItemInstanceId;
@@ -44,6 +47,7 @@ public class Item implements Serializable, Comparable<Item> {
     private final int mCannotEquipReason;
     private final int mLocation;
     private boolean mIsEquipped;
+    private boolean mIsLocked;
     private final int mItemLevel;
     private int mStackSize;
     private final int mQualityLevel;
@@ -67,6 +71,7 @@ public class Item implements Serializable, Comparable<Item> {
 
     private final String mJson;
     private final String mBucketDescription;
+    private boolean mIsEquippable;
 
 
     private Item(long itemHash, int bindStatus, boolean isEquipped, int itemLevel, int stackSize, int qualityLevel, boolean canEquip, boolean isEquipment, boolean isGridComplete, String itemInstanceId,
@@ -79,7 +84,9 @@ public class Item implements Serializable, Comparable<Item> {
                  int location,
                  String bucketDescription,
                  String json, String definition,
-                 long unlockFlagHashRequiredToEquip
+                 long unlockFlagHashRequiredToEquip,
+                 boolean isLocked,
+                 boolean isEquippable
 
     ) {
         mItemHash = itemHash;
@@ -114,6 +121,8 @@ public class Item implements Serializable, Comparable<Item> {
 
         mJson = json;
         mUnlockFlagHashRequiredToEquip = unlockFlagHashRequiredToEquip;
+        mIsLocked = isLocked;
+        mIsEquippable = isEquippable;
         //mDefinition = definition;
     }
 
@@ -131,6 +140,7 @@ public class Item implements Serializable, Comparable<Item> {
                         bucket = null;
                     // i'm interested only in transferrable items
                     if (!definition.optBoolean("nonTransferrable")) {
+                        //Log.v(LOG_TAG, definition.toString() + " " + bucket.toString());
                         items.add(createItem(key, item, definition, bucket));
                     }
                 }
@@ -199,7 +209,9 @@ public class Item implements Serializable, Comparable<Item> {
                 bucket != null ? bucket.optString("bucketDescription") : "",
                 item.toString(),
                 definition.toString(),
-                item.optLong("unlockFlagHashRequiredToEquip", 0)
+                item.optLong("unlockFlagHashRequiredToEquip", 0),
+                item.optBoolean("locked", false),
+                definition.optBoolean("equippable", false)
         );
     }
 
@@ -304,11 +316,11 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     public String getDamageTypeName() {
-        if (mDamageType == 3) {
+        if (mDamageType == DAMAGE_TYPE_SOLAR) {
             return "Solar";
-        } else if (mDamageType == 2) {
+        } else if (mDamageType == DAMAGE_TYPE_ARC) {
             return "Arc";
-        } else if (mDamageType == 4) {
+        } else if (mDamageType == DAMAGE_TYPE_VOID) {
             return "Void";
         }
         return "";
@@ -407,8 +419,72 @@ public class Item implements Serializable, Comparable<Item> {
                 }
             }
         }
-
+        if (isEquippable() && mCanEquip) {
+            if (getIsLocked()) {
+                actions.add(new Action(R.string.unlock_action_label, new Action.ActionRunnable() {
+                    @Override
+                    public void run(final Activity activity) {
+                        doUnLock(activity);
+                    }
+                }));
+            } else {
+                actions.add(new Action(R.string.lock_action_label, new Action.ActionRunnable() {
+                    @Override
+                    public void run(Activity activity) {
+                        doLock(activity);
+                    }
+                }));
+            }
+        }
         return actions;
+    }
+
+
+    private void doUnLock(final Activity activity) {
+        Toast.makeText(activity, activity.getString(R.string.do_unlock_in_progress), Toast.LENGTH_SHORT).show();
+        final ClientWebView webView = ((Application) activity.getApplication()).getWebView();
+        final String owner = Items.getInstance().getItemOwner(this);
+        ItemMover.setLockState(webView, this, owner, false, null).then(new ItemMover.Result(){
+            @Override
+            public void onSuccess() {
+                Toast.makeText(activity, activity.getString(R.string.do_unlock_success), Toast.LENGTH_SHORT).show();
+                setIsLocked(false);
+                ItemMonitor.getInstance().notifyChanged();
+                activity.finish();
+            }
+
+            @Override
+            public void onError(String e) {
+                Toast.makeText(activity, activity.getString(R.string.do_unlock_error), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    private void doLock(final Activity activity) {
+        Toast.makeText(activity, activity.getString(R.string.do_lock_in_progress), Toast.LENGTH_SHORT).show();
+        final ClientWebView webView = ((Application) activity.getApplication()).getWebView();
+        final String owner = Items.getInstance().getItemOwner(this);
+
+        ItemMover.setLockState(webView, this, owner, true, null).then(new ItemMover.Result() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(activity, activity.getString(R.string.do_lock_success), Toast.LENGTH_SHORT).show();
+                setIsLocked(true);
+                ItemMonitor.getInstance().notifyChanged();
+                activity.finish();
+            }
+
+            @Override
+            public void onError(String e) {
+                Toast.makeText(activity, activity.getString(R.string.do_lock_error), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    protected void setIsLocked(boolean isLocked) {
+        mIsLocked=isLocked;
     }
 
     private void doEquip(final Activity activity) {
@@ -510,7 +586,7 @@ public class Item implements Serializable, Comparable<Item> {
                 mName, mItemDescription, mIcon, mSecondaryIcon, mTierTypeName, mTierType, mItemTypeName,
                 mBucketTypeHash, mItemType, mItemSubType, mClassType,
                 mPrimaryStatValue, mDamageType, mBucketName, mCannotEquipReason,
-                mLocation, "", "", "", mUnlockFlagHashRequiredToEquip
+                mLocation, "", "", "", mUnlockFlagHashRequiredToEquip, mIsLocked, mIsEquippable
         );
     }
 
@@ -524,6 +600,14 @@ public class Item implements Serializable, Comparable<Item> {
 
     public int getTypeImportance() {
         return typeToImportance(mItemType);
+    }
+
+    public boolean getIsLocked() {
+        return mIsLocked;
+    }
+
+    public boolean isEquippable() {
+        return mIsEquippable;
     }
 
     public static class Action {

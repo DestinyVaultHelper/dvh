@@ -2,9 +2,11 @@ package org.swistowski.vaulthelper.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -57,9 +59,13 @@ public class ItemView extends FrameLayout {
         if (item.getPrimaryStatValue() != 0) {
             details += item.getPrimaryStatValue() + " ";
         }
+        /*
         if (item.getDamageType() != 0) {
             details += item.getDamageTypeName() + " ";
         }
+        */
+        setDamageType(item.getDamageType());
+
         if (item.isEquipped()) {
             details += "Equipped ";
         }
@@ -74,10 +80,16 @@ public class ItemView extends FrameLayout {
         setOwner(Items.getInstance().getItemOwnerName(item));
         CheckBox cb = ((CheckBox) findViewById(R.id.favorite_button));
         final long item_id = item.getInstanceId();
-        if(item_id==0){
+        if (item_id == 0) {
             cb.setVisibility(INVISIBLE);
         } else {
             cb.setVisibility(VISIBLE);
+        }
+        ImageView lockView = (ImageView) findViewById(R.id.icon_locked);
+        if(item.getIsLocked()){
+            lockView.setVisibility(View.VISIBLE);
+        } else {
+            lockView.setVisibility(View.INVISIBLE);
         }
 
         boolean hasLabel = Labels.getInstance().hasLabel(item_id, Labels.getInstance().getCurrent());
@@ -97,6 +109,27 @@ public class ItemView extends FrameLayout {
         });
     }
 
+    private void setDamageType(int damageType) {
+        ImageView iv = (ImageView) findViewById(R.id.icon_damange);
+        if (damageType == 0) {
+            iv.setImageDrawable(null);
+        } else {
+            String imageName=null;
+            if (damageType == Item.DAMAGE_TYPE_ARC) {
+                imageName = "arc_damage_icon";
+            } else if (damageType == Item.DAMAGE_TYPE_SOLAR) {
+                imageName = "fire_damage_icon";
+            } else if (damageType == Item.DAMAGE_TYPE_VOID) {
+                imageName = "void_damage_icon";
+            }
+            if (imageName != null) {
+                int imageId = getContext().getResources().getIdentifier(imageName, "drawable", getContext().getPackageName());
+                iv.setImageResource(imageId);
+            }
+
+        }
+    }
+
     private void removeBorder() {
         ImageView iv = (ImageView) findViewById(R.id.icon_preview);
         iv.setPadding(0, 0, 0, 0);
@@ -104,7 +137,7 @@ public class ItemView extends FrameLayout {
 
     private void makeBorder() {
         ImageView iv = (ImageView) findViewById(R.id.icon_preview);
-        int border = 5;
+        int border = 2;
         iv.setPadding(border, border, border, border);
         iv.setBackgroundColor(getResources().getColor(R.color.completed_border));
     }

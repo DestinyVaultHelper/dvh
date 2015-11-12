@@ -67,6 +67,13 @@ public class AdFragment extends Fragment {
             }
         });
         mPlusOneButton = (PlusOneButton) view.findViewById(R.id.plus_one_button);
+
+        view.findViewById(R.id.share_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleShareButtonClick();
+            }
+        });
         /*
         view.findViewById(R.id.share_button).setOnClickListener(new View.OnClickListener(){
 
@@ -77,6 +84,14 @@ public class AdFragment extends Fragment {
         });
         */
         return view;
+    }
+
+    private void handleShareButtonClick() {
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.google_plus_share_title));
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text));
+        startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_action_label)));
     }
 
     private void handleShareClick(View v) {

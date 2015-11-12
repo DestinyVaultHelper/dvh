@@ -169,5 +169,19 @@ Build number: <xliff:g id="build_number">%s</xliff:g>\n
     <string name="pref_show_all_label">Show not moveable items</string>
     <string name="help">Help</string>
     <string name="pref_ordering_title">Order</string>
+    <string name="is_locked">Is locked</string>
+    <string name="is_not_locked">Is not locked</string>
+    <string name="locked_filter_label">Locked</string>
+    <string name="unlock_action_label">Unlock</string>
+    <string name="lock_action_label">Lock</string>
+    <string name="do_unlock_in_progress">Unlocking item</string>
+    <string name="do_lock_in_progress">Locking item</string>
+    <string name="do_unlock_success">Item unlocked</string>
+    <string name="do_unlock_error">Cannot unlock item</string>
+    <string name="do_lock_success">Item is locked</string>
+    <string name="do_lock_error">Cannot lock item</string>
+    <string name="share_label">Inform your friends</string>
+    <string name="share_action_label">Inform your friends</string>
+    <string name="share_text" >Hey check out Vault Helper for Destiny at: https://play.google.com/store/apps/details?id=org.swistowski.vaulthelper&amp;utm_source=share_button</string>
 
 </resources>

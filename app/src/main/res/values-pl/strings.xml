@@ -100,7 +100,7 @@
   <string name="options">opcje</string>
   <string name="Logo">Logo</string>
   <string name="share_on_google_plus">Podziel się na Google+</string>
-  <string name="google_plus_share_title">Vault Helper dla Destiny, najlepszy manager przedmiotów</string>
+  <string name="google_plus_share_title">Vault helper dla Destiny, najlepsze manager przedmiotów.</string>
   <string name="title_activity_settings">Ustawienia</string>
   <!--Strings related to Settings-->
   <!--Example General settings-->
@@ -112,10 +112,13 @@
     <item>Położenie→Zestaw→Jakość→Światło→Nazwa</item>
     <item>Nazwa</item>
   </string-array>
-  <string name="pref_title_tab_style">Styl taba</string>
-  <string name="pref_desription_show_all_label">Pokaż wszystko</string>
+  <string name="pref_title_tab_style">Styl tabów</string>
+  <string name="pref_desription_show_all_label">Pokaż wszystkie</string>
   <string name="pref_desription_show_all_off">Pokaż tylko przedmioty do przeniesienia</string>
-  <string name="pref_show_all_label">Pokaż nie przenoszalne przedmioty</string>
+  <string name="pref_show_all_label">Pokaż nieprzenoszalne przedmioty</string>
   <string name="help">Pomoc</string>
   <string name="pref_ordering_title">Kolejność</string>
+  <string name="is_locked">Jest zablokowane</string>
+  <string name="is_not_locked">Nie jest zablokowane</string>
+  <string name="locked_filter_label">Zablokowane</string>
 </resources>
