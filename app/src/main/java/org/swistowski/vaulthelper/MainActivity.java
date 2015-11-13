@@ -4,25 +4,30 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.gesture.GestureOverlayView;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.internal.view.SupportMenuItem;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -48,6 +53,7 @@ import org.swistowski.vaulthelper.purchase.IabResult;
 import org.swistowski.vaulthelper.purchase.Inventory;
 import org.swistowski.vaulthelper.purchase.Purchase;
 import org.swistowski.vaulthelper.storage.Characters;
+import org.swistowski.vaulthelper.storage.FilterMonitor;
 import org.swistowski.vaulthelper.storage.Filters;
 import org.swistowski.vaulthelper.storage.Data;
 import org.swistowski.vaulthelper.storage.Preferences;
@@ -76,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
 
     IabHelper mHelper;
     private Timer mSuccessLoginTimer;
-    private boolean premium;
+    private FilterMonitor.SearchWatcher mSearchWatcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
             mViewPager.setOnPageChangeListener(this);
 
             mViewPager.setAdapter(mPagerAdapter);
-
 
             onPageSelected(0);
         } else {
@@ -386,11 +391,7 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         } catch (JSONException e1) {
             message = e;
         }
-        new AlertDialog.Builder(this)
-                .setTitle("Error")
-                .setMessage(message)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -432,10 +433,24 @@ public class MainActivity extends AppCompatActivity implements ItemListFragment.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_actions, menu);
 
-        SupportMenuItem searchItem = (SupportMenuItem) menu.findItem(R.id.action_search);
+        final SupportMenuItem searchItem = (SupportMenuItem) menu.findItem(R.id.action_search);
 
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
+        if(mSearchWatcher!=null){
+            FilterMonitor.getInstance().unregisterSearchWatcher(mSearchWatcher);
+        };
+
+        mSearchWatcher = new FilterMonitor.SearchWatcher() {
+            @Override
+            public void onUpdateSearch(String newValue) {
+                searchItem.expandActionView();
+                searchView.setQuery(newValue, false);
+            }
+        };
+
+        FilterMonitor.getInstance().registerSearchWatcher(mSearchWatcher);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

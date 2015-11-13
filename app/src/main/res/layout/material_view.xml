@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="fill_parent"
+    android:layout_height="48dp">
+
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/icon_material"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Name placeholder"
+        android:id="@+id/materialName"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="12dp"
+        android:layout_toRightOf="@+id/icon_material"
+        android:layout_toEndOf="@+id/icon_material"
+        android:textStyle="bold"
+        android:layout_marginLeft="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Count placeholder"
+        android:id="@+id/materialQuantity"
+        android:layout_gravity="right"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="12dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="12dp" />
+</RelativeLayout>

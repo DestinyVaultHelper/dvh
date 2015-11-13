@@ -9,6 +9,7 @@ import android.text.Html;
 import org.swistowski.vaulthelper.R;
 import org.swistowski.vaulthelper.fragments.AdFragment;
 import org.swistowski.vaulthelper.fragments.ItemListFragment;
+import org.swistowski.vaulthelper.fragments.MaterialFragment;
 import org.swistowski.vaulthelper.models.Character;
 import org.swistowski.vaulthelper.storage.Characters;
 import org.swistowski.vaulthelper.storage.Items;
@@ -63,16 +64,12 @@ public class ItemsFragmentPagerAdapter extends FragmentStatePagerAdapter {
                 }
             }));
         }
-        /*
-        if (mPages.size() == 0) {
-            mPages.add(new Page(context.getString(R.string.settings), new FragmentProvider() {
-                @Override
-                public Fragment getFragment() {
-                    return SettingsFragment.newInstance();
-                }
-            }));
-        }
-        */
+        mPages.add(new Page(context.getString(R.string.materials), new FragmentProvider() {
+            @Override
+            public Fragment getFragment() {
+                return MaterialFragment.newInstance();
+            }
+        }));
         if (isPremium) {
             mPages.add(new Page(context.getString(R.string.ad), new FragmentProvider() {
                 @Override

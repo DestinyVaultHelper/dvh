@@ -247,7 +247,6 @@ public class Item implements Serializable, Comparable<Item> {
 
     public String[] debugAttrs() {
         String[] ret = new String[]{};
-        Log.v(LOG_TAG, "item id: " + mItemInstanceId);
         return ret;
     }
 
@@ -368,6 +367,13 @@ public class Item implements Serializable, Comparable<Item> {
 
                     @Override
                     public void onError(String e) {
+                        String message;
+                        try {
+                            message = new JSONObject(e).optString("errorMessage");
+                        } catch (JSONException e1) {
+                            message = e;
+                        }
+                        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
                         // onMoveError(e);
                     }
                 }
@@ -444,7 +450,7 @@ public class Item implements Serializable, Comparable<Item> {
         Toast.makeText(activity, activity.getString(R.string.do_unlock_in_progress), Toast.LENGTH_SHORT).show();
         final ClientWebView webView = ((Application) activity.getApplication()).getWebView();
         final String owner = Items.getInstance().getItemOwner(this);
-        ItemMover.setLockState(webView, this, owner, false, null).then(new ItemMover.Result(){
+        ItemMover.setLockState(webView, this, owner, false, null).then(new ItemMover.Result() {
             @Override
             public void onSuccess() {
                 Toast.makeText(activity, activity.getString(R.string.do_unlock_success), Toast.LENGTH_SHORT).show();
@@ -471,8 +477,13 @@ public class Item implements Serializable, Comparable<Item> {
             public void onSuccess() {
                 Toast.makeText(activity, activity.getString(R.string.do_lock_success), Toast.LENGTH_SHORT).show();
                 setIsLocked(true);
-                ItemMonitor.getInstance().notifyChanged();
-                activity.finish();
+                webView.queueRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        ItemMonitor.getInstance().notifyChanged();
+                        //activity.finish();
+                    }
+                });
             }
 
             @Override
@@ -484,7 +495,7 @@ public class Item implements Serializable, Comparable<Item> {
     }
 
     protected void setIsLocked(boolean isLocked) {
-        mIsLocked=isLocked;
+        mIsLocked = isLocked;
     }
 
     private void doEquip(final Activity activity) {

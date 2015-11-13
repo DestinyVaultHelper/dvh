@@ -183,5 +183,6 @@ Build number: <xliff:g id="build_number">%s</xliff:g>\n
     <string name="share_label">Inform your friends</string>
     <string name="share_action_label">Inform your friends</string>
     <string name="share_text" >Hey check out Vault Helper for Destiny at: https://play.google.com/store/apps/details?id=org.swistowski.vaulthelper&amp;utm_source=share_button</string>
+    <string name="materials">Materials</string>
 
 </resources>

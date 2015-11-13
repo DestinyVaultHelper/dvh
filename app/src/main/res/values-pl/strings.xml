@@ -100,7 +100,7 @@
   <string name="options">opcje</string>
   <string name="Logo">Logo</string>
   <string name="share_on_google_plus">Podziel się na Google+</string>
-  <string name="google_plus_share_title">Vault helper dla Destiny, najlepsze manager przedmiotów.</string>
+  <string name="google_plus_share_title">Vault Helper dla Destiny, najlepszy manager przedmiotów</string>
   <string name="title_activity_settings">Ustawienia</string>
   <!--Strings related to Settings-->
   <!--Example General settings-->
@@ -113,12 +113,24 @@
     <item>Nazwa</item>
   </string-array>
   <string name="pref_title_tab_style">Styl tabów</string>
-  <string name="pref_desription_show_all_label">Pokaż wszystkie</string>
+  <string name="pref_desription_show_all_label">Pokaż wszystko</string>
   <string name="pref_desription_show_all_off">Pokaż tylko przedmioty do przeniesienia</string>
   <string name="pref_show_all_label">Pokaż nieprzenoszalne przedmioty</string>
   <string name="help">Pomoc</string>
   <string name="pref_ordering_title">Kolejność</string>
-  <string name="is_locked">Jest zablokowane</string>
-  <string name="is_not_locked">Nie jest zablokowane</string>
-  <string name="locked_filter_label">Zablokowane</string>
+  <string name="is_locked">Zablokowany</string>
+  <string name="is_not_locked">Nie zablokowany</string>
+  <string name="locked_filter_label">Zablokowanie</string>
+  <string name="unlock_action_label">Odblokuj</string>
+  <string name="lock_action_label">Zablokuj</string>
+  <string name="do_unlock_in_progress">Ściągam blokadę</string>
+  <string name="do_lock_in_progress">Zakładam blokadę</string>
+  <string name="do_unlock_success">Przedmiot odblokowany</string>
+  <string name="do_unlock_error">Nie mogę odblokować przedmiotu</string>
+  <string name="do_lock_success">Przedmiot jest zablokowany</string>
+  <string name="do_lock_error">Nie mogę zablokować przedmiotu</string>
+  <string name="share_label">Powiadom znajomych</string>
+  <string name="share_action_label">Powiadom znajomych</string>
+  <string name="share_text">Sprawdź Vault Helper dla Destiny na: https://play.google.com/store/apps/details?id=org.swistowski.vaulthelper&amp;utm_source=share_button</string>
+  <string name="materials">Materiały</string>
 </resources>

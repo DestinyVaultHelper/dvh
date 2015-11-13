@@ -66,6 +66,15 @@ public class Items {
         return allItems;
     }
 
+    public List<Item> allWithoutFiltering() {
+        List<Item> allItems = new ArrayList<>();
+
+        for (Map.Entry<String, List<Item>> entry : items.entrySet()) {
+            allItems.addAll(entry.getValue());
+        }
+        return allItems;
+    }
+
     public void clean() {
         items = new HashMap<>();
         itemsOwners = new HashMap<>();
